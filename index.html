@@ -28188,7 +28188,8 @@ async function saveCurrent() {
 
     .saveEntity(
       entity,
-      data
+      data,
+      state.authV84 ? state.authV84.token : ''
     );
 }
 
@@ -28294,7 +28295,8 @@ function removeCurrent() {
 
     .deleteEntity(
       entity,
-      id
+      id,
+      state.authV84 ? state.authV84.token : ''
     );
 }
 

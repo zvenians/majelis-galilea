@@ -560,7 +560,18 @@ function doPost(e) {
       applyCarryForwardV7: typeof applyCarryForwardV7 !== 'undefined' ? applyCarryForwardV7 : null,
       getDashboardIntelligenceV7: typeof getDashboardIntelligenceV7 !== 'undefined' ? getDashboardIntelligenceV7 : null,
       getMeetingModeDataV7: typeof getMeetingModeDataV7 !== 'undefined' ? getMeetingModeDataV7 : null,
-      getSystemHealthV7: typeof getSystemHealthV7 !== 'undefined' ? getSystemHealthV7 : null
+      getSystemHealthV7: typeof getSystemHealthV7 !== 'undefined' ? getSystemHealthV7 : null,
+      // Missing Functions fixed from audit
+      deleteEntity: typeof deleteEntity !== 'undefined' ? deleteEntity : null,
+      downloadSecretaryLetterV81: typeof downloadSecretaryLetterV81 !== 'undefined' ? downloadSecretaryLetterV81 : null,
+      generateFamilyIdentityPdfV82: typeof generateFamilyIdentityPdfV82 !== 'undefined' ? generateFamilyIdentityPdfV82 : null,
+      generateMemberIdentityPdfV82: typeof generateMemberIdentityPdfV82 !== 'undefined' ? generateMemberIdentityPdfV82 : null,
+      getCongregationViewerDataV8: typeof getCongregationViewerDataV8 !== 'undefined' ? getCongregationViewerDataV8 : null,
+      getFilePreviewInfoV7: typeof getFilePreviewInfoV7 !== 'undefined' ? getFilePreviewInfoV7 : null,
+      getFinanceRevisionDataV702: typeof getFinanceRevisionDataV702 !== 'undefined' ? getFinanceRevisionDataV702 : null,
+      getNotificationCenterV8: typeof getNotificationCenterV8 !== 'undefined' ? getNotificationCenterV8 : null,
+      getSettingsCenterV8: typeof getSettingsCenterV8 !== 'undefined' ? getSettingsCenterV8 : null,
+      runCrudAlignmentSelfTestV83: typeof runCrudAlignmentSelfTestV83 !== 'undefined' ? runCrudAlignmentSelfTestV83 : null
     };
 
     if (!ALLOWED.hasOwnProperty(action) || !ALLOWED[action]) {
