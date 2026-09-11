@@ -3830,11 +3830,7 @@ function loginGoogleV85(idToken) {
       STATUS: 'Aktif',
       AUTH_PROVIDER: 'GOOGLE',
       GOOGLE_EMAIL: data.email,
-      permissions: {
-        pages: ['rapat', 'usulan', 'keputusan', 'tindak_lanjut', 'program', 'rapbj', 'keuangan', 'inventaris', 'pengurus', 'jemaat', 'dokumen', 'surat', 'kalender', 'arsip', 'settings', 'access'],
-        write: ['*'],
-        remove: ['*']
-      }
+      permissions: rolePermissionMatrixV84_()['SUPERADMIN']
     };
     
     authCacheV84_().put(authKeyV84_(token), JSON.stringify(user), 21600);
@@ -3856,8 +3852,15 @@ function loginMajelisV84(username,pin){
 function getAuthContextV84(token){
   const raw=token&&authCacheV84_().get(authKeyV84_(token));
   if(!raw)return {authenticated:false};
-  authCacheV84_().put(authKeyV84_(token),raw,21600);
-  return {authenticated:true,user:JSON.parse(raw)};
+  const user = JSON.parse(raw);
+  if (user && user.ROLE) {
+    const matrix = rolePermissionMatrixV84_();
+    if (matrix[user.ROLE]) {
+       user.permissions = matrix[user.ROLE];
+    }
+  }
+  authCacheV84_().put(authKeyV84_(token), JSON.stringify(user), 21600);
+  return {authenticated:true,user:user};
 }
 function logoutMajelisV84(token){if(token)authCacheV84_().remove(authKeyV84_(token));return {success:true};}
 function requireAuthV84_(token){const c=getAuthContextV84(token);if(!c.authenticated)throw new Error('AUTH_REQUIRED');return c.user;}
