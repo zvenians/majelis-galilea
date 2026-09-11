@@ -22336,10 +22336,7 @@ const FORM = {
   },
 
 
-  pengurus: {
-    title:
-      'Pengurus Majelis',
-
+  pengurus: { title: 'Pengurus',
     fields: [
       {
         key: 'FOTO_FILE',
@@ -22347,39 +22344,27 @@ const FORM = {
         type: 'photo',
         full: true
       },
-
       {
         key: 'NAMA',
-        label: 'Nama',
+        label: 'Nama Lengkap',
         type: 'text',
-        full: true,
         required: true
       },
-
-      {
-        key: 'JABATAN',
-        label: 'Jabatan',
-        type: 'text'
-      },
-
       {
         key: 'DEPARTEMEN',
         label: 'Departemen',
         type: 'departemen'
       },
-
       {
         key: 'NO_WHATSAPP',
         label: 'WhatsApp',
         type: 'text'
       },
-
       {
         key: 'EMAIL',
         label: 'Email',
         type: 'email'
       },
-
       {
         key: 'STATUS',
         label: 'Status',
@@ -22389,15 +22374,13 @@ const FORM = {
           'Tidak Aktif'
         ]
       },
-
       {
         key: 'URUTAN',
-        label: 'Urutan',
+        label: 'Urutan Tampil',
         type: 'number'
       }
     ]
   },
-
 
   jemaat: {
     title:
@@ -26315,15 +26298,7 @@ function personCard(
     entity ===
     'pengurus'
       ? (
-          esc(
-            item.JABATAN ||
-            '-'
-          ) +
-          '<br>' +
-          esc(
-            item.DEPARTEMEN ||
-            ''
-          )
+          esc(item.DEPARTEMEN || '-')
         )
       : (
           '<strong>Keluarga ' +
@@ -28954,7 +28929,7 @@ function attendanceRowHtml(
         </strong>
 
         <small>
-          ${esc(item.JABATAN || '-')}
+          ${esc(item.DEPARTEMEN || item.JABATAN || '-')}
         </small>
 
       </div>
@@ -32160,7 +32135,7 @@ function openPersonViewerV7(
               alt="${esc(displayName)}">
             <strong>${esc(displayName)}</strong>
             <span>
-              ${esc(item.JABATAN || item.DEPARTEMEN || '')}
+              ${esc(item.DEPARTEMEN || '')}
             </span>
           </div>
         `

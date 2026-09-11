@@ -6981,7 +6981,7 @@ function buildNotulenPdf_(
     const rows = [
       [
         'Nama',
-        'Jabatan',
+        'Departemen',
         'Status',
         'Keterangan'
       ]
@@ -6992,7 +6992,7 @@ function buildNotulenPdf_(
         rows.push([
           item.NAMA ||
           '-',
-          item.JABATAN ||
+          item.DEPARTEMEN ||
           '-',
           item.STATUS_KEHADIRAN ||
           '-',
@@ -8040,7 +8040,6 @@ function buildPeoplePdf_(
     isOfficer
       ? [[
           'Nama',
-          'Jabatan',
           'Departemen',
           'WhatsApp',
           'Status'
@@ -8062,8 +8061,6 @@ function buildPeoplePdf_(
       ) {
         rows.push([
           item.NAMA ||
-          '-',
-          item.JABATAN ||
           '-',
           item.DEPARTEMEN ||
           '-',
@@ -12600,7 +12597,7 @@ function initializeAttendance(
               NAMA:
                 officer.NAMA,
               JABATAN:
-                officer.JABATAN,
+                officer.DEPARTEMEN,
               STATUS_KEHADIRAN:
                 'Hadir',
               KETERANGAN:
