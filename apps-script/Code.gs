@@ -348,7 +348,7 @@ const APP = {
 
     AKSES_ROLE: [
       'ID_USER','USERNAME','NAMA','ROLE','PIN_HASH','STATUS',
-      'CREATED_AT','UPDATED_AT','LAST_LOGIN','LEVEL'
+      'CREATED_AT','UPDATED_AT','LAST_LOGIN','LEVEL','PASSWORD_HASH','AUTH_PROVIDER','GOOGLE_EMAIL'
     ],
 
     ATTACHMENTS: [
@@ -499,6 +499,7 @@ function doPost(e) {
     // Whitelist of callable functions from Vercel proxy
     const ALLOWED = {
       // Auth
+      fixAksesRoleV85: fixAksesRoleV85,
       migrateAuthV85: migrateAuthV85,
       loginMajelisV84: loginMajelisV84,
       loginGoogleV85: loginGoogleV85,
@@ -25199,4 +25200,51 @@ function migrateAuthV85() {
     }
   }
   return { success: true, message: 'Migration V8.5 Auth complete.' };
+}
+
+function fixAksesRoleV85() {
+  const sh = getSheet_(APP.SHEETS.ACCESS);
+  if (!sh) return { success: false, message: 'Sheet not found' };
+  
+  // 1. Ensure all schema headers exist
+  setupDatabase();
+  
+  // 2. Populate missing LEVEL, AUTH_PROVIDER, etc for existing rows
+  const headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  if (sh.getLastRow() > 1) {
+    const data = sh.getRange(2, 1, sh.getLastRow() - 1, headers.length).getValues();
+    const roleIdx = headers.indexOf('ROLE');
+    const levelIdx = headers.indexOf('LEVEL');
+    const passIdx = headers.indexOf('PASSWORD_HASH');
+    const pinIdx = headers.indexOf('PIN_HASH');
+    const authIdx = headers.indexOf('AUTH_PROVIDER');
+    const matrix = rolePermissionMatrixV84_();
+    
+    let changed = false;
+    data.forEach(row => {
+      // populate LEVEL
+      if (levelIdx !== -1 && !row[levelIdx]) {
+        const role = row[roleIdx];
+        if (matrix[role] && matrix[role].level !== undefined) {
+          row[levelIdx] = matrix[role].level;
+          changed = true;
+        }
+      }
+      // copy PIN_HASH to PASSWORD_HASH
+      if (passIdx !== -1 && pinIdx !== -1 && !row[passIdx] && row[pinIdx]) {
+        row[passIdx] = row[pinIdx];
+        changed = true;
+      }
+      // set AUTH_PROVIDER
+      if (authIdx !== -1 && !row[authIdx]) {
+        row[authIdx] = 'LOCAL';
+        changed = true;
+      }
+    });
+    
+    if (changed) {
+      sh.getRange(2, 1, data.length, headers.length).setValues(data);
+    }
+  }
+  return { success: true, message: 'AKSES_ROLE fixed successfully.' };
 }
