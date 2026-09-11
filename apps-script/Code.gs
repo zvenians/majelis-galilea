@@ -3823,11 +3823,11 @@ function loginGoogleV85(idToken) {
     
     const token = (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '');
     const user = {
-      ID_USER: 'SA-01',
-      USERNAME: 'superadmin',
-      NAMA: 'Superadmin',
+      id: 'SA-01',
+      username: 'superadmin',
+      name: data.name || 'Superadmin',
+      role: 'SUPERADMIN',
       ROLE: 'SUPERADMIN',
-      STATUS: 'Aktif',
       AUTH_PROVIDER: 'GOOGLE',
       GOOGLE_EMAIL: data.email,
       permissions: rolePermissionMatrixV84_()['SUPERADMIN']
