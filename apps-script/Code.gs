@@ -3810,7 +3810,7 @@ function authCacheV84_(){return CacheService.getScriptCache();}
 function authKeyV84_(t){return 'MG-AUTH-V84-'+String(t||'');}
 function safeRoleUserV84_(r){
   const role=String(r.ROLE||'');
-  return {id:r.ID_USER,username:r.USERNAME,name:r.NAMA||r.USERNAME,role,permissions:rolePermissionMatrixV84_()[role]||{pages:[],write:[],remove:[]}};
+  return {id:r.ID_USER,username:r.USERNAME,name:r.NAMA||r.USERNAME,role,ROLE:role,permissions:rolePermissionMatrixV84_()[role]||{pages:[],write:[],remove:[]}};
 }
 function loginGoogleV85(idToken) {
   if (!idToken) throw new Error('Token tidak valid.');
@@ -3853,10 +3853,11 @@ function getAuthContextV84(token){
   const raw=token&&authCacheV84_().get(authKeyV84_(token));
   if(!raw)return {authenticated:false};
   const user = JSON.parse(raw);
-  if (user && user.ROLE) {
+  const r = user && (user.ROLE || user.role);
+  if (r) {
     const matrix = rolePermissionMatrixV84_();
-    if (matrix[user.ROLE]) {
-       user.permissions = matrix[user.ROLE];
+    if (matrix[r]) {
+       user.permissions = matrix[r];
     }
   }
   authCacheV84_().put(authKeyV84_(token), JSON.stringify(user), 21600);
