@@ -16,7 +16,7 @@ if (!fs.existsSync(manifestPath)) {
 }
 
 try {
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8').replace(/^\uFEFF/, ''));
   if (!manifest.timeZone || !manifest.runtimeVersion) {
     throw new Error('Manifest missing required fields (timeZone, runtimeVersion)');
   }
@@ -50,7 +50,7 @@ if (!fs.existsSync(claspPath)) {
 }
 
 try {
-  const claspConfig = JSON.parse(fs.readFileSync(claspPath, 'utf8'));
+  const claspConfig = JSON.parse(fs.readFileSync(claspPath, 'utf8').replace(/^\uFEFF/, ''));
   if (!claspConfig.scriptId) {
     throw new Error('Missing scriptId in .clasp.json');
   }
