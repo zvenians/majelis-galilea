@@ -3,6 +3,7 @@
 > A centralized administration platform and workflow automation system built with Google Apps Script, Vercel Serverless proxying, and a 23-tab Google Sheets relational database.
 
 [![Status](https://img.shields.io/badge/Status-Production-brightgreen?style=flat-square)](#)
+[![CI](https://github.com/zvenians/majelis-galilea/actions/workflows/ci.yml/badge.svg)](https://github.com/zvenians/majelis-galilea/actions/workflows/ci.yml)
 [![Live Demo](https://img.shields.io/badge/Live_Portal-majelis--galilea.vercel.app-blue?style=flat-square&logo=vercel)](https://majelis-galilea.vercel.app)
 [![Backend](https://img.shields.io/badge/Backend-Google_Apps_Script_(V8)-4285F4?style=flat-square&logo=google)](https://developers.google.com/apps-script)
 [![Proxy](https://img.shields.io/badge/Proxy-Vercel_Serverless-black?style=flat-square&logo=vercel)](https://vercel.com/)
@@ -202,4 +203,19 @@ Configure this environment variable in your Vercel Project Settings:
    ```bash
    npx vercel --prod
    ```
+
+---
+
+## 11. Development & CI Workflow
+
+The repository enforces backend syntax and manifest validation via GitHub Actions before code reaches production:
+
+```text
+Local Branch ──► Pull Request ──► GitHub Actions CI (validate-gas.js) ──► Merge to main ──► Vercel & Clasp Deploy
+```
+
+- **Local Verification:** Run `node scripts/validate-gas.js` locally to verify `appsscript.json`, syntax check all 24k+ lines of `Code.gs`, and ensure configuration integrity.
+- **Automated Gating:** Every push and pull request to `main` triggers automated execution of the validation suite.
+- **Zero Credential Exposure:** CI executes pure syntax and static integrity checks without requiring production Google Apps Script credentials.
+
 
