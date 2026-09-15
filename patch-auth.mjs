@@ -9,7 +9,7 @@ code = code.replace(
 
 code = code.replace(
   'const APP = {',
-  'const GOOGLE_CLIENT_ID = "152249823054-gtalq11ff14re7cpnas3dktaf7u4t432.apps.googleusercontent.com";\nconst SUPERADMIN_EMAIL = "simatupangkevin9@gmail.com";\n\nconst APP = {'
+  'const GOOGLE_CLIENT_ID = "152249823054-gtalq11ff14re7cpnas3dktaf7u4t432.apps.googleusercontent.com";\nfunction getSuperadminEmail_() {\n  const p = PropertiesService.getScriptProperties();\n  const configured = p.getProperty(\'SUPERADMIN_EMAIL\');\n  if (configured && configured.trim()) return configured.trim().toLowerCase();\n  try {\n    const owner = Session.getEffectiveUser().getEmail();\n    if (owner && owner.trim()) return owner.trim().toLowerCase();\n  } catch (_) {}\n  return \'\';\n}\n\nconst APP = {'
 );
 
 const googleLoginFunc = \
@@ -19,7 +19,9 @@ function loginGoogleV85(idToken) {
     const res = UrlFetchApp.fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + idToken);
     const data = JSON.parse(res.getContentText());
     if (data.aud !== GOOGLE_CLIENT_ID) throw new Error('Unrecognized client.');
-    if (data.email !== SUPERADMIN_EMAIL) throw new Error('Email tidak diizinkan. Hanya ' + SUPERADMIN_EMAIL + ' yang diizinkan sebagai SUPERADMIN.');
+    const superAdminEmail = getSuperadminEmail_();
+    if (!superAdminEmail) throw new Error('SUPERADMIN_EMAIL belum dikonfigurasi pada Script Properties.');
+    if (!data.email || data.email.toLowerCase() !== superAdminEmail) throw new Error('Email tidak diizinkan sebagai SUPERADMIN.');
     if (data.email_verified !== 'true' && data.email_verified !== true) throw new Error('Email belum diverifikasi oleh Google.');
     
     const token = (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '');
