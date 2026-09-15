@@ -35,6 +35,13 @@ Session 6 jam via CacheService.
 - Google Sheets sebagai database
 - Vercel account untuk deployment
 
+### Clasp Configuration (Local Development)
+1. Salin template konfigurasi: `cp .clasp.json.example .clasp.json`
+2. Isi `scriptId` dengan Script ID proyek Apps Script Anda (**Project Settings > Script ID**).
+3. File `.clasp.json` diabaikan oleh Git (`.gitignore`) untuk mencegah kebocoran ID proyek.
+4. Jalankan validasi: `node scripts/validate-gas.js`
+5. Push ke Apps Script: `npx @google/clasp push`
+
 ### Environment Variables (Vercel)
 ```
 APPS_SCRIPT_URL=https://script.google.com/macros/s/.../exec
