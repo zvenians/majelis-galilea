@@ -503,6 +503,11 @@ function doPost(e) {
     const action = String(body.action || '');
     const args = body.args || [];
 
+    if (!Array.isArray(args)) throw new Error('Argumen permintaan tidak valid.');
+    const publicActions = ['loginMajelisV84','loginGoogleV85','logoutMajelisV84',
+      'getAuthContextV84','getBackendStatus','getPublicViewerDataV84','getCongregationViewerDataV8'];
+    if (!publicActions.includes(action)) requireAuthV84_(body.authToken);
+
     if (!action) {
       return jsonResponse_({ __error__: 'Missing action parameter' });
     }
@@ -510,8 +515,6 @@ function doPost(e) {
     // Whitelist of callable functions from Vercel proxy
     const ALLOWED = {
       // Auth
-      fixAksesRoleV85: fixAksesRoleV85,
-      migrateAuthV85: migrateAuthV85,
       loginMajelisV84: loginMajelisV84,
       loginGoogleV85: loginGoogleV85,
       logoutMajelisV84: logoutMajelisV84,
@@ -524,7 +527,8 @@ function doPost(e) {
       getBackendStatus: getBackendStatus,
       getSecureAppDataV84: getSecureAppDataV84,
       getPublicViewerDataV84: getPublicViewerDataV84,
-      getAppData: getAppData,
+      setPublicPublicationV86: setPublicPublicationV86,
+      createGovernanceBackupV86: createGovernanceBackupV86,
       getNotulenDetail: getNotulenDetail,
       getAuditLog: getAuditLog,
       getCrudContractV83: getCrudContractV83,
@@ -630,7 +634,7 @@ function renderMainAppV84_() {
       )
       .addMetaTag(
         'viewport',
-        'width=device-width, initial-scale=1, maximum-scale=1'
+        'width=device-width, initial-scale=1'
       )
       .setXFrameOptionsMode(
         HtmlService
@@ -3074,6 +3078,13 @@ function saveEntityCore_(
         )
       : null;
 
+  // Setelah isi berubah, pengurus perlu memeriksa publikasinya lagi.
+  if (publicationEntitiesV86_()[entity]) {
+    payload.PUBLIKASI = 'Internal';
+    payload.PUBLIKASI_OLEH = '';
+    payload.PUBLIKASI_PADA = '';
+  }
+
   if (
     entity ===
     'keuangan'
@@ -3312,6 +3323,8 @@ function saveEntityCore_(
 
 function saveEntity(entity,payload,token){
   assertEntityPermissionV84_(token,entity,'write');
+  payload = {...(payload || {})};
+  ['PUBLIKASI','PUBLIKASI_OLEH','PUBLIKASI_PADA'].forEach(key => delete payload[key]);
   return saveEntityInternal_(entity,payload);
 }
 
@@ -3867,7 +3880,22 @@ function loginMajelisV84(username,pin){
 function getAuthContextV84(token){
   const raw=token&&authCacheV84_().get(authKeyV84_(token));
   if(!raw)return {authenticated:false};
-  const user = JSON.parse(raw);
+  let user = JSON.parse(raw);
+  // Pergantian jabatan dan penonaktifan akun berlaku pada sesi yang masih terbuka.
+  if (user.AUTH_PROVIDER === 'GOOGLE') {
+    if (user.GOOGLE_EMAIL !== getSuperadminEmail_()) {
+      logoutMajelisV84(token);
+      return {authenticated:false};
+    }
+  } else {
+    const account = readSheet_(APP.SHEETS.ACCESS).find(row =>
+      String(row.ID_USER) === String(user.id) && String(row.STATUS || 'Aktif') === 'Aktif');
+    if (!account || account.ROLE === 'SUPERADMIN') {
+      logoutMajelisV84(token);
+      return {authenticated:false};
+    }
+    user = safeRoleUserV84_(account);
+  }
   const r = user && (user.ROLE || user.role);
   if (r) {
     const matrix = rolePermissionMatrixV84_();
@@ -3893,18 +3921,102 @@ function assertFeatureV84_(token,feature){
 }
 function getSecureAppDataV84(token,filters){
   const u=requireAuthV84_(token),d=getAppData(filters||{}),pages=new Set(u.permissions.pages||[]);
-  const map={notulen:'rapat',agenda:'rapat',kehadiran:'rapat',usulan:'usulan',keputusan:'keputusan',tindakLanjut:'tindak_lanjut',program:'program',rapbj:'rapbj',keuangan:'keuangan',inventaris:'inventaris',pengurus:'pengurus',jemaat:'jemaat',documents:'dokumen',letters:'surat'};
+  const map={notulen:'rapat',agenda:'rapat',kehadiran:'rapat',usulan:'usulan',keputusan:'keputusan',tindakLanjut:'tindak_lanjut',programs:'program',rapbj:'rapbj',keuangan:'keuangan',inventaris:'inventaris',pengurus:'pengurus',jemaat:'jemaat',documents:'dokumen',letters:'surat'};
   Object.keys(map).forEach(k=>{if(!pages.has(map[k]))d[k]=[];});
   d.authV84=u;return d;
 }
 function getPublicViewerDataV84(filters){
   const year=Number((filters&&filters.year)||currentYear_()),d=getAppData({year});
-  const meetings=(d.notulen||[]).filter(x=>['Disetujui','Final'].includes(String(x.STATUS||''))).map(x=>({id:x.ID_NOTULEN,date:x.TANGGAL,title:x.JUDUL,type:x.JENIS_RAPAT,place:x.TEMPAT}));
+  const meetings=(d.notulen||[]).filter(x=>isPublicPublicationV86_(x)&&['Disetujui','Final'].includes(String(x.STATUS||''))).map(x=>({id:x.ID_NOTULEN,date:x.TANGGAL,title:x.JUDUL,type:x.JENIS_RAPAT,place:x.TEMPAT}));
   const ids=new Set(meetings.map(x=>String(x.id)));
-  const decisions=(d.keputusan||[]).filter(x=>ids.has(String(x.ID_NOTULEN))).map(x=>({number:x.NO_KEPUTUSAN,decision:x.KEPUTUSAN,department:x.DEPARTEMEN,target:x.TARGET_SELESAI,status:x.STATUS}));
-  const programs=(d.program||[]).map(x=>({name:x.NAMA_PROGRAM,department:x.DEPARTEMEN,start:x.TANGGAL_MULAI,end:x.TANGGAL_SELESAI,status:x.STATUS}));
-  const documents=(d.documents||[]).filter(x=>String(x.STATUS||'Aktif')==='Aktif').map(x=>({date:x.TANGGAL,category:x.KATEGORI,title:x.JUDUL,number:x.NOMOR_DOKUMEN,url:x.FILE_URL}));
+  const decisions=(d.keputusan||[]).filter(x=>isPublicPublicationV86_(x)&&ids.has(String(x.ID_NOTULEN))).map(x=>({number:x.NO_KEPUTUSAN,decision:x.KEPUTUSAN,department:x.DEPARTEMEN,target:x.TARGET_SELESAI,status:x.STATUS}));
+  const programs=(d.programs||[]).filter(x=>isPublicPublicationV86_(x)&&x.STATUS!=='Dibatalkan').map(x=>({name:x.NAMA_PROGRAM,department:x.DEPARTEMEN,start:x.TANGGAL_MULAI,end:x.TANGGAL_SELESAI,status:x.STATUS}));
+  const documents=(d.documents||[]).filter(x=>isPublicPublicationV86_(x)&&String(x.STATUS||'Aktif')==='Aktif').map(x=>({date:x.TANGGAL,category:x.KATEGORI,title:x.JUDUL,number:x.NOMOR_DOKUMEN,url:safePublicUrlV86_(x.FILE_URL)}));
   return {success:true,version:APP.VERSION,year,church:{name:getSettingSafe_('CHURCH_NAME')||'GMAHK Galilea Balikpapan',logo:getSettingSafe_('LOGO_URL')||''},summary:{meetings:meetings.length,decisions:decisions.length,programs:programs.length,documents:documents.length},meetings,decisions,programs,documents};
+}
+
+function publicationEntitiesV86_() {
+  return {
+    notulen: {sheet: APP.SHEETS.NOTULEN, id: 'ID_NOTULEN'},
+    keputusan: {sheet: APP.SHEETS.KEPUTUSAN, id: 'ID_KEPUTUSAN'},
+    program: {sheet: APP.SHEETS.PROGRAM, id: 'ID_PROGRAM'},
+    dokumen: {sheet: APP.SHEETS.DOKUMEN, id: 'ID_DOKUMEN'}
+  };
+}
+
+function isPublicPublicationV86_(row) {
+  return String(row.PUBLIKASI || '') === 'Publik';
+}
+
+function safePublicUrlV86_(value) {
+  const url = String(value || '').trim();
+  return /^https:\/\/[^\s<>"']+$/i.test(url) ? url : '';
+}
+
+function setPublicPublicationV86(token, entity, id, publish) {
+  const user = requireAuthV84_(token);
+  if (!['SUPERADMIN','ADMIN','KETUA_JEMAAT','SEKRETARIS'].includes(user.role || user.ROLE)) {
+    throw new Error('Publikasi hanya dapat diatur oleh administrator, ketua jemaat, atau sekretaris.');
+  }
+  const config = publicationEntitiesV86_()[entity];
+  if (!config || !String(id || '').trim() || typeof publish !== 'boolean') {
+    throw new Error('Pilihan publikasi tidak valid.');
+  }
+  return withDocumentLock_(() => {
+    const sheet = getSheet_(config.sheet);
+    const row = findRowById_(sheet, config.id, id);
+    if (!row) throw new Error('Data tidak ditemukan.');
+    const record = rowToObject_(sheet, row);
+    if (publish) {
+      if (entity === 'notulen' && !['Disetujui','Final'].includes(record.STATUS)) {
+        throw new Error('Notulen harus disetujui sebelum dipublikasikan.');
+      }
+      if (entity === 'keputusan') {
+        const meeting = findObjectById_(APP.SHEETS.NOTULEN, 'ID_NOTULEN', record.ID_NOTULEN);
+        if (!meeting || !isPublicPublicationV86_(meeting) || !['Disetujui','Final'].includes(meeting.STATUS)) {
+          throw new Error('Publikasikan notulen yang sudah disetujui terlebih dahulu.');
+        }
+      }
+      if (entity === 'program' && record.STATUS === 'Dibatalkan') {
+        throw new Error('Program yang dibatalkan tidak dapat dipublikasikan.');
+      }
+      if (entity === 'dokumen' && String(record.STATUS || 'Aktif') !== 'Aktif') {
+        throw new Error('Hanya dokumen aktif yang dapat dipublikasikan.');
+      }
+    }
+    // Kolom ditambahkan saat dipakai; data lama tetap menjadi arsip internal.
+    const headers = getHeaders_(sheet);
+    ['PUBLIKASI','PUBLIKASI_OLEH','PUBLIKASI_PADA'].forEach(header => {
+      if (!headers.includes(header)) {
+        if (headers.length === sheet.getMaxColumns()) sheet.insertColumnsAfter(headers.length, 1);
+        headers.push(header);
+        sheet.getRange(1, headers.length).setValue(header);
+      }
+    });
+    const at = new Date();
+    const values = {
+      PUBLIKASI: publish ? 'Publik' : 'Internal',
+      PUBLIKASI_OLEH: user.name || user.username,
+      PUBLIKASI_PADA: at
+    };
+    Object.keys(values).forEach(header => sheet.getRange(row, headers.indexOf(header) + 1).setValue(values[header]));
+    audit_(publish ? 'PUBLISH_PUBLIC' : 'WITHDRAW_PUBLIC', entity, id,
+      (user.name || user.username) + ': ' + values.PUBLIKASI);
+    return {success:true, publication:values.PUBLIKASI};
+  });
+}
+
+function createGovernanceBackupV86(token) {
+  const user = assertFeatureV84_(token, 'settings');
+  return withDocumentLock_(() => {
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const folder = getOrCreateFolder_(getSettingSafe_('ARCHIVE_FOLDER_NAME') || 'MAJELIS GALILEA - ARSIP');
+    const stamp = Utilities.formatDate(new Date(), APP.TZ, 'yyyyMMdd-HHmmss');
+    SpreadsheetApp.flush();
+    const copy = DriveApp.getFileById(spreadsheet.getId()).makeCopy('Majelis Galilea - Backup ' + stamp, folder);
+    audit_('BACKUP_DATABASE', 'database', copy.getId(), (user.name || user.username) + ': salinan seluruh database.');
+    return {success:true, name:copy.getName(), url:copy.getUrl()};
+  });
 }
 function listAccessUsersV84(token){
   const u=requireAuthV84_(token);if(!u.permissions.access)throw new Error('Akses ditolak.');
@@ -12460,6 +12572,9 @@ function reviewNotulen(
         );
       }
 
+      payload.PUBLIKASI = 'Internal';
+      payload.PUBLIKASI_OLEH = '';
+      payload.PUBLIKASI_PADA = '';
       payload.UPDATED_AT =
         now;
 
@@ -16079,8 +16194,7 @@ function getSystemHealthV7() {
       .reverse()
       .find(
         item =>
-          item.ACTION ===
-          'ARCHIVE_YEAR'
+          ['ARCHIVE_YEAR', 'BACKUP_DATABASE'].includes(item.ACTION)
       ) ||
     null;
 
@@ -19275,120 +19389,19 @@ function settingBoolV8_(
 }
 
 
-function getCongregationViewerDataV8(
-  year
-) {
-  year =
-    Number(
-      year ||
-      currentYear_()
-    );
-
-  const data =
-    getAppData({
-      year
-    });
-
-  const approvedMeetings =
-    data.notulen
-      .filter(
-        item =>
-          item.STATUS ===
-          'Disetujui'
-      )
-      .slice(
-        0,
-        6
-      )
-      .map(
-        item => ({
-          title:
-            item.JUDUL,
-          date:
-            item.TANGGAL,
-          type:
-            item.JENIS_RAPAT
-        })
-      );
-
-  const programs =
-    data.programs
-      .filter(
-        item =>
-          ![
-            'Dibatalkan'
-          ].includes(
-            item.STATUS
-          )
-      )
-      .slice(
-        0,
-        8
-      )
-      .map(
-        item => ({
-          name:
-            item.NAMA_PROGRAM,
-          department:
-            item.DEPARTEMEN,
-          start:
-            item.TANGGAL_MULAI,
-          end:
-            item.TANGGAL_SELESAI,
-          status:
-            item.STATUS
-        })
-      );
-
-  const ministry =
-    getFinanceMinistryMetricsV702(
-      year
-    );
-
+function getCongregationViewerDataV8(year) {
+  const data = getPublicViewerDataV84({year});
   return {
-    church:
-      data.app.church,
-    logoUrl:
-      data.app.logoUrl,
-    year,
-    nextMeeting:
-      data.summary.nextMeeting ||
-      null,
-    approvedMeetings:
-      settingBoolV8_(
-        'VIEWER_SHOW_APPROVED_MEETINGS',
-        true
-      )
-        ? approvedMeetings
-        : [],
-    programs:
-      settingBoolV8_(
-        'VIEWER_SHOW_PROGRAMS',
-        true
-      )
-        ? programs
-        : [],
-    finance:
-      settingBoolV8_(
-        'VIEWER_SHOW_FINANCE',
-        true
-      )
-        ? {
-            income:
-              data.summary.totalIncome,
-            expense:
-              data.summary.totalExpense,
-            balance:
-              data.summary.totalBalance
-          }
-        : null,
-    ministry:
-      settingBoolV8_(
-        'VIEWER_SHOW_MINISTRY_PROGRESS',
-        true
-      )
-        ? ministry
-        : null
+    church: data.church.name,
+    logoUrl: data.church.logo,
+    year: data.year,
+    nextMeeting: null,
+    approvedMeetings: settingBoolV8_('VIEWER_SHOW_APPROVED_MEETINGS', true)
+      ? data.meetings.slice(0, 6) : [],
+    programs: settingBoolV8_('VIEWER_SHOW_PROGRAMS', true)
+      ? data.programs.slice(0, 8) : [],
+    finance: null,
+    ministry: null
   };
 }
 

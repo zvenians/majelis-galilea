@@ -1,1 +1,181 @@
-<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#650a15"><title>Majelis Galilea — Viewer Only</title><style>*{box-sizing:border-box}:root{--wine:#650a15;--dark:#251a1c;--line:#e7dfe0;--muted:#817678}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f1ee;color:#211a1c}header,main{width:min(1120px,calc(100% - 24px));margin:auto}header{margin-top:14px;padding:12px 18px;border-radius:22px;background:var(--dark);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 18px 55px rgba(40,10,16,.16)}.brand{display:flex;align-items:center;gap:12px}.brand-logo{width:50px;height:50px;padding:7px;border-radius:15px;background:#fff;display:grid;place-items:center;flex:0 0 auto}.brand-logo img{display:block;width:100%;height:100%;object-fit:contain}.brand-copy small,.brand-copy b{display:block}.brand-copy small{font-size:8px;letter-spacing:.12em;color:#b8a9ac}.brand-copy b{margin-top:4px;font-size:14px}.viewer-badge{font-size:8px;letter-spacing:.1em;color:#d7cdd0;padding:9px 12px;border:1px solid rgba(255,255,255,.1);border-radius:12px}main{display:grid;gap:12px;margin-top:12px;margin-bottom:50px}.hero,.panel{padding:26px;border-radius:28px;background:#fff;border:1px solid var(--line)}.hero{background:linear-gradient(145deg,#4a0710,#7b1020);color:#fff;min-height:310px}.hero small{font-size:8px;letter-spacing:.15em;color:#d7aeb4}.hero h1{font-size:clamp(42px,7vw,82px);line-height:.9;margin:14px 0;letter-spacing:-.065em}.hero p{max-width:650px;color:#e0c4c8;line-height:1.65}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:28px}.stats div{padding:14px;border:1px solid rgba(255,255,255,.15);border-radius:16px}.stats b{font-size:26px}.list article{padding:14px 0;border-bottom:1px solid #eee}.list strong,.list small{display:block}.list small{color:#887b7e;font-size:8px;margin-bottom:4px}.list a{color:var(--wine)}.status{padding:14px 18px;border-radius:18px;background:#fff4f4;border:1px solid #ead3d7}.status[hidden]{display:none}@media(max-width:700px){header{border-radius:18px}.brand-logo{width:44px;height:44px}.brand-copy b{font-size:12px}.viewer-badge{font-size:7px;padding:8px 9px}.stats{grid-template-columns:1fr 1fr}.hero,.panel{padding:20px}.hero{min-height:auto}}</style></head><body><header><div class="brand"><div class="brand-logo"><img src="https://www.adventist.design/wp-content/uploads/2017/04/adventist_logo.png" alt="Logo Gereja Masehi Advent Hari Ketujuh" referrerpolicy="no-referrer"></div><div class="brand-copy"><small>GMAHK GALILEA</small><b>MAJELIS GALILEA</b></div></div><span class="viewer-badge">VIEWER ONLY</span></header><main><section id="status" class="status" hidden></section><section class="hero"><small>PUBLIC VIEW · READ ONLY</small><h1>Keputusan yang bisa dilihat.</h1><p>Viewer publik menampilkan informasi yang sudah aman untuk dibaca. Tidak tersedia fungsi tambah, edit, hapus, data pribadi anggota, maupun transaksi keuangan detail.</p><div class="stats"><div><b id="m">0</b><br>Rapat</div><div><b id="d">0</b><br>Keputusan</div><div><b id="p">0</b><br>Program</div><div><b id="f">0</b><br>Dokumen</div></div></section><section class="panel"><h2>Notulen Disetujui</h2><div id="meet" class="list"></div></section><section class="panel"><h2>Keputusan</h2><div id="dec" class="list"></div></section><section class="panel"><h2>Program Kerja</h2><div id="prog" class="list"></div></section><section class="panel"><h2>Dokumen Aktif</h2><div id="docs" class="list"></div></section></main><script>const $=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function empty(t){return `<article><strong>${esc(t)}</strong></article>`}window.MG_VIEWER_CALLBACK=x=>{if(!x||!x.success){showError('Backend merespons, tetapi data viewer belum tersedia.');return}$('status').hidden=true;$('m').textContent=x.summary?.meetings||0;$('d').textContent=x.summary?.decisions||0;$('p').textContent=x.summary?.programs||0;$('f').textContent=x.summary?.documents||0;$('meet').innerHTML=(x.meetings||[]).map(a=>`<article><small>${esc(a.date||'')}</small><strong>${esc(a.title||'')}</strong></article>`).join('')||empty('Belum ada notulen publik.');$('dec').innerHTML=(x.decisions||[]).map(a=>`<article><small>${esc(a.number||'')}</small><strong>${esc(a.decision||'')}</strong></article>`).join('')||empty('Belum ada keputusan.');$('prog').innerHTML=(x.programs||[]).map(a=>`<article><small>${esc(a.department||'')}</small><strong>${esc(a.name||'')}</strong></article>`).join('')||empty('Belum ada program.');$('docs').innerHTML=(x.documents||[]).map(a=>`<article><small>${esc(a.category||'')}</small><strong>${a.url?`<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title||'Dokumen')}</a>`:esc(a.title||'Dokumen')}</strong></article>`).join('')||empty('Belum ada dokumen publik.')}function showError(msg){const e=$('status');e.textContent=msg;e.hidden=false}async function load(){try{const res=await fetch('/api/gas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getPublicViewerDataV84',args:[{year:new Date().getFullYear()}]})});if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();const payload=data&&data.result?data.result:data;window.MG_VIEWER_CALLBACK(payload);}catch(err){showError('Viewer belum dapat terhubung ke backend. Pastikan server proxy dan deployment Apps Script aktif.');}}load();</script></body></html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#650a15">
+  <title>Majelis Galilea — Informasi Jemaat</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { --wine: #650a15; --ink: #251a1c; --line: #e7dfe0; --muted: #6a5b60; }
+    body { margin: 0; font: 14px/1.6 Inter, Arial, sans-serif; background: #f5f1ee; color: var(--ink); }
+    header, main { width: min(1120px, calc(100% - 32px)); margin: auto; }
+    header { margin-top: 18px; padding: 16px 20px; border-radius: 22px; background: var(--ink); color: white; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-logo { width: 50px; height: 50px; padding: 7px; border-radius: 15px; background: white; color: var(--wine); flex-shrink: 0; display: grid; place-items: center; overflow: hidden; font-weight: 800; }
+    .brand-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .brand-copy small, .brand-copy b { display: block; }
+    .brand-copy small { font-size: 12px; color: #d0c0c5; }
+    .brand-copy b { font-size: 16px; }
+    header a { padding: 10px 14px; border: 1px solid #8f7b83; border-radius: 12px; color: white; text-decoration: none; }
+    main { display: grid; gap: 18px; margin-top: 18px; margin-bottom: 48px; }
+    .hero, .panel { padding: 28px; border-radius: 24px; background: white; border: 1px solid var(--line); }
+    .hero { background: linear-gradient(145deg, #4a0710, #7b1020); color: white; }
+    .hero small { font-size: 12px; color: #e4c9ce; }
+    h1 { font-size: clamp(28px, 5vw, 46px); line-height: 1.15; margin: 14px 0; letter-spacing: -.03em; }
+    h2 { font-size: 21px; line-height: 1.3; margin: 0 0 18px; }
+    .hero p { max-width: 70ch; color: #efdbdf; margin: 0; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
+    .stats div { padding: 14px 18px; border: 1px solid #a66571; border-radius: 16px; }
+    .stats b, .stats span { display: block; }
+    .stats b { font-size: 26px; }
+    .stats span { color: #efdbdf; }
+    .filters { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; }
+    .filters label { display: grid; gap: 6px; }
+    .filters .search { flex: 1; min-width: 180px; }
+    input, button { font: inherit; min-height: 44px; }
+    input { padding: 10px 12px; border: 1px solid #cbb6bd; border-radius: 12px; background: white; color: var(--ink); }
+    input[type="number"] { width: 110px; }
+    button { padding: 10px 16px; border: 1px solid var(--wine); border-radius: 12px; background: var(--wine); color: white; cursor: pointer; }
+    button:disabled { opacity: .7; cursor: wait; }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #b65c28; outline-offset: 4px; }
+    .list article { padding: 16px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+    .list article:last-child { border-bottom: 0; }
+    .list strong, .list small { display: block; }
+    .list strong { font-size: 16px; line-height: 1.5; }
+    .list small { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .list a { color: var(--wine); text-underline-offset: 3px; }
+    .empty { color: var(--muted); margin: 0; }
+    .status { padding: 16px 20px; border-radius: 16px; background: #fff4f4; border: 1px solid #d7adb6; }
+    [hidden] { display: none !important; }
+    .note { margin: 0; color: var(--muted); font-size: 13px; }
+    .filters + .note { margin-top: 16px; }
+    @media (max-width: 600px) {
+      header { align-items: start; padding: 16px; flex-wrap: wrap; }
+      .hero, .panel { padding: 20px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .filters { gap: 12px; }
+      .filters .search { flex-basis: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo"><img src="https://www.adventist.design/wp-content/uploads/2017/04/adventist_logo.png" alt="Logo Gereja Masehi Advent Hari Ketujuh" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-label="Majelis Galilea">MG</span></div>
+      <div class="brand-copy"><small>GMAHK GALILEA</small><b>Majelis Galilea</b></div>
+    </div>
+    <a href="/admin">Masuk pengurus</a>
+  </header>
+  <main>
+    <section class="hero">
+      <small>INFORMASI JEMAAT</small>
+      <h1>Pelayanan yang dapat kita ikuti bersama.</h1>
+      <p>Rapat, keputusan, program, dan dokumen yang telah dipilih pengurus untuk dibagikan kepada jemaat.</p>
+      <div class="stats" aria-label="Jumlah informasi yang dipublikasikan">
+        <div><b id="m">—</b><span>Rapat</span></div>
+        <div><b id="d">—</b><span>Keputusan</span></div>
+        <div><b id="p">—</b><span>Program</span></div>
+        <div><b id="f">—</b><span>Dokumen</span></div>
+      </div>
+    </section>
+    <section class="panel">
+      <form class="filters" id="viewerFilters">
+        <label for="viewerYear">Tahun<input id="viewerYear" type="number" min="2000" max="2100" required></label>
+        <label class="search" for="viewerSearch">Cari informasi<input id="viewerSearch" type="search" placeholder="Judul, departemen, atau keputusan"></label>
+        <button id="viewerReload" type="submit">Muat ulang</button>
+      </form>
+      <p class="note" id="viewerProgress" role="status" aria-live="polite">Menyiapkan informasi…</p>
+    </section>
+    <section id="status" class="status" role="alert" hidden></section>
+    <section class="panel"><h2>Rapat yang dipublikasikan</h2><div id="meet" class="list"></div></section>
+    <section class="panel"><h2>Keputusan</h2><div id="dec" class="list"></div></section>
+    <section class="panel"><h2>Program kerja</h2><div id="prog" class="list"></div></section>
+    <section class="panel"><h2>Dokumen untuk jemaat</h2><div id="docs" class="list"></div></section>
+    <p class="note">Informasi internal majelis, data pribadi anggota, dan rincian transaksi keuangan tidak ditampilkan pada halaman ini.</p>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    let viewerData = null;
+    let requestId = 0;
+    let loading = false;
+    $('viewerYear').value = new Date().getFullYear();
+
+    function safeDocumentUrl(value) {
+      try { const url = new URL(value); return url.protocol === 'https:' ? url.href : ''; }
+      catch { return ''; }
+    }
+
+    function dateLabel(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+    }
+
+    function renderList(id, rows, content) {
+      $(id).innerHTML = rows.length ? rows.map(content).join('') : '<p class="empty">Belum ada informasi yang dipublikasikan atau cocok dengan pencarian.</p>';
+    }
+
+    function renderViewer() {
+      if (!viewerData) return;
+      const search = $('viewerSearch').value.trim().toLocaleLowerCase('id');
+      const filter = rows => (rows || []).filter(row => Object.values(row).some(value => String(value || '').toLocaleLowerCase('id').includes(search)));
+      renderList('meet', filter(viewerData.meetings), row => `<article><strong>${esc(row.title)}</strong><small>${esc([dateLabel(row.date), row.type, row.place].filter(Boolean).join(' · '))}</small></article>`);
+      renderList('dec', filter(viewerData.decisions), row => `<article><strong>${esc(row.decision)}</strong><small>${esc([row.number, row.department, row.status, row.target && 'Target: ' + dateLabel(row.target)].filter(Boolean).join(' · '))}</small></article>`);
+      renderList('prog', filter(viewerData.programs), row => `<article><strong>${esc(row.name)}</strong><small>${esc([row.department, row.status, dateLabel(row.start)].filter(Boolean).join(' · '))}</small></article>`);
+      renderList('docs', filter(viewerData.documents), row => {
+        const url = safeDocumentUrl(row.url);
+        return `<article><strong>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(row.title || 'Dokumen')} ↗</a>` : esc(row.title || 'Dokumen')}</strong><small>${esc([row.category, row.number, dateLabel(row.date)].filter(Boolean).join(' · '))}</small></article>`;
+      });
+      $('viewerProgress').textContent = `Informasi tahun ${viewerData.year}${search ? ' · Hasil pencarian ditampilkan di bawah.' : ' · Data terbaru berhasil dimuat.'}`;
+    }
+
+    window.MG_VIEWER_CALLBACK = data => {
+      if (!data || !data.success) throw new Error('Informasi jemaat belum tersedia.');
+      viewerData = data;
+      $('status').hidden = true;
+      ['m','d','p','f'].forEach((id, index) => { $(id).textContent = data.summary?.[['meetings','decisions','programs','documents'][index]] || 0; });
+      renderViewer();
+    };
+
+    async function load() {
+      const year = Number($('viewerYear').value);
+      if (!Number.isInteger(year) || year < 2000 || year > 2100) return;
+      const current = ++requestId;
+      loading = true;
+      $('viewerReload').disabled = true;
+      $('viewerProgress').textContent = `Memuat informasi tahun ${year}…`;
+      $('status').hidden = true;
+      viewerData = null;
+      ['meet','dec','prog','docs'].forEach(id => { $(id).innerHTML = '<p class="empty">Memuat informasi…</p>'; });
+      ['m','d','p','f'].forEach(id => { $(id).textContent = '—'; });
+      try {
+        const response = await fetch('/api/gas', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({action:'getPublicViewerDataV84', args:[{year}]}),
+          signal: AbortSignal.timeout(30000)
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        if (current !== requestId) return;
+        if (data.__error__) throw new Error(data.__error__);
+        window.MG_VIEWER_CALLBACK(data.result || data);
+      } catch (error) {
+        if (current !== requestId) return;
+        $('status').textContent = 'Informasi belum dapat dimuat. Tekan Muat ulang untuk mencoba kembali, atau hubungi sekretaris jemaat.';
+        $('status').hidden = false;
+        $('viewerProgress').textContent = 'Koneksi belum tersedia.';
+        ['meet','dec','prog','docs'].forEach(id => { $(id).innerHTML = '<p class="empty">Informasi belum dapat dimuat.</p>'; });
+      } finally {
+        if (current === requestId) { loading = false; $('viewerReload').disabled = false; }
+      }
+    }
+
+    $('viewerFilters').onsubmit = event => { event.preventDefault(); load(); };
+    $('viewerYear').onchange = () => { if ($('viewerYear').checkValidity()) load(); };
+    $('viewerSearch').oninput = () => { if (!loading) renderViewer(); };
+    load();
+  </script>
+</body>
+</html>
