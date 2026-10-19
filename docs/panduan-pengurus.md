@@ -1,47 +1,79 @@
-# Panduan pengurus Majelis Galilea
+# Cara pakai Majelis Galilea
 
-Dashboard menampilkan pintasan sesuai jabatan. Semua menu memuat halaman yang boleh dibuka oleh akun tersebut. Pilihan tahun berlaku untuk data, laporan, dan pengaturan publikasi yang sedang dilihat.
+## Lima menu utama
 
-## Publikasi untuk jemaat
+| Menu | Untuk apa? |
+| --- | --- |
+| Ringkasan | Melihat rapat berikutnya, tugas yang belum selesai, dan informasi sesuai izin akun. |
+| Rapat | Menampung usulan, mencatat rapat, melihat keputusan, dan mengurus tugas. |
+| Program & Anggaran | Menyusun kegiatan, mengisi anggarannya, dan melihat anggaran tahunan. |
+| Keuangan | Mencatat transaksi, melihat saldo, dan membuat laporan. |
+| Administrasi | Mengurus surat, dokumen, inventaris, pengurus, dan anggota jemaat. |
 
-Administrator, ketua jemaat, dan sekretaris dapat membuka **Publikasi jemaat** melalui Menu atau Panduan pengurus.
+Pilih tahun di bagian atas untuk membuka data lama. Menu yang tidak sesuai izin akun tidak ditampilkan. Akun pengurus, arsip tahunan, riwayat perubahan, dan salinan data ada di **Menu → Pengaturan**.
 
-- Notulen perlu berstatus Disetujui atau Final sebelum dipublikasikan. Viewer menampilkan identitas rapat, bukan seluruh isi notulen.
-- Keputusan memiliki izin publikasi sendiri dan hanya tampil jika notulen induknya juga disetujui dan dipublikasikan.
-- Program yang dibatalkan dan dokumen yang tidak aktif tidak dapat dipublikasikan.
-- Data lama tanpa pilihan publikasi dianggap internal. Tidak ada publikasi massal otomatis.
-- Pengeditan melalui penyimpanan aplikasi, sinkronisasi keputusan, atau perubahan status rapat mengembalikan informasi yang diubah menjadi internal. Pengurus memeriksanya sebelum mempublikasikan ulang.
-- Publikasi dan penarikannya tercatat di log aktivitas, beserta nama akun yang mengaturnya.
+## Menyiapkan dan menjalankan rapat
 
-Untuk dokumen, periksa isi file sebelum mempublikasikan tautannya. Mengubah pilihan menjadi Internal menghentikan penayangan di viewer; tautan yang sudah diketahui seseorang tetap mengikuti izin Google Drive. Batasi izin file di Drive jika akses file juga perlu dicabut.
+1. Buka **Rapat → Tambah Rapat**. Isi tanggal, judul, tempat, pemimpin, dan pencatat rapat.
+2. Di **Persiapan**, pilih usulan yang akan dibahas. Tombol **Lihat tugas rapat sebelumnya** membantu membawa pekerjaan yang belum selesai ke rapat ini.
+3. Di **Catatan rapat**, tambahkan pembahasan lalu isi hasilnya. Cukup tulis keputusan sekali. Jika ada penanggung jawab atau batas waktu, tugas dibuat otomatis.
+4. Periksa **Daftar hadir** dan tambahkan file di **Lampiran** bila perlu.
+5. Tekan **Minta persetujuan**. Pengurus yang diberi izin dapat menyetujui hasil rapat atau meminta perbaikan.
+6. Di bagian **Tugas**, ubah status menjadi **Belum dikerjakan**, **Sedang dikerjakan**, atau **Selesai**. Persentase kemajuan tidak wajib diisi. Status lama seperti Ditunda tetap terbaca.
 
-Kolom `PUBLIKASI`, `PUBLIKASI_OLEH`, dan `PUBLIKASI_PADA` ditambahkan di akhir tab yang bersangkutan ketika publikasi pertama kali diatur. Kolom lama tidak dipindahkan. Status operasional dan kunci notulen tetap dipertahankan. Perubahan manual di spreadsheet atau pada file Drive tidak melalui pemeriksaan publikasi aplikasi; pengelola perlu menarik publikasi sebelum mengubahnya.
+Rapat yang sudah disetujui dikunci. Pengurus yang berwenang dapat membukanya untuk diperbaiki. Perubahan status tugas setelah rapat tetap boleh dilakukan sesuai izin akun.
 
-## Pergantian pengurus
+Tombol WhatsApp membuka pesan yang sudah disiapkan. Pengurus tetap memilih sendiri apakah pesan akan dikirim.
 
-1. Administrator membuat backup seluruh database.
-2. Buka Akses & Role, buat akun pengurus baru dan pilih jabatan yang sesuai.
-3. Nonaktifkan akun pengurus lama setelah penyerahan tugas. Hindari menghapus akun hanya untuk pergantian jabatan agar jejak administrasinya tetap tersedia.
-4. Minta pengurus baru masuk dengan akunnya sendiri dan memeriksa pintasan serta pekerjaan yang belum selesai.
-5. Simpan kepemilikan spreadsheet, folder Drive, proyek Apps Script, dan hosting pada pengelola yang ditunjuk gereja.
+## Program dan anggaran
 
-Perubahan jabatan dan penonaktifan akun dibaca ulang pada pemeriksaan sesi berikutnya. Permintaan yang sudah berjalan atau data yang sudah tampil di perangkat pengguna tidak dapat ditarik kembali oleh perubahan akun tersebut.
+Buat program di **Program & Anggaran → Program**. Bendahara dapat menekan **Atur anggaran** pada kartu program. Nama program dan departemen ikut terisi; anggaran langsung terhubung ke program tersebut. Menyimpan ulang memperbarui anggaran yang sama.
 
-## Backup dan pemulihan
+Pos biaya di luar program tetap bisa dibuat pada **Anggaran tahunan**. Jika satu pos anggaran dipakai beberapa program, ubah dari Anggaran tahunan agar pengaruhnya ke seluruh program jelas.
 
-**Backup seluruh database** tersedia untuk administrator pada Panduan pengurus. Tombol ini membuat salinan lengkap spreadsheet di folder arsip yang sudah dikonfigurasi. Salinan mencakup seluruh tab, termasuk akun, pengaturan, dan log sebelum proses backup. Salinan ini tidak menyalin file lampiran Drive atau kode Apps Script; keduanya perlu dikelola terpisah. Jangan membagikan spreadsheet backup kepada publik.
+Saat mencatat transaksi, pilih **Anggaran yang dipakai**. Sumber dana, departemen, dan kategori mengikuti pilihan tersebut dan bisa diperiksa sebelum disimpan. Saat mencatat hasil rapat, pilihan program membantu mengisi rincian biaya.
 
-Arsip tahunan tetap digunakan untuk laporan dan arsip per periode. Status kesehatan backup menerima catatan arsip tahunan maupun salinan database; periksa jenisnya pada log sebelum melakukan pemulihan.
+## Keuangan
 
-Jika data perlu dipulihkan:
+- **Transaksi:** catat uang masuk dan keluar, cari transaksi, serta kelola buktinya.
+- **Ringkasan:** lihat saldo dan perubahan pemasukan/pengeluaran. Target perpuluhan dan persembahan ada pada bagian yang bisa dibuka bila dibutuhkan.
+- **Laporan:** cocokkan saldo catatan dengan saldo sebenarnya, periksa laporan, tutup bulan, dan unduh PDF.
 
-1. Hentikan sementara input pengurus dan buat backup kondisi terbaru.
-2. Buka salinan yang hendak dipakai, periksa tanggal, tab, header, dan data yang dibutuhkan.
-3. Administrator mengembalikan isi tab yang diperlukan ke tab dengan nama yang sama pada spreadsheet asli. Pertahankan ID spreadsheet dan proyek Apps Script yang sudah terhubung; jangan mengganti file utama dengan salinan tanpa memperbarui koneksi.
-4. Jika tab akses ikut dipulihkan, pastikan akun pengurus lama tetap nonaktif dan jabatan akun masih sesuai sebelum layanan dibuka kembali.
-5. Periksa koneksi, jumlah data, saldo, keputusan, dan izin publikasi; lalu minta pengurus memuat ulang halaman.
+Pencatatan, bukti transaksi, riwayat perubahan, pencocokan saldo, dan kunci periode tetap tersedia. Data keuangan lama tidak dihapus.
 
-Pemulihan bersifat manual agar data aktif tidak tertimpa oleh satu klik.
+## Kartu dan foto tetap tersedia
+
+**Administrasi → Inventaris** tetap menampilkan kartu barang, jumlah, lokasi, dan kondisi. Data serta laporan inventaris tetap ada.
+
+**Administrasi → Jemaat** tetap menyediakan kartu anggota dan kartu keluarga, unduhan PNG/PDF, serta potong foto saat memilih foto baru. Pilih nama keluarga sebelum membuka kartu keluarga. Kolom tambahan bisa dibuka lewat **Rincian tambahan**; nilainya tetap ikut disimpan.
+
+## Informasi untuk jemaat
+
+Pengurus yang berwenang dapat memilih **Tampilkan ke jemaat** langsung pada catatan rapat, keputusan, program, atau dokumen.
+
+- Catatan rapat perlu disetujui terlebih dahulu. Tampilan jemaat menampilkan identitas rapat, bukan seluruh isi catatan.
+- Keputusan baru tampil jika catatan rapat asalnya juga sudah disetujui dan ditampilkan.
+- Program yang dibatalkan serta dokumen yang tidak aktif tidak dapat ditampilkan.
+- Data lama tetap hanya untuk pengurus sampai dipilih untuk ditampilkan.
+- Jika isi diubah, informasi kembali hanya untuk pengurus. Periksa lagi sebelum menampilkannya.
+
+Untuk dokumen, periksa juga isi file dan izin berbagi di Google Drive. Menyembunyikan dokumen dari website tidak mengubah izin file Drive.
+
+## Akun dan pergantian pengurus
+
+Administrator membuat akun dengan empat pilihan utama: **Administrator**, **Sekretariat**, **Bendahara**, atau **Anggota majelis**. Jabatan di gereja ditulis terpisah. Centang **Boleh menyetujui hasil rapat** hanya untuk pengurus yang ditugaskan menyetujui rapat.
+
+Akun lama mempertahankan izinnya. Jika akun lama memakai jenis akses lain, pilihan itu tetap muncul saat akun tersebut diubah. Tidak ada penggantian jenis akses massal. Administrator memilih sendiri jika ingin memindahkannya ke salah satu dari empat pilihan utama.
+
+Nonaktifkan akun pengurus yang sudah selesai bertugas. Setiap orang memakai akunnya sendiri. Perubahan izin dan penonaktifan akun berlaku pada permintaan berikutnya; data yang sudah tampil di perangkat tidak bisa ditarik kembali.
+
+## Salinan data dan pemulihan
+
+Administrator membuka **Pengaturan → Buat salinan data**. Salinan ini mencakup seluruh tabel, termasuk akun dan pengaturan. File lampiran di Drive dan kode aplikasi perlu disimpan terpisah. Jangan membagikan salinan data kepada umum.
+
+**Arsip tahunan** tetap digunakan untuk laporan per tahun. Riwayat perubahan tetap dicatat walaupun tidak menjadi menu utama.
+
+Jika perlu memulihkan data, hentikan sementara pengisian, buat salinan kondisi terbaru, lalu periksa salinan yang akan digunakan. Administrator mengembalikan tabel yang diperlukan ke spreadsheet asli. Pertahankan nama tabel dan ID spreadsheet. Periksa akun, jumlah data, saldo, serta informasi untuk jemaat sebelum aplikasi dipakai kembali.
 
 ## Penerapan pembaruan
 
@@ -51,6 +83,7 @@ Frontend Vercel, proxy, dan backend Apps Script perlu memakai kode dari perubaha
 cp .clasp.json.example .clasp.json
 node scripts/validate-gas.js
 node scripts/test-governance.js
+node scripts/test-simple-workflow.js
 ```
 
 Konfigurasi template hanya digunakan untuk validasi. Untuk penerapan, gunakan ID proyek dan deployment Apps Script yang sudah berjalan. Buat backup database produksi, dorong sumber Apps Script, lalu perbarui versi deployment yang sama. Setelah itu terapkan frontend dan proxy di Vercel. Jangan membuat URL backend baru sebagai pengganti tanpa memperbarui konfigurasi hosting.
@@ -58,3 +91,12 @@ Konfigurasi template hanya digunakan untuk validasi. Untuk penerapan, gunakan ID
 Frontend lama belum mengirim `authToken` pada badan permintaan proxy. Karena backend baru memeriksa token pada semua tindakan internal, lakukan pergantian backend dan frontend pada jendela pemeliharaan yang sama dan minta pengurus memuat ulang halaman. Data lama tetap internal sampai publikasi dipilih pengurus; viewer dapat kosong sesaat setelah pembaruan.
 
 Pengujian perilaku menggunakan data contoh dan runtime Apps Script tiruan. Tetap periksa login asli, publikasi satu data contoh yang disetujui pengurus, penarikan publikasi, backup Drive, dan akses per jabatan pada deployment setelah penerapan.
+
+
+## Catatan teknis pembaruan alur sederhana
+
+Nama tabel, ID data, dan nilai status yang sudah tersimpan tetap dipakai. Label di layar disederhanakan tanpa mengubah arti status lama. Kolom `JABATAN` dan `BOLEH_SETUJUI_RAPAT` ditambahkan di akhir tabel akun ketika akun disimpan; akun lama tanpa nilai khusus mengikuti izin persetujuan sebelumnya. Kolom publikasi juga ditambahkan saat diperlukan.
+
+Pembaruan frontend dan Apps Script harus dilakukan bersama karena tombol status tugas dan anggaran program memakai endpoint baru. Tidak ada migrasi penghapusan data.
+
+Pengujian browser lokal tersedia di `scripts/test-workspace-browser.js`. Pasang Playwright di lingkungan pengujian, lalu jalankan dengan Chromium yang tersedia. Contoh: `MG_CHROMIUM_PATH=/path/to/chromium node scripts/test-workspace-browser.js`. Pengujian memakai proxy asli dan kode Apps Script di memori dengan tabel contoh. Ini tidak menguji login produksi, pembuatan PDF melalui layanan Google, atau unggah foto/berkas ke Drive asli.

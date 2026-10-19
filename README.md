@@ -12,6 +12,12 @@
 
 ---
 
+## Alur sederhana untuk pengurus
+
+Navigasi utama terdiri dari **Ringkasan**, **Rapat**, **Program & Anggaran**, **Keuangan**, dan **Administrasi**. Usulan, catatan, keputusan, dan tugas berada dalam satu alur rapat. Kartu inventaris, kartu anggota/keluarga, dan potong foto tetap tersedia. Akun, arsip, salinan data, dan riwayat perubahan berada di Pengaturan.
+
+Baca [cara pakai pengurus](docs/panduan-pengurus.md) untuk alur terbaru dan catatan penerapan. Izin akun lama serta data historis tetap dipertahankan.
+
 ## 1. Project Overview
 
 **Majelis Galilea** is the official church governance, administrative workflow, and records management portal for the church board (*Majelis Jemaat*) of GMAHK Galilea Balikpapan.

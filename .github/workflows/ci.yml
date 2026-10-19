@@ -30,3 +30,6 @@ jobs:
 
       - name: Check publication and account access
         run: node scripts/test-governance.js
+
+      - name: Check simplified meeting and budget workflow
+        run: node scripts/test-simple-workflow.js

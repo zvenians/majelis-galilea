@@ -534,6 +534,8 @@ function doPost(e) {
       getCrudContractV83: getCrudContractV83,
       // CRUD
       saveEntity: saveEntity,
+      updateTaskStatusV87: updateTaskStatusV87,
+      saveProgramBudgetV87: saveProgramBudgetV87,
       // Special features
       reviewNotulen: typeof reviewNotulen !== 'undefined' ? reviewNotulen : null,
       initializeAttendance: typeof initializeAttendance !== 'undefined' ? initializeAttendance : null,
@@ -3324,23 +3326,30 @@ function saveEntityCore_(
 function saveEntity(entity,payload,token){
   assertEntityPermissionV84_(token,entity,'write');
   payload = {...(payload || {})};
-  ['PUBLIKASI','PUBLIKASI_OLEH','PUBLIKASI_PADA'].forEach(key => delete payload[key]);
+  ['PUBLIKASI','PUBLIKASI_OLEH','PUBLIKASI_PADA','_ALLOW_LOCKED_EDIT','_ALLOW_CLOSED_EDIT'].forEach(key => delete payload[key]);
+  if (entity === 'notulen') {
+    ['LOCKED','APPROVED_BY','APPROVED_AT','APPROVAL_NOTE'].forEach(key => delete payload[key]);
+    const current = payload.ID_NOTULEN ? findObjectById_(APP.SHEETS.NOTULEN, 'ID_NOTULEN', payload.ID_NOTULEN) : null;
+    payload.STATUS = current ? current.STATUS : 'Draft';
+  }
+  if (entity === 'tindak_lanjut' && payload.STATUS === 'Selesai') payload.PROGRESS = 100;
   return saveEntityInternal_(entity,payload);
 }
 
-function saveEntityInternal_(
-  entity,
-  payload
-) {
-  return withDocumentLock_(
-    () =>
-      saveEntityCore_(
-        entity,
-        payload
-      )
-  );
+function saveEntityInternal_(entity, payload) {
+  return withDocumentLock_(() => {
+    if (['agenda','kehadiran'].includes(entity)) {
+      const config=APP.ENTITY[entity];
+      const previous=payload[config.id] ? findObjectById_(resolveEntitySheetNameV602_(config),config.id,payload[config.id]) : null;
+      const parents=[previous && previous.ID_NOTULEN,payload.ID_NOTULEN].filter(Boolean);
+      parents.forEach(id => {
+        const meeting=findObjectById_(APP.SHEETS.NOTULEN,'ID_NOTULEN',id);
+        if (meeting && String(meeting.LOCKED).toLowerCase()==='true') throw new Error('Rapat sudah disetujui. Buka untuk diperbaiki terlebih dahulu.');
+      });
+    }
+    return saveEntityCore_(entity, payload);
+  });
 }
-
 
 function processEntityPayload_(
   entity,
@@ -3834,7 +3843,10 @@ function authCacheV84_(){return CacheService.getScriptCache();}
 function authKeyV84_(t){return 'MG-AUTH-V84-'+String(t||'');}
 function safeRoleUserV84_(r){
   const role=String(r.ROLE||'');
-  return {id:r.ID_USER,username:r.USERNAME,name:r.NAMA||r.USERNAME,role,ROLE:role,permissions:rolePermissionMatrixV84_()[role]||{pages:[],write:[],remove:[]}};
+  const permissions = {...(rolePermissionMatrixV84_()[role] || {pages:[],write:[],remove:[]})};
+  permissions.approveMeeting = r.BOLEH_SETUJUI_RAPAT === undefined || r.BOLEH_SETUJUI_RAPAT === ''
+    ? !!permissions.meeting : String(r.BOLEH_SETUJUI_RAPAT).toLowerCase() === 'true';
+  return {id:r.ID_USER,username:r.USERNAME,name:r.NAMA||r.USERNAME,position:r.JABATAN||'',role,ROLE:role,permissions};
 }
 function loginGoogleV85(idToken) {
   if (!idToken) throw new Error('Token tidak valid.');
@@ -3900,7 +3912,7 @@ function getAuthContextV84(token){
   if (r) {
     const matrix = rolePermissionMatrixV84_();
     if (matrix[r]) {
-       user.permissions = matrix[r];
+       user.permissions = {...matrix[r], approveMeeting:user.AUTH_PROVIDER === 'GOOGLE' ? true : user.permissions.approveMeeting};
     }
   }
   authCacheV84_().put(authKeyV84_(token), JSON.stringify(user), 21600);
@@ -4020,7 +4032,7 @@ function createGovernanceBackupV86(token) {
 }
 function listAccessUsersV84(token){
   const u=requireAuthV84_(token);if(!u.permissions.access)throw new Error('Akses ditolak.');
-  return readSheet_(APP.SHEETS.ACCESS).map(x=>({id:x.ID_USER,username:x.USERNAME,name:x.NAMA,role:x.ROLE,status:x.STATUS,lastLogin:x.LAST_LOGIN}));
+  return readSheet_(APP.SHEETS.ACCESS).map(x=>({id:x.ID_USER,username:x.USERNAME,name:x.NAMA,role:x.ROLE,status:x.STATUS,lastLogin:x.LAST_LOGIN,position:x.JABATAN||'',canApprove:safeRoleUserV84_(x).permissions.approveMeeting}));
 }
 function saveAccessUserV84(token,p){
   const u=requireAuthV84_(token);if(!u.permissions.access)throw new Error('Akses ditolak.');
@@ -4029,9 +4041,15 @@ function saveAccessUserV84(token,p){
   if(!username||!Object.keys(matrix).includes(role))throw new Error('Username/role tidak valid.');
   const rows=readSheet_(APP.SHEETS.ACCESS),dup=rows.find(x=>String(x.USERNAME||'').toLowerCase()===username&&String(x.ID_USER||'')!==String(p.id||''));
   if(dup)throw new Error('Username sudah digunakan.');
+  ensureAccessDetailsV87_(sh);
+  const details = {};
+  if (p.position !== undefined) details.JABATAN = String(p.position || '').trim();
+  if (p.canApprove !== undefined) details.BOLEH_SETUJUI_RAPAT = p.canApprove === true;
   const now=new Date(),level=matrix[role].level;
   if(p.id){
-    const row=findRowById_(sh,'ID_USER',p.id),cur=rowToObject_(sh,row),next={...cur,USERNAME:username,NAMA:String(p.name||username),ROLE:role,STATUS:String(p.status||'Aktif'),UPDATED_AT:now,LEVEL:level};
+    const row=findRowById_(sh,'ID_USER',p.id),cur=rowToObject_(sh,row),next={...cur,...details,USERNAME:username,NAMA:String(p.name||username),ROLE:role,STATUS:String(p.status||'Aktif'),UPDATED_AT:now,LEVEL:level};
+    if(!cur) throw new Error('Akun pengurus tidak ditemukan.');
+    if(String(cur.USERNAME).toLowerCase()!==username && !p.pin) throw new Error('Isi kata sandi baru jika nama untuk masuk diubah.');
     if(p.pin) {
         if(String(p.pin||'').length<6)throw new Error('Password minimal 6 karakter.');
         next.PIN_HASH=hashPinV84_(username,p.pin);
@@ -4041,7 +4059,7 @@ function saveAccessUserV84(token,p){
   if(String(p.pin||'').length<6)throw new Error('Password minimal 6 karakter.');
   const id=generateId_('USR');
   const h=getHeaders_(sh);
-  const next={ID_USER:id,USERNAME:username,NAMA:String(p.name||username),ROLE:role,PIN_HASH:hashPinV84_(username,p.pin),STATUS:String(p.status||'Aktif'),CREATED_AT:now,UPDATED_AT:now,LEVEL:level};
+  const next={...details,ID_USER:id,USERNAME:username,NAMA:String(p.name||username),ROLE:role,PIN_HASH:hashPinV84_(username,p.pin),STATUS:String(p.status||'Aktif'),CREATED_AT:now,UPDATED_AT:now,LEVEL:level};
   sh.appendRow(h.map(k=>next[k]!==undefined?next[k]:''));
   return {success:true,id};
 }
@@ -12468,7 +12486,12 @@ function reviewNotulen(
   action,
   note,
   token) {
-  assertFeatureV84_(token,'meeting');
+  const reviewer = requireAuthV84_(token);
+  if (action === 'submit') {
+    assertEntityPermissionV84_(token, 'notulen', 'write');
+  } else if (!(reviewer.permissions.approveMeeting === undefined ? reviewer.permissions.meeting : reviewer.permissions.approveMeeting)) {
+    throw new Error('Akun ini belum diberi izin menyetujui hasil rapat.');
+  }
 
   return withDocumentLock_(
     () => {
@@ -12753,7 +12776,7 @@ function approveAgendaProposal(
   proposalId,
   notulenId,
   token) {
-  assertFeatureV84_(token,'meeting');
+  assertEntityPermissionV84_(token,'agenda','write');
 
   return withDocumentLock_(
     () => {
@@ -12783,6 +12806,11 @@ function approveAgendaProposal(
         );
       }
 
+      if (String(meeting.LOCKED).toLowerCase() === 'true') throw new Error('Rapat sudah disetujui. Buka untuk diperbaiki terlebih dahulu.');
+      if (proposal.STATUS === 'Diterima' && proposal.ID_AGENDA) {
+        if (String(proposal.ID_NOTULEN) !== String(notulenId)) throw new Error('Usulan ini sudah masuk ke rapat lain.');
+        return {success:true, agendaId:proposal.ID_AGENDA};
+      }
       const agendaResult =
         saveEntityCore_(
           'agenda',
@@ -24360,4 +24388,72 @@ function fixAksesRoleV85() {
     }
   }
   return { success: true, message: 'AKSES_ROLE fixed successfully.' };
+}
+
+
+/* Pilihan sederhana di layar; data lama tetap memakai nama kolom yang sama. */
+function ensureAccessDetailsV87_(sheet) {
+  const headers = getHeaders_(sheet);
+  ['JABATAN','BOLEH_SETUJUI_RAPAT'].forEach(name => {
+    if (headers.includes(name)) return;
+    if (headers.length === sheet.getMaxColumns()) sheet.insertColumnsAfter(headers.length, 1);
+    headers.push(name);
+    sheet.getRange(1, headers.length).setValue(name);
+  });
+}
+
+function updateTaskStatusV87(token, id, status) {
+  assertEntityPermissionV84_(token, 'tindak_lanjut', 'write');
+  if (!['Belum Dimulai','Proses','Selesai'].includes(status)) throw new Error('Pilih status tugas yang tersedia.');
+  return withDocumentLock_(() => {
+    const task = findObjectById_(APP.SHEETS.TINDAK_LANJUT, 'ID_TINDAK_LANJUT', id);
+    if (!task) throw new Error('Tugas tidak ditemukan.');
+    // Read again while locked: changing status must not overwrite somebody else's notes.
+    const progress = status === 'Selesai' ? 100 : status === 'Belum Dimulai' ? 0 : Math.min(99, Number(task.PROGRESS || 0));
+    return saveEntityCore_('tindak_lanjut', {...task, STATUS:status, PROGRESS:progress});
+  });
+}
+
+function saveProgramBudgetV87(token, programId, input) {
+  assertEntityPermissionV84_(token, 'rapbj', 'write');
+  input = input || {};
+  const amount = Number(input.ANGGARAN);
+  if (input.ANGGARAN === '' || !Number.isFinite(amount) || amount < 0) throw new Error('Isi anggaran dengan angka nol atau lebih.');
+  if (!APP.SOURCES.includes(input.SUMBER_DANA)) throw new Error('Pilih sumber dana yang tersedia.');
+  return withDocumentLock_(() => {
+    const program = findObjectById_(APP.SHEETS.PROGRAM, 'ID_PROGRAM', programId);
+    if (!program) throw new Error('Program tidak ditemukan.');
+    const budget = program.ID_RAPBJ ? findObjectById_(APP.SHEETS.RAPBJ, 'ID_RAPBJ', program.ID_RAPBJ) : null;
+    if (program.ID_RAPBJ && !budget) throw new Error('Anggaran yang terhubung tidak ditemukan. Periksa data program terlebih dahulu.');
+    // A shared budget may cover several programs. Changing it here would alter all of them.
+    const shared = budget && readSheet_(APP.SHEETS.PROGRAM).some(row => row.ID_PROGRAM !== program.ID_PROGRAM && String(row.ID_RAPBJ) === String(budget.ID_RAPBJ));
+    if (shared) throw new Error('Anggaran ini dipakai beberapa program. Ubah melalui bagian Anggaran tahunan.');
+    const budgetId = budget ? budget.ID_RAPBJ : generateId_(APP.ENTITY.rapbj.prefix);
+    const sheet = getSheet_(APP.SHEETS.PROGRAM);
+    const row = findRowById_(sheet, 'ID_PROGRAM', programId);
+    const headers = getHeaders_(sheet);
+    const before = sheet.getRange(row, 1, 1, headers.length).getValues()[0];
+    // Save the link after the budget succeeds. Roll back a new budget if linking fails.
+    const saved = saveEntityCore_('rapbj', {
+      ...(budget || {}), ID_RAPBJ:budgetId, TAHUN:program.TAHUN,
+      PROGRAM_ATAU_POS:budget ? budget.PROGRAM_ATAU_POS : program.NAMA_PROGRAM,
+      DEPARTEMEN:program.DEPARTEMEN || '', ANGGARAN:amount, SUMBER_DANA:input.SUMBER_DANA,
+      CATATAN:String(input.CATATAN || ''), STATUS:budget ? budget.STATUS : 'Draft'
+    });
+    try {
+      const updated = {ID_RAPBJ:budgetId, ANGGARAN:amount, SUMBER_DANA:input.SUMBER_DANA, UPDATED_AT:new Date(), PUBLIKASI:'Internal', PUBLIKASI_OLEH:'', PUBLIKASI_PADA:''};
+      sheet.getRange(row, 1, 1, headers.length).setValues([headers.map((key,index) => updated[key] === undefined ? before[index] : updated[key])]);
+    } catch (error) {
+      if (!budget) {
+        const budgetSheet = getSheet_(APP.SHEETS.RAPBJ);
+        const budgetRow = findRowById_(budgetSheet, 'ID_RAPBJ', budgetId);
+        if (budgetRow) budgetSheet.deleteRow(budgetRow);
+      } else {
+        saveEntityCore_('rapbj', budget);
+      }
+      throw error;
+    }
+    audit_('PROGRAM_BUDGET', 'program', programId, 'Anggaran program diperbarui.');
+    return {success:true, id:saved.id};
+  });
 }

@@ -10999,7 +10999,7 @@ body::before {
 }
 
 
-/* 10 Preview */
+/* 10 Pratinjau */
 .preview-modal-v7 {
   z-index: 195 !important;
 }
@@ -15852,7 +15852,7 @@ body::before {
 }
 
 
-/* Letter Preview */
+/* Letter Pratinjau */
 .letter-preview-shell-v81 {
   position: sticky;
 
@@ -18029,6 +18029,74 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .dynamic-island .island-page-copy strong { font-size: 13px; }
 }
 
+/* Navigasi dan ruang kerja yang dipakai sehari-hari. */
+[hidden] { display: none !important; }
+#dashboard > .command-frame { display:none; }
+#officerWelcomeV86 { margin-bottom:24px; }
+#officerNavigationV86 { display:block; position:relative; padding:0; border:0; box-shadow:none; background:transparent; }
+#officerNavigationV86 .main-menu-v87 { display:flex; flex-wrap:wrap; gap:8px; padding:12px; border:1px solid #dfd6d3; border-radius:18px; background:#fffdfa; }
+#officerNavigationV86 .main-menu-v87 button { flex:1 1 130px; border:0; border-radius:10px; padding:14px 16px; font-size:15px; background:transparent; color:#574147; min-height:48px; }
+#officerNavigationV86 button[aria-current="page"], .section-menu-v87 button[aria-current="page"] { background:#652a3d; color:white; font-weight:600; }
+.section-menu-v87 { display:flex !important; flex-wrap:wrap; gap:8px; padding:14px 0; }
+.section-menu-v87 button { border:1px solid #dfd6d3; background:#fffdfa; color:#574147; border-radius:999px; padding:10px 17px; font-size:14px; min-height:44px; }
+.summary-grid-v87 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.summary-grid-v87 article,.simple-panel-v87 { padding:26px; border:1px solid #dfd6d3; border-radius:18px; background:#fffdfa; min-width:0; }
+.summary-grid-v87 h3 { font-size:24px; line-height:1.3; margin:16px 0; }
+.summary-grid-v87 p { font-size:15px; line-height:1.65; margin:12px 0; }
+.summary-grid-v87 p small,.summary-grid-v87 p strong { display:block; }
+.summary-grid-v87 small { font-size:12px; color:#705b62; }
+.summary-grid-v87 button,.simple-panel-v87 button,.settings-links-v87 button,#programBudgetFormV87 button { border:0; border-radius:10px; background:#652a3d; color:white; padding:12px 16px; min-height:44px; font-size:14px; margin:8px 8px 0 0; }
+.summary-grid-v87 button.subtle-v87 { background:#f2eae6; color:#652a3d; }
+.scene-rail .scene-number,.scene-rail > i { display:none; }
+.workspace .page.active:not(#dashboard) { display:block !important; }
+.page > .scene-content { min-height:0; }
+.scene-rail { padding:12px 0 20px; border:0; position:static; min-height:0; }
+.scene-rail h2 { font-size:28px; }
+.scene-rail p { font-size:15px; margin-top:8px; }
+.scene-content { min-width:0; }
+.island-nav-grid { grid-template-columns:repeat(5,minmax(0,1fr)); }
+.simple-extra-v87 { padding:16px 0; margin:8px 0; border-top:1px solid #e6deda; }
+.simple-extra-v87 summary { cursor:pointer; padding:10px 0; min-height:44px; font-size:15px; color:#652a3d; }
+.simple-extra-v87 .form-grid { margin-top:12px; }
+.form-hint-v87 { font-size:14px; line-height:1.6; color:#705b62; margin:12px 0; }
+.origin-link-v87 { display:block; text-align:left; background:none; border:0; color:#652a3d; text-decoration:underline; font-size:13px; min-height:44px; padding:6px 0; }
+.task-status-v87 { border:1px solid #d6c5cb; padding:10px; border-radius:10px; background:#fff; font-size:14px; min-height:44px; max-width:100%; }
+.meeting-steps-v87 { color:#705b62; font-size:14px; line-height:1.6; padding:12px 0; }
+.meeting-cover-actions { flex-wrap:wrap; gap:8px; }
+.meeting-cover-actions button { min-height:44px; font-size:14px; }
+.publication-local-v87 { white-space:normal; text-align:left; }
+.settings-links-v87 { display:flex; flex-wrap:wrap; gap:10px; }
+#keuangan .finance-command-actions-v8 > button,#keuangan .rail-finance-report-v8 { display:none; }
+#keuangan .finance-command-actions-v8 > select { min-height:44px; }
+.field label { font-size:14px; }
+.field input,.field select,.field textarea { font-size:16px; min-height:44px; }
+#detailBody .agenda-detail { padding:20px; }
+#detailBody p { font-size:15px; line-height:1.65; }
+#detailBody .detail-metrics { margin-top:16px; }
+@media(max-width:900px) { .summary-grid-v87{grid-template-columns:1fr;} .island-nav-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media(max-width:600px) {
+  #officerNavigationV86 .main-menu-v87 {gap:4px;padding:8px;}
+  #officerNavigationV86 .main-menu-v87 button {flex-basis:calc(50% - 8px);padding:12px 8px;font-size:14px;}
+  #officerNavigationV86 .main-menu-v87 button:last-child {flex-grow:1;}
+  .summary-grid-v87 article,.simple-panel-v87{padding:20px;}
+  .task-card { display:flex;flex-direction:column;align-items:stretch;gap:14px; }
+  .record-actions {flex-wrap:wrap;}
+  .section-menu-v87 button {flex:1 1 auto;padding:10px 12px;}
+}
+
+
+#loader { inset:auto 16px 16px auto; width:auto; min-height:0; padding:14px 20px; border-radius:14px; background:#652a3d; pointer-events:none; box-shadow:0 8px 24px #32101c22; }
+#loader .sanctuary-scene,#loader > strong { display:none; }
+#loader > span { margin:0; font-size:14px; color:white; }
+#officerNavigationV86 .main-menu-v87 { width:100%; }
+#accessFormV87 > button { min-height:44px; padding:10px 16px; margin:12px 8px 0 0; }
+#accessApproveV87 { height:18px; width:18px; }
+
+.page.active { animation:none !important; }
+#dashboard { padding-top:12px; }
+.role-cards-v84 { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+
+#mobileActionBarV7 { display:none !important; }
 </style>
 
 
@@ -18267,20 +18335,20 @@ document.addEventListener(
 
 
 window.MG_PAGE_TITLES = {
-  dashboard: 'Dashboard',
-  rapat: 'Notulen & Rapat',
-  usulan: 'Usulan Agenda',
-  keputusan: 'Bank Keputusan',
-  tindak_lanjut: 'Tindak Lanjut',
+  dashboard: 'Ringkasan',
+  rapat: 'Rapat',
+  usulan: 'Usulan rapat',
+  keputusan: 'Keputusan rapat',
+  tindak_lanjut: 'Tugas',
   program: 'Program Kerja',
   rapbj: 'RAPBJ',
   keuangan: 'Keuangan',
   inventaris: 'Inventaris',
   pengurus: 'Pengurus',
   jemaat: 'Anggota Jemaat',
-  dokumen: 'Pusat Dokumen',
-  surat: 'Surat Sekretaris',
-  akses: 'Akses & Role',
+  dokumen: 'Dokumen',
+  surat: 'Surat',
+  akses: 'Akun pengurus',
   kalender: 'Kalender',
   arsip: 'Arsip Tahunan',
   aktivitas: 'Aktivitas'
@@ -18476,7 +18544,7 @@ document.addEventListener(
         <strong>Administrasi Jemaat</strong>
       </div>
     </div>
-    
+
     <!-- Google Login Button -->
     <div style="margin: 20px 0; display: flex; justify-content: center;">
       <div id="g_id_onload"
@@ -18495,20 +18563,20 @@ document.addEventListener(
            data-logo_alignment="left">
       </div>
     </div>
-    
+
     <div style="text-align: center; margin: 10px 0; color: #888; font-size: 12px;">atau</div>
-    
+
     <form id="loginFormV84" onsubmit="loginMajelisV84(event)">
       <label>
-        <span>Username</span>
+        <span>Nama untuk masuk</span>
         <input id="loginUsernameV84" required>
       </label>
       <label>
-        <span>Password</span>
+        <span>Kata sandi</span>
         <input id="loginPinV84" type="password" required>
       </label>
       <p id="loginErrorV84"></p>
-      <button type="submit">Login</button>
+      <button type="submit">Masuk</button>
     </form>
   </section>
 </div>
@@ -18696,7 +18764,7 @@ document.addEventListener(
         id="pdfButton"
         class="island-tool"
         onclick="downloadCurrentReport()"
-        aria-label="Download PDF">
+        aria-label="Unduh PDF">
 
         <i class="pdf-icon"></i>
         <span>PDF</span>
@@ -18736,167 +18804,11 @@ document.addEventListener(
   <div class="island-expand">
 
     <div class="island-nav-grid">
-
-      <button
-        class="nav-item active"
-        data-page="dashboard"
-        onclick="shellNavigate('dashboard')">
-
-        <i class="icon icon-dashboard"></i>
-        <b>Dashboard</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="rapat"
-        onclick="shellNavigate('rapat')">
-
-        <i class="icon icon-note"></i>
-        <b>Notulen</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="usulan"
-        onclick="shellNavigate('usulan')">
-
-        <i class="icon icon-inbox"></i>
-        <b>Usulan</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="keputusan"
-        onclick="shellNavigate('keputusan')">
-
-        <i class="icon icon-check"></i>
-        <b>Keputusan</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="tindak_lanjut"
-        onclick="shellNavigate('tindak_lanjut')">
-
-        <i class="icon icon-progress"></i>
-        <b>Tindak Lanjut</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="program"
-        onclick="shellNavigate('program')">
-
-        <i class="icon icon-program"></i>
-        <b>Program</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="rapbj"
-        onclick="shellNavigate('rapbj')">
-
-        <i class="icon icon-budget"></i>
-        <b>RAPBJ</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="keuangan"
-        onclick="shellNavigate('keuangan')">
-
-        <i class="icon icon-wallet"></i>
-        <b>Keuangan</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="inventaris"
-        onclick="shellNavigate('inventaris')">
-
-        <i class="icon icon-box"></i>
-        <b>Inventaris</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="pengurus"
-        onclick="shellNavigate('pengurus')">
-
-        <i class="icon icon-user"></i>
-        <b>Pengurus</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="jemaat"
-        onclick="shellNavigate('jemaat')">
-
-        <i class="icon icon-people"></i>
-        <b>Jemaat</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="dokumen"
-        onclick="shellNavigate('dokumen')">
-
-        <i class="icon icon-file"></i>
-        <b>Dokumen</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="surat"
-        onclick="shellNavigate('surat')">
-
-        <i class="icon icon-note"></i>
-        <b>Surat Sekretaris</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="kalender"
-        onclick="shellNavigate('kalender')">
-
-        <i class="icon icon-calendar"></i>
-        <b>Kalender</b>
-
-      </button>
-
-      <button
-        class="nav-item"
-        data-page="arsip"
-        onclick="shellNavigate('arsip')">
-
-        <i class="icon icon-archive"></i>
-        <b>Arsip</b>
-
-      </button><button class="nav-item role-admin-only-v84" data-page="akses" onclick="shellNavigate('akses')"><i class="icon icon-user"></i><b>Akses & Role</b></button>
-
-      <button
-        class="nav-item"
-        data-page="aktivitas"
-        onclick="shellNavigate('aktivitas')">
-
-        <i class="icon icon-history"></i>
-        <b>Aktivitas</b>
-
-      </button>
-
+      <button class="nav-item" data-group="ringkasan" onclick="navigateGroupV87('ringkasan')"><i class="icon icon-dashboard"></i><b>Ringkasan</b></button>
+      <button class="nav-item" data-group="rapat" onclick="navigateGroupV87('rapat')"><i class="icon icon-note"></i><b>Rapat</b></button>
+      <button class="nav-item" data-group="program" onclick="navigateGroupV87('program')"><i class="icon icon-program"></i><b>Program & Anggaran</b></button>
+      <button class="nav-item" data-group="keuangan" onclick="navigateGroupV87('keuangan')"><i class="icon icon-wallet"></i><b>Keuangan</b></button>
+      <button class="nav-item" data-group="administrasi" onclick="navigateGroupV87('administrasi')"><i class="icon icon-file"></i><b>Administrasi</b></button>
     </div>
 
     <div class="island-utility-row-v7 island-utility-v8">
@@ -18936,17 +18848,12 @@ document.addEventListener(
 
       <button
         type="button"
-        onclick="openSettingsCenterV8()">
+        onclick="openWorkspaceSettingsV87()">
         <span class="settings-glyph-v8"></span>
         Pengaturan
       </button>
 
-      <button
-        type="button"
-        onclick="openSystemHealthV7()">
-        <span class="health-glyph-v7"></span>
-        Kesehatan sistem
-      </button>
+
 
       <button
         type="button"
@@ -18981,7 +18888,7 @@ document.addEventListener(
       </strong>
 
       <span id="bootNoticeText">
-        Website sudah dibuka. Data Spreadsheet sedang disiapkan.
+        Data sedang disiapkan.
       </span>
 
     </div>
@@ -19442,7 +19349,7 @@ document.addEventListener(
         </h2>
 
         <p>
-          PIC, target dan progres.
+          Tugas, penanggung jawab, dan batas waktu.
         </p>
 
       </div>
@@ -19598,7 +19505,7 @@ document.addEventListener(
         </h2>
 
         <p>
-          Arus dana, target, rekonsiliasi dan laporan bulanan.
+          Catat uang masuk dan keluar, lalu periksa laporan bulanan.
         </p>
 
       </div>
@@ -19620,7 +19527,7 @@ document.addEventListener(
         <div>
 
           <small>
-            FINANCE COMMAND CENTER
+            CATATAN KEUANGAN
           </small>
 
           <h2 id="financePeriodTitleV8">
@@ -19638,7 +19545,7 @@ document.addEventListener(
 
           <button
             onclick="openFinanceGovernanceV8()">
-            Closing & Verifikasi
+            Periksa & tutup bulan
           </button>
 
           <button
@@ -19709,7 +19616,7 @@ document.addEventListener(
         <header>
 
           <div>
-            <small>TREND 12 BULAN</small>
+            <small>PERUBAHAN SELAMA SETAHUN</small>
             <h3>Pemasukan vs pengeluaran</h3>
           </div>
 
@@ -19764,7 +19671,7 @@ document.addEventListener(
 
           <div>
             <small>SALDO PER SUMBER DANA</small>
-            <h3>Saldo awal → arus → saldo akhir</h3>
+            <h3>Saldo tiap sumber dana</h3>
           </div>
 
         </header>
@@ -19782,8 +19689,8 @@ document.addEventListener(
         <header>
 
           <div>
-            <small>REKONSILIASI</small>
-            <h3>Saldo sistem vs saldo aktual</h3>
+            <small>PENCOCOKAN SALDO</small>
+            <h3>Cocokkan saldo catatan dan saldo sebenarnya</h3>
           </div>
 
         </header>
@@ -19802,7 +19709,7 @@ document.addEventListener(
 
           <div>
             <small>TRANSAKSI</small>
-            <h3>Filter & rincian lengkap</h3>
+            <h3>Daftar transaksi</h3>
           </div>
 
           <button
@@ -19889,7 +19796,7 @@ document.addEventListener(
         </h2>
 
         <p>
-          Aset dan kondisi.
+          Daftar barang dan kondisinya.
         </p>
 
       </div>
@@ -20104,7 +20011,7 @@ document.addEventListener(
           type="button"
           onclick="openSelectedFamilyIdentityV82()"
           disabled>
-          Lihat / Download Keluarga
+          Buka kartu keluarga
         </button>
 
       </div>
@@ -20180,7 +20087,7 @@ document.addEventListener(
       <div>
 
         <h2>
-          Surat Sekretaris
+          Surat
         </h2>
 
         <p>
@@ -20211,7 +20118,7 @@ document.addEventListener(
           <header>
 
             <div>
-              <small>LETTER COMPOSER</small>
+              <small>BUAT SURAT</small>
               <h2>Buat surat resmi.</h2>
             </div>
 
@@ -20521,13 +20428,13 @@ document.addEventListener(
 
             <button
               type="button"
-              onclick="refreshSecretaryPreviewV81()">
-              Preview
+              onclick="refreshSecretaryPratinjauV81()">
+              Pratinjau
             </button>
 
             <button
               type="submit">
-              Generate & Download PDF
+              Generate & Unduh PDF
             </button>
 
           </div>
@@ -20542,14 +20449,14 @@ document.addEventListener(
             <span>PREVIEW KOP SURAT</span>
 
             <button
-              onclick="refreshSecretaryPreviewV81()">
+              onclick="refreshSecretaryPratinjauV81()">
               ↻
             </button>
 
           </header>
 
           <div
-            id="letterPreviewV81"
+            id="letterPratinjauV81"
             class="letter-paper-v81">
           </div>
 
@@ -20585,7 +20492,7 @@ document.addEventListener(
   </section>
 
 
-  <section id="akses" class="page"><aside class="scene-rail"><span class="scene-number">A</span><div><h2>Akses<br>& Role</h2><p>Kelola akun internal.</p></div><i></i></aside><div class="scene-content"><section class="access-console-v84"><header><div><small>ROLE-BASED ACCESS</small><h2>Hak akses pengguna.</h2></div><button onclick="openAccessUserFormV84()">+ Pengguna</button></header><div class="role-cards-v84"><article><b>Keuangan</b><span>Keuangan & RAPBJ</span></article><article><b>Pengurus</b><span>Administrasi & sekretariat</span></article><article><b>Anggota Majelis</b><span>Rapat, usulan & tindak lanjut</span></article></div><div id="accessUserListV84" class="access-user-list-v84"></div></section></div></section>
+  <section id="akses" class="page"><aside class="scene-rail"><span class="scene-number">A</span><div><h2>Akun pengurus</h2><p>Kelola akun internal.</p></div><i></i></aside><div class="scene-content"><section class="access-console-v84"><header><div><small>AKUN PENGURUS</small><h2>Siapa yang memakai aplikasi?</h2></div><button onclick="openAccessUserFormV84()">Tambah akun</button></header><div class="role-cards-v84"><article><b>Administrator</b><span>Mengelola aplikasi dan akun</span></article><article><b>Sekretariat</b><span>Rapat, surat, dan data gereja</span></article><article><b>Bendahara</b><span>Transaksi dan anggaran</span></article><article><b>Anggota majelis</b><span>Usulan dan tugas rapat</span></article></div><div id="accessUserListV84" class="access-user-list-v84"></div></section></div></section>
 
   <!-- ===================================================
        KALENDER
@@ -20688,7 +20595,7 @@ document.addEventListener(
 
     <section class="archive-hero">
 
-      
+
 
       <div class="archive-actions">
 
@@ -20704,7 +20611,7 @@ document.addEventListener(
           class="archive-secondary"
           onclick="downloadPdf('tahunan')">
 
-          Download PDF Tahunan
+          Unduh PDF Tahunan
 
         </button>
 
@@ -20795,7 +20702,7 @@ document.addEventListener(
       <div>
 
         <span class="eyebrow dark">
-          FORM
+          ISI DATA
         </span>
 
         <h2 id="modalTitle">
@@ -20985,7 +20892,7 @@ document.addEventListener(
 
       <button onclick="quickCreateV7('usulan')">
         <b>02</b>
-        <strong>Usulan Agenda</strong>
+        <strong>Usulan rapat</strong>
         <span>siapkan bahan rapat</span>
       </button>
 
@@ -21092,7 +20999,7 @@ document.addEventListener(
 
   <div
     class="modal-backdrop"
-    onclick="closePreviewV7()">
+    onclick="closePratinjauV7()">
   </div>
 
   <div class="preview-panel-v7">
@@ -21106,7 +21013,7 @@ document.addEventListener(
 
       <button
         class="close-button"
-        onclick="closePreviewV7()">
+        onclick="closePratinjauV7()">
         <i></i><i></i>
       </button>
 
@@ -21259,8 +21166,8 @@ document.addEventListener(
     <header>
 
       <div>
-        <small>SYSTEM HEALTH</small>
-        <h2>Backend & Backup</h2>
+        <small>PERIKSA APLIKASI</small>
+        <h2>Koneksi & salinan data</h2>
       </div>
 
       <button
@@ -21300,7 +21207,7 @@ document.addEventListener(
     <header>
 
       <div>
-        <small>SMART FOLLOW-UP</small>
+        <small>TUGAS SEBELUMNYA</small>
         <h2>Masukkan ke rapat ini?</h2>
       </div>
 
@@ -21338,7 +21245,7 @@ document.addEventListener(
     <header>
 
       <div>
-        <small>NOTIFICATION CENTER</small>
+        <small>PEMBERITAHUAN</small>
         <h2>Perlu perhatian</h2>
       </div>
 
@@ -21375,7 +21282,7 @@ document.addEventListener(
     <header>
 
       <div>
-        <small>SETTING CENTER</small>
+        <small>PENGATURAN</small>
         <h2>Konfigurasi sistem</h2>
       </div>
 
@@ -21459,7 +21366,7 @@ document.addEventListener(
     <header>
 
       <div>
-        <small>MEMBERSHIP IDENTITY</small>
+        <small>KARTU JEMAAT</small>
         <h2 id="identityTitleV82">
           Kartu Identitas Jemaat
         </h2>
@@ -21489,13 +21396,13 @@ document.addEventListener(
 
         <button
           onclick="downloadIdentityPngV82()">
-          Download PNG
+          Unduh PNG
         </button>
 
         <button
           class="primary"
           onclick="downloadIdentityPdfV82()">
-          Download PDF
+          Unduh PDF
         </button>
 
       </div>
@@ -21882,7 +21789,7 @@ const FORM = {
 
       {
         key: 'PIC',
-        label: 'PIC',
+        label: 'Penanggung jawab',
         type: 'pengurus'
       },
 
@@ -21894,7 +21801,7 @@ const FORM = {
 
       {
         key: 'DEADLINE',
-        label: 'Deadline',
+        label: 'Batas waktu',
         type: 'date'
       },
 
@@ -21915,7 +21822,7 @@ const FORM = {
 
   usulan: {
     title:
-      'Usulan Agenda',
+      'Usulan rapat',
 
     fields: [
       {
@@ -21946,14 +21853,14 @@ const FORM = {
 
       {
         key: 'LATAR_BELAKANG',
-        label: 'Latar Belakang',
+        label: 'Alasan usulan',
         type: 'textarea',
         full: true
       },
 
       {
         key: 'ESTIMASI_ANGGARAN',
-        label: 'Estimasi Anggaran',
+        label: 'Perkiraan biaya',
         type: 'number'
       },
 
@@ -21992,7 +21899,7 @@ const FORM = {
     fields: [
       {
         key: 'ID_NOTULEN',
-        label: 'Notulen Terkait',
+        label: 'Rapat asal',
         type: 'notulen'
       },
 
@@ -22012,7 +21919,7 @@ const FORM = {
 
       {
         key: 'PIC',
-        label: 'PIC',
+        label: 'Penanggung jawab',
         type: 'pengurus'
       },
 
@@ -22069,7 +21976,7 @@ const FORM = {
 
   tindak_lanjut: {
     title:
-      'Tindak Lanjut',
+      'Tugas',
 
     fields: [
       {
@@ -22089,7 +21996,7 @@ const FORM = {
 
       {
         key: 'PIC',
-        label: 'PIC',
+        label: 'Penanggung jawab',
         type: 'pengurus'
       },
 
@@ -22101,7 +22008,7 @@ const FORM = {
 
       {
         key: 'TARGET_SELESAI',
-        label: 'Deadline',
+        label: 'Batas waktu',
         type: 'date'
       },
 
@@ -22119,7 +22026,7 @@ const FORM = {
 
       {
         key: 'PROGRESS',
-        label: 'Progress (%)',
+        label: 'Kemajuan (%) — boleh dikosongkan',
         type: 'number'
       },
 
@@ -22161,14 +22068,14 @@ const FORM = {
 
       {
         key: 'DESKRIPSI',
-        label: 'Deskripsi',
+        label: 'Keterangan',
         type: 'textarea',
         full: true
       },
 
       {
         key: 'PIC',
-        label: 'PIC',
+        label: 'Penanggung jawab',
         type: 'pengurus'
       },
 
@@ -22199,7 +22106,7 @@ const FORM = {
 
       {
         key: 'ID_RAPBJ',
-        label: 'Pos RAPBJ',
+        label: 'Anggaran yang dipakai',
         type: 'rapbj'
       },
 
@@ -22233,7 +22140,7 @@ const FORM = {
 
   rapbj: {
     title:
-      'Pos RAPBJ',
+      'Pos anggaran',
 
     fields: [
       {
@@ -22354,19 +22261,19 @@ const FORM = {
 
       {
         key: 'ID_RAPBJ',
-        label: 'Pos RAPBJ',
+        label: 'Anggaran yang dipakai',
         type: 'rapbj'
       },
 
       {
         key: 'ID_NOTULEN',
-        label: 'Notulen Terkait',
+        label: 'Rapat asal',
         type: 'notulen'
       },
 
       {
         key: 'ID_AGENDA',
-        label: 'Agenda Terkait',
+        label: 'Pembahasan terkait',
         type: 'agenda'
       },
 
@@ -22674,7 +22581,7 @@ const FORM = {
 
       {
         key: 'DESKRIPSI',
-        label: 'Deskripsi',
+        label: 'Keterangan',
         type: 'textarea',
         full: true
       }
@@ -22771,7 +22678,7 @@ function init() {
     hideLoader();
 
     setBootError(
-      'Frontend error',
+      'Halaman belum bisa dibuka',
       error.message ||
       String(error)
     );
@@ -22787,8 +22694,8 @@ function startBootV601(
   callback
 ) {
   setBootLoading(
-    'Memeriksa backend',
-    'Mengecek MAJELIS GALILEA Backend V7.'
+    'Menghubungkan data',
+    'Menghubungkan ke data gereja.'
   );
 
   google.script.run
@@ -22863,7 +22770,7 @@ function startBootV601(
 
         setBootLoading(
           'Mengambil data',
-          'Backend V7 siap. Menyusun data tahun ' +
+          'Menyiapkan data tahun ' +
           state.year +
           '.'
         );
@@ -22967,7 +22874,7 @@ function loadDataV601(
 
           setBootReady(
             'Terhubung',
-            'Backend V7 dan Spreadsheet berhasil dimuat.'
+            'Data sudah siap.'
           );
 
           if (
@@ -23004,7 +22911,7 @@ function loadDataV601(
           showAuthGateV84('Silakan masuk untuk melanjutkan.');
           return;
         }
-        setBootError('Backend error',message);
+        setBootError('Data belum bisa dimuat',message);
       }
     )
 
@@ -23248,6 +23155,7 @@ function renderAll() {
   );
 
   refreshNotificationBadgeV8();
+  renderSimpleDashboardV87();
   applyOfficerControlsV86();
 }
 
@@ -23489,7 +23397,7 @@ function renderDashboard() {
           'Belum ada notulen.'
         );
 
-  loadDashboardIntelligenceV7();
+  renderSimpleDashboardV87();
 }
 
 
@@ -23659,7 +23567,7 @@ function meetingRow(
       <div class="record-actions">
 
         <span class="badge ${statusClass(item.STATUS)}">
-          ${esc(item.STATUS || 'Draft')}
+          ${esc(simpleLabelV87(item.STATUS || 'Draft'))}
         </span>
 
         <button
@@ -23685,7 +23593,7 @@ function meetingRow(
                 class="mini-button"
                 onclick="editEntity('notulen','${item.ID_NOTULEN}')">
 
-                Edit
+                Ubah
 
               </button>
             `
@@ -23767,7 +23675,7 @@ function renderProposals() {
                     class="mini-button"
                     onclick="editEntity('usulan','${item.ID_USULAN}')">
 
-                    Edit
+                    Ubah
 
                   </button>
 
@@ -23809,12 +23717,12 @@ function renderDecisions() {
                   ·
                   ${esc(item.DEPARTEMEN || 'Tanpa departemen')}
                   ·
-                  ${item.TARGET_SELESAI ? dateLabel(item.TARGET_SELESAI) : 'Tanpa deadline'}
+                  ${item.TARGET_SELESAI ? dateLabel(item.TARGET_SELESAI) : 'Tanpa batas waktu'}
                 </p>
 
                 <footer>
 
-                  <div class="record-actions">
+                  ${meetingOriginV87(item)}<div class="record-actions">${publicationControlV87('keputusan', item)}
 
                     <span class="badge ${statusClass(item.STATUS)}">
                       ${esc(item.STATUS || 'Aktif')}
@@ -23828,19 +23736,13 @@ function renderDecisions() {
 
                   <div class="record-actions">
 
-                    <button
-                      class="mini-button"
-                      onclick="openRelationshipV7('keputusan','${item.ID_KEPUTUSAN}')">
 
-                      Relasi
-
-                    </button>
 
                     <button
                       class="mini-button"
                       onclick="editEntity('keputusan','${item.ID_KEPUTUSAN}')">
 
-                      Edit
+                      Ubah
 
                     </button>
 
@@ -23863,124 +23765,16 @@ function renderDecisions() {
 ========================================================= */
 
 function renderTasks() {
-  const today =
-    new Date()
-      .toISOString()
-      .slice(
-        0,
-        10
-      );
-
-  const items =
-    state.data.tindakLanjut;
-
-  document.getElementById(
-    'taskList'
-  ).innerHTML =
-    items.length
-      ? items
-          .map(
-            item => {
-              const overdue =
-                item.TARGET_SELESAI &&
-                item.TARGET_SELESAI <
-                  today &&
-                item.STATUS !==
-                  'Selesai';
-
-              const progress =
-                Math.min(
-                  100,
-                  Math.max(
-                    0,
-                    Number(
-                      item.PROGRESS ||
-                      0
-                    )
-                  )
-                );
-
-              return `
-                <article class="task-card ${overdue ? 'overdue' : ''}">
-
-                  <div class="task-main">
-
-                    <strong>
-                      ${esc(item.URAIAN)}
-                    </strong>
-
-                    <span>
-                      ${esc(item.PIC || 'PIC belum diisi')}
-                      ·
-                      ${esc(item.DEPARTEMEN || 'Tanpa departemen')}
-                      ·
-                      ${item.TARGET_SELESAI ? dateLabel(item.TARGET_SELESAI) : 'Tanpa deadline'}
-                    </span>
-
-                  </div>
-
-                  <div class="progress-wrap">
-
-                    <div class="progress-head">
-
-                      <span>
-                        ${esc(item.STATUS || 'Belum Dimulai')}
-                      </span>
-
-                      <b>
-                        ${progress}%
-                      </b>
-
-                    </div>
-
-                    <div class="progress-bar">
-                      <i style="width:${progress}%"></i>
-                    </div>
-
-                  </div>
-
-                  <div class="record-actions">
-
-                    <button
-                      class="mini-button"
-                      onclick="sendWhatsAppReminder('${item.ID_TINDAK_LANJUT}')">
-
-                      WhatsApp
-
-                    </button>
-
-                    <button
-                      class="mini-button"
-                      onclick="openRelationshipV7('tindak_lanjut','${item.ID_TINDAK_LANJUT}')">
-
-                      Relasi
-
-                    </button>
-
-                    <button
-                      class="mini-button"
-                      onclick="editEntity('tindak_lanjut','${item.ID_TINDAK_LANJUT}')">
-
-                      Edit
-
-                    </button>
-
-                  </div>
-
-                </article>
-              `;
-            }
-          )
-          .join('')
-      : emptyState(
-          'Belum ada tindak lanjut.'
-        );
+  const items=state.data.tindakLanjut || [], today=localIsoDate(new Date());
+  document.getElementById('taskList').innerHTML=items.map(item=>{
+    const status=item.STATUS || 'Belum Dimulai';
+    const choices=['Belum Dimulai','Proses','Selesai'];
+    if(!choices.includes(status))choices.push(status);
+    return `<article class="task-card ${item.TARGET_SELESAI && item.TARGET_SELESAI<today && !['Selesai','Dibatalkan'].includes(status)?'overdue':''}"><div class="task-main"><strong>${esc(item.URAIAN)}</strong><span>${esc(item.PIC || 'Belum ada penanggung jawab')} · ${item.TARGET_SELESAI?dateLabel(item.TARGET_SELESAI):'Tanpa batas waktu'}</span>${meetingOriginV87(item)}</div>
+    ${canWriteEntityV84('tindak_lanjut')?`<select class="task-status-v87" aria-label="Status tugas: ${esc(item.URAIAN)}" data-previous="${esc(status)}" onchange="changeTaskStatusV87('${escJs(item.ID_TINDAK_LANJUT)}',this)">${choices.map(value=>`<option value="${esc(value)}" ${value===status?'selected':''}>${simpleLabelV87(value)}</option>`).join('')}</select>`:`<span class="badge">${esc(simpleLabelV87(status))}</span>`}
+    <div class="record-actions"><button class="mini-button" onclick="sendWhatsAppReminder('${escJs(item.ID_TINDAK_LANJUT)}')">Ingatkan lewat WhatsApp</button>${canWriteEntityV84('tindak_lanjut')?`<button class="mini-button" onclick="editEntity('tindak_lanjut','${escJs(item.ID_TINDAK_LANJUT)}')">Ubah rincian</button>`:''}</div></article>`;
+  }).join('') || emptyState('Belum ada tugas. Tugas muncul dari hasil rapat yang memiliki penanggung jawab atau batas waktu.');
 }
-
-
-/* =========================================================
-   PROGRAMS
-========================================================= */
 
 function renderPrograms() {
   const items =
@@ -24060,7 +23854,7 @@ function renderPrograms() {
                     <i style="width:${percent}%"></i>
                   </div>
 
-                  <footer>
+                  <footer>${canWriteEntityV84('rapbj') ? `<button class="mini-button" onclick="openProgramBudgetV87('${escJs(item.ID_PROGRAM)}')">Atur anggaran</button>` : ''}${publicationControlV87('program', item)}
 
                     <span class="badge ${statusClass(item.STATUS)}">
                       ${esc(item.STATUS || 'Rencana')}
@@ -24070,7 +23864,7 @@ function renderPrograms() {
                       class="mini-button"
                       onclick="editEntity('program','${item.ID_PROGRAM}')">
 
-                      Edit
+                      Ubah
 
                     </button>
 
@@ -24197,19 +23991,13 @@ function renderRapbj() {
                       }
                     </span>
 
-                    <button
-                      class="mini-button"
-                      onclick="openRelationshipV7('rapbj','${item.ID_RAPBJ}')">
 
-                      Relasi
-
-                    </button>
 
                     <button
                       class="mini-button"
                       onclick="editEntity('rapbj','${item.ID_RAPBJ}')">
 
-                      Edit
+                      Ubah
 
                     </button>
 
@@ -24221,7 +24009,7 @@ function renderRapbj() {
           )
           .join('')
       : emptyState(
-          'Belum ada RAPBJ.'
+          'Belum ada anggaran tahunan.'
         );
 }
 
@@ -24407,7 +24195,7 @@ function loadFinanceCommandV8(
 
   target.innerHTML = `
     <div class="finance-v8-loading">
-      menyusun finance command center...
+      Menyiapkan catatan keuangan...
     </div>
   `;
 
@@ -25052,7 +24840,7 @@ function saveReconciliationV8(
     .withSuccessHandler(
       () => {
         toast(
-          'Rekonsiliasi disimpan.'
+          'Pencocokan saldo tersimpan.'
         );
 
         loadFinanceCommandV8(
@@ -25119,7 +24907,7 @@ function hydrateFinanceFiltersV8(
       .join('');
 
   rapbj.innerHTML =
-    '<option value="">Semua RAPBJ</option>' +
+    '<option value="">Semua anggaran</option>' +
     data.filters.rapbj
       .map(
         item =>
@@ -25208,7 +24996,7 @@ function renderFinanceTransactionsV8(
                   <button
                     onclick="editEntity('keuangan','${item.ID_TRANSAKSI}')"
                     ${String(state.financeV8.period.IS_CLOSED).toLowerCase() === 'true' ? 'disabled' : ''}>
-                    Edit
+                    Ubah
                   </button>
 
                 </div>
@@ -25273,7 +25061,7 @@ function openFinanceEvidenceV8(
 
                       <button
                         onclick="previewAttachmentV8('${escJs(file.FILE_ID)}','${escJs(file.JUDUL || file.FILE_NAME)}')">
-                        Preview
+                        Pratinjau
                       </button>
 
                       <button
@@ -25372,7 +25160,7 @@ function previewAttachmentV8(
       }
     )
 
-    .getFilePreviewInfoV7(
+    .getFilePratinjauInfoV7(
       fileId
     );
 }
@@ -25509,7 +25297,7 @@ function openFinanceGovernanceV8() {
     'true';
 
   openActionModal(
-    'Closing Bulanan',
+    'Periksa & tutup bulan',
     `
       <div class="finance-governance-v8">
 
@@ -25528,7 +25316,7 @@ function openFinanceGovernanceV8() {
           </span>
 
           <span>
-            <small>Closing</small>
+            <small>Tutup bulan</small>
             <strong>${closed ? 'Ditutup' : 'Terbuka'}</strong>
           </span>
 
@@ -25567,7 +25355,7 @@ function openFinanceGovernanceV8() {
 
                 <button
                   onclick="saveFinanceStatusV8('Diverifikasi')">
-                  Verifikasi
+                  Periksa
                 </button>
 
                 <button
@@ -25953,7 +25741,7 @@ function renderInventory() {
                     class="mini-button"
                     onclick="editEntity('inventaris','${item.ID_INVENTARIS}')">
 
-                    Edit
+                    Ubah
 
                   </button>
 
@@ -26501,7 +26289,7 @@ function personCard(
             class="mini-button"
             onclick="editEntity('${entity}','${id}')">
 
-            Edit
+            Ubah
 
           </button>
 
@@ -26555,7 +26343,7 @@ function renderDocuments() {
 
                 </div>
 
-                <div class="record-actions">
+                <div class="record-actions">${publicationControlV87('dokumen', item)}
 
                   ${
                     item.FILE_URL
@@ -26564,7 +26352,7 @@ function renderDocuments() {
                           class="mini-button"
                           onclick="previewDocumentV7('${item.ID_DOKUMEN}')">
 
-                          Preview
+                          Pratinjau
 
                         </button>
 
@@ -26583,7 +26371,7 @@ function renderDocuments() {
                     class="mini-button"
                     onclick="editEntity('dokumen','${item.ID_DOKUMEN}')">
 
-                    Edit
+                    Ubah
 
                   </button>
 
@@ -26871,7 +26659,7 @@ function bindNavigation() {
               event.preventDefault();
 
               shellNavigate(
-                button.dataset.page
+                button.dataset.page || firstGroupPageV87(button.dataset.group)
               );
             }
           }
@@ -26887,7 +26675,7 @@ function showAuthGateV84(msg=''){const g=document.getElementById('authGateV84');
 function hideAuthGateV84(){const g=document.getElementById('authGateV84');if(g)g.classList.remove('show');setText('loginErrorV84','')}
 
 function handleGoogleLogin(response) {
-  setText('loginErrorV84', 'Verifikasi akun Google...');
+  setText('loginErrorV84', 'Memeriksa akun Google...');
   google.script.run
     .withSuccessHandler(r => {
       state.authV84 = { token: r.token, user: r.user };
@@ -26907,16 +26695,34 @@ function hasPageAccessV84(p){const u=state.authV84.user;return !!(u&&u.permissio
 function canWriteEntityV84(e){const u=state.authV84.user;const _r=u&&(u.role||u.ROLE);const l=u&&u.permissions?u.permissions.write:[];const result=Array.isArray(l)&&(l.includes('*')||l.includes(e));if(!result)console.warn('[MG-AUTH] canWriteEntityV84 DENIED entity='+e+' user='+JSON.stringify({role:_r,hasPerms:!!(u&&u.permissions),write:l}));return result;}
 function applyRoleUiV84(){const u=state.authV84.user;if(!u)return;const _r=u.role||u.ROLE;document.querySelectorAll('[data-page]').forEach(el=>{el.hidden=!hasPageAccessV84(el.dataset.page)});document.querySelectorAll('.role-admin-only-v84').forEach(el=>{el.hidden=(_r!=='ADMIN'&&_r!=='SUPERADMIN')});applyOfficerControlsV86()}
 function loadAccessUsersV84(){const _u=state.authV84.user,_r=_u&&(_u.role||_u.ROLE);if(!_u||(_r!=='ADMIN'&&_r!=='SUPERADMIN'))return;google.script.run.withSuccessHandler(r=>{state.accessUsersV84=r;renderAccessUsersV84()}).withFailureHandler(e=>toast(errorMessage(e))).listAccessUsersV84(state.authV84.token)}
-function renderAccessUsersV84(){const t=document.getElementById('accessUserListV84');if(!t)return;t.innerHTML=(state.accessUsersV84||[]).map(x=>`<article><div><small>${esc(x.role)}</small><strong>${esc(x.name||x.username)}</strong><span>@${esc(x.username)} · ${esc(x.status)}</span></div><button onclick="openAccessUserFormV84('${x.id}')">Edit</button></article>`).join('')||emptyState('Belum ada pengguna.')}
-function openAccessUserFormV84(id=''){const x=id?(state.accessUsersV84||[]).find(r=>r.id===id):null;openActionModal(x?'Edit Pengguna':'Tambah Pengguna',`<div class="access-form-v84"><label><span>Nama</span><input id="accessNameV84" value="${esc(x?x.name:'')}"></label><label><span>Username</span><input id="accessUsernameV84" value="${esc(x?x.username:'')}"></label><label><span>Role</span><select id="accessRoleV84">${['SUPERADMIN','ADMIN','KETUA_JEMAAT','PENDETA','SEKRETARIS','KEUANGAN','PENGURUS','MAJELIS','VIEWER'].map(r=>`<option value="${r}" ${x&&x.role===r?'selected':''}>${r}</option>`).join('')}</select></label><label><span>Status</span><select id="accessStatusV84">${['Aktif','Nonaktif'].map(r=>`<option value="${r}" ${x&&x.status===r?'selected':''}>${r}</option>`).join('')}</select></label><label class="full"><span>${x?'Password baru (opsional)':'Password'}</span><input id="accessPinV84" type="password"></label></div>`,`<button onclick="saveAccessUserFormV84('${x?x.id:''}')" >Simpan</button>${x?`<button class="danger" onclick="deleteAccessUserFormV84('${x.id}')">Hapus</button>`:''}`)}
-function saveAccessUserFormV84(id){const p={id,name:document.getElementById('accessNameV84').value,username:document.getElementById('accessUsernameV84').value,role:document.getElementById('accessRoleV84').value,status:document.getElementById('accessStatusV84').value,pin:document.getElementById('accessPinV84').value};google.script.run.withSuccessHandler(()=>{closeActionModal();toast('Pengguna tersimpan.');loadAccessUsersV84()}).withFailureHandler(e=>toast(errorMessage(e))).saveAccessUserV84(state.authV84.token,p)}
+function renderAccessUsersV84() {
+  const target=document.getElementById('accessUserListV84');if(!target)return;
+  target.innerHTML=(state.accessUsersV84 || []).map(row=>`<article><div><small>${esc(simpleRoleLabelV87(row.role))}${row.canApprove?' · Boleh menyetujui rapat':''}</small><strong>${esc(row.name || row.username)}</strong><span>${esc(row.position || '')} · @${esc(row.username)} · ${esc(row.status)}</span></div><button onclick="openAccessUserFormV84('${escJs(row.id)}')">Ubah</button></article>`).join('') || emptyState('Belum ada akun pengurus.');
+}
+
+function openAccessUserFormV84(id='') {
+  const row=id?(state.accessUsersV84 || []).find(item=>item.id===id):null;
+  const roles=['ADMIN','SEKRETARIS','KEUANGAN','MAJELIS'];
+  // Keep old account rights until the administrator explicitly chooses a new profile.
+  if(row && !roles.includes(row.role))roles.push(row.role);
+  openActionModal(row?'Ubah akun pengurus':'Tambah akun pengurus',`<form id="accessFormV87"><div class="access-form-v84"><label><span>Nama</span><input id="accessNameV84" value="${esc(row?row.name:'')}" required></label><label><span>Nama untuk masuk</span><input id="accessUsernameV84" value="${esc(row?row.username:'')}" required></label><label><span>Jenis akses</span><select id="accessRoleV84">${roles.map(role=>`<option value="${role}" ${(row?row.role:'MAJELIS')===role?'selected':''}>${simpleRoleLabelV87(role)}${!['ADMIN','SEKRETARIS','KEUANGAN','MAJELIS'].includes(role)?' (izin akun lama)':''}</option>`).join('')}</select></label><label><span>Jabatan di gereja (boleh kosong)</span><input id="accessPositionV87" value="${esc(row?row.position || '':'')}" placeholder="Contoh: Ketua jemaat"></label><label><span>Status akun</span><select id="accessStatusV84">${['Aktif','Nonaktif'].map(value=>`<option ${row && row.status===value?'selected':''}>${value}</option>`).join('')}</select></label><label class="full"><span>${row?'Kata sandi baru (kosongkan jika tetap)':'Kata sandi, minimal 6 karakter'}</span><input id="accessPinV84" type="password" minlength="6" ${row?'':'required'} autocomplete="new-password"></label><label class="full"><span><input id="accessApproveV87" type="checkbox" ${row && row.canApprove?'checked':''}> Boleh menyetujui hasil rapat dan membukanya untuk diperbaiki</span></label></div><p class="form-hint-v87">Jenis akses mengatur pekerjaan yang bisa dilakukan. Jabatan hanya keterangan. Izin menyetujui rapat diatur tersendiri.</p><button type="submit">Simpan</button>${row?`<button type="button" class="danger" onclick="deleteAccessUserFormV84('${escJs(row.id)}')">Hapus akun</button>`:''}</form>`,'');
+  document.getElementById('accessFormV87').onsubmit=event=>{event.preventDefault();saveAccessUserFormV84(row?row.id:'');};
+}
+
+function saveAccessUserFormV84(id) {
+  const form=document.getElementById('accessFormV87');if(!form.reportValidity())return;
+  const payload={id,name:document.getElementById('accessNameV84').value,username:document.getElementById('accessUsernameV84').value,role:document.getElementById('accessRoleV84').value,status:document.getElementById('accessStatusV84').value,pin:document.getElementById('accessPinV84').value,position:document.getElementById('accessPositionV87').value,canApprove:document.getElementById('accessApproveV87').checked};
+  const button=form.querySelector('[type="submit"]');button.disabled=true;
+  google.script.run.withSuccessHandler(()=>{closeActionModal();toast('Akun pengurus tersimpan.');loadAccessUsersV84();}).withFailureHandler(error=>{button.disabled=false;toast(errorMessage(error));}).saveAccessUserV84(state.authV84.token,payload);
+}
+
 function deleteAccessUserFormV84(id){if(!confirm('Hapus akun ini?'))return;google.script.run.withSuccessHandler(()=>{closeActionModal();loadAccessUsersV84()}).withFailureHandler(e=>toast(errorMessage(e))).deleteAccessUserV84(state.authV84.token,id)}
 
 const PAGE_CREATE_V83 = {
   rapat: {entity: 'notulen', label: 'Tambah Rapat'},
   usulan: {entity: 'usulan', label: 'Tambah Usulan'},
-  keputusan: {entity: 'keputusan', label: 'Tambah Keputusan'},
-  tindak_lanjut: {entity: 'tindak_lanjut', label: 'Tambah Tindak Lanjut'},
+
+  tindak_lanjut: {entity: 'tindak_lanjut', label: 'Tambah tugas'},
   program: {entity: 'program', label: 'Tambah Program'},
   rapbj: {entity: 'rapbj', label: 'Tambah Pos'},
   keuangan: {entity: 'keuangan', label: 'Tambah Transaksi'},
@@ -26938,7 +26744,7 @@ function createForCurrentPageV83() {
     return;
   }
 
-  if(!canWriteEntityV84(config.entity)){toast('Role Anda tidak memiliki izin menambah data di halaman ini.');return;}
+  if(!canWriteEntityV84(config.entity)){toast('Akun Anda tidak memiliki izin menambah data di halaman ini.');return;}
 
   closeQuickActionsV7();
 
@@ -26955,7 +26761,7 @@ function openPage(
   page,
   scroll = true
 ) {
-  if(state.authV84.user&&page!=='dashboard'&&!hasPageAccessV84(page)){toast('Role Anda tidak memiliki akses ke halaman tersebut.');page='dashboard';}
+  if(state.authV84.user&&page!=='dashboard'&&!hasPageAccessV84(page)){toast('Akun Anda tidak memiliki akses ke halaman tersebut.');page='dashboard';}
 
   /*
    * V8.4.0 navigation invariant:
@@ -27005,19 +26811,19 @@ function openPage(
 
   const titles = {
     dashboard:
-      'Dashboard',
+      'Ringkasan',
 
     rapat:
-      'Notulen & Rapat',
+      'Rapat',
 
     usulan:
-      'Usulan Agenda',
+      'Usulan rapat',
 
     keputusan:
-      'Bank Keputusan',
+      'Keputusan rapat',
 
     tindak_lanjut:
-      'Tindak Lanjut',
+      'Tugas',
 
     program:
       'Program Kerja',
@@ -27038,13 +26844,13 @@ function openPage(
       'Anggota Jemaat',
 
     dokumen:
-      'Pusat Dokumen',
+      'Dokumen',
 
     surat:
-      'Surat Sekretaris',
+      'Surat',
 
     akses:
-      'Akses & Role',
+      'Akun pengurus',
 
     kalender:
       'Kalender',
@@ -27456,35 +27262,8 @@ function openForm(
     );
 
   form.innerHTML = `
-
-    <div
-      id="draftBannerV7"
-      class="draft-banner-v7">
-      <span class="draft-dot-v7"></span>
-      <span id="draftStatusV7">autosave aktif</span>
-    </div>
-
-    <div class="form-grid">
-
-      ${
-        config.fields
-          .map(
-            field =>
-              renderField(
-                field,
-                data[
-                  field.key
-                ] ??
-                '',
-                data
-              )
-          )
-          .join('')
-      }
-
-    </div>
-
-
+    <div id="draftBannerV7" class="draft-banner-v7"><span id="draftStatusV7">Draf disimpan otomatis</span></div>
+    ${renderSimpleFieldsV87(entity, config.fields, data)}
     <div class="form-actions">
 
       ${
@@ -27529,7 +27308,7 @@ function openForm(
       saveCurrent();
     };
 
-  bindFilePreviews();
+  bindFilePratinjaus();
 
   document
     .getElementById(
@@ -27723,7 +27502,7 @@ function renderField(
       <div class="photo-field">
 
         <div
-          id="photoPreview"
+          id="photoPratinjau"
           class="photo-preview">
 
           ${
@@ -27868,7 +27647,7 @@ function selectHtml(
                     : ''
                 }>
 
-                ${esc(option)}
+                ${esc(simpleLabelV87(option))}
 
               </option>
             `
@@ -27932,7 +27711,7 @@ function objectSelectHtml(
 }
 
 
-function bindFilePreviews() {
+function bindFilePratinjaus() {
   const input =
     document.getElementById(
       'photoInput'
@@ -28037,7 +27816,7 @@ function validateFormPayloadV83(
       progress >
         100
     ) {
-      return 'Progress harus berada antara 0 sampai 100%.';
+      return 'Kemajuan harus antara 0 sampai 100%.';
     }
   }
 
@@ -28069,7 +27848,7 @@ async function saveCurrent() {
     !form.reportValidity()
   ) {
     toast(
-      'Lengkapi field wajib terlebih dahulu.'
+      'Isi bagian yang wajib terlebih dahulu.'
     );
 
     return;
@@ -28090,6 +27869,8 @@ async function saveCurrent() {
     state.editing.data ||
     {};
 
+  if (entity === 'notulen') data.STATUS = old.STATUS || 'Draft';
+  if (entity === 'tindak_lanjut' && data.STATUS === 'Selesai') data.PROGRESS = 100;
   const contractError =
     validateFormPayloadV83(
       entity,
@@ -28314,9 +28095,7 @@ async function saveCurrent() {
               result &&
               result.id
             ) {
-              openCarryForwardV7(
-                result.id
-              );
+              detailNotulen(result.id);
             }
           }
         );
@@ -28365,6 +28144,13 @@ function editEntity(
   entity,
   id
 ) {
+  if (entity === 'keputusan') {
+    const decision=(state.data.keputusan || []).find(row=>String(row.ID_KEPUTUSAN)===String(id));
+    if (decision && decision.ID_AGENDA) {
+      if (!canWriteEntityV84('agenda')) { toast('Hasil rapat diubah oleh pencatat rapat.'); return; }
+      detailNotulen(decision.ID_NOTULEN); return;
+    }
+  }
   const rows =
     getCollection(
       entity
@@ -28489,6 +28275,7 @@ function closeModal() {
 function detailNotulen(
   id
 ) {
+  if (!state.detail || String(state.detail.ID_NOTULEN) !== String(id)) state.meetingTabV87 = 'persiapan';
   showLoader();
 
   google.script.run
@@ -28524,374 +28311,32 @@ function detailNotulen(
 }
 
 
-function renderNotulenDetail(
-  detail
-) {
-  setText(
-    'detailTitle',
-    'Notulen'
-  );
-
-  const locked =
-    String(
-      detail.LOCKED
-    ).toLowerCase() ===
-    'true';
-
-  document.getElementById(
-    'detailBody'
-  ).innerHTML = `
-
-    <section class="meeting-cover">
-
-      <h3>
-        ${esc(detail.JUDUL)}
-      </h3>
-
-      <p>
-        ${dateLabel(detail.TANGGAL)}
-        ·
-        ${esc(detail.JENIS_RAPAT || 'Rapat Majelis')}
-        ·
-        ${esc(detail.TEMPAT || 'Tempat belum diisi')}
-      </p>
-
-      <div class="meeting-cover-actions">
-
-        <button
-          onclick="downloadPdf('notulen','${detail.ID_NOTULEN}')">
-
-          Download PDF
-
-        </button>
-
-        <button
-          onclick="startMeetingModeV7('${detail.ID_NOTULEN}')">
-
-          Meeting Mode
-
-        </button>
-
-        <button
-          onclick="openRelationshipV7('notulen','${detail.ID_NOTULEN}')">
-
-          Relasi & Timeline
-
-        </button>
-
-        ${
-          !locked
-            ? `
-              <button
-                onclick="editEntity('notulen','${detail.ID_NOTULEN}')">
-
-                Edit Notulen
-
-              </button>
-            `
-            : ''
-        }
-
-        ${
-          detail.STATUS ===
-          'Draft'
-            ? `
-              <button
-                onclick="reviewMeeting('${detail.ID_NOTULEN}','submit')">
-
-                Ajukan Persetujuan
-
-              </button>
-            `
-            : ''
-        }
-
-        ${
-          detail.STATUS ===
-          'Menunggu Persetujuan'
-            ? `
-              <button
-                onclick="openReviewAction('${detail.ID_NOTULEN}','approve')">
-
-                Setujui
-
-              </button>
-
-              <button
-                onclick="openReviewAction('${detail.ID_NOTULEN}','revise')">
-
-                Minta Revisi
-
-              </button>
-            `
-            : ''
-        }
-
-        ${
-          locked
-            ? `
-              <button
-                onclick="openReviewAction('${detail.ID_NOTULEN}','unlock')">
-
-                Buka Kunci
-
-              </button>
-            `
-            : ''
-        }
-
-        <button
-          onclick="openAttachmentUpload('${detail.ID_NOTULEN}')">
-
-          Tambah Lampiran
-
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <section class="detail-metrics">
-
-      <article>
-
-        <small>
-          KUORUM
-        </small>
-
-        <strong>
-          ${detail.QUORUM.percent}%
-        </strong>
-
-        <span class="badge ${detail.QUORUM.met ? 'approved' : 'danger'}">
-          ${detail.QUORUM.met ? 'Terpenuhi' : 'Belum Terpenuhi'}
-        </span>
-
-      </article>
-
-
-      <article>
-
-        <small>
-          ANGGARAN
-        </small>
-
-        <strong>
-          ${money(detail.TOTAL_ANGGARAN)}
-        </strong>
-
-      </article>
-
-
-      <article>
-
-        <small>
-          REALISASI
-        </small>
-
-        <strong>
-          ${money(detail.TOTAL_REALISASI)}
-        </strong>
-
-      </article>
-
-    </section>
-
-
-    ${
-      detail.APPROVAL_NOTE
-        ? `
-          <section class="detail-section">
-
-            <header>
-              <h4>Catatan Approval</h4>
-            </header>
-
-            <p style="
-              color:var(--muted);
-              font-size:9px;
-              line-height:1.6;
-            ">
-              ${esc(detail.APPROVAL_NOTE)}
-            </p>
-
-          </section>
-        `
-        : ''
-    }
-
-
-    <section class="detail-section">
-
-      <header>
-
-        <h4>
-          Agenda
-        </h4>
-
-        ${
-          !locked
-            ? `
-              <button
-                class="mini-button"
-                onclick="addAgenda('${detail.ID_NOTULEN}')">
-
-                + Agenda
-
-              </button>
-            `
-            : ''
-        }
-
-      </header>
-
-      ${
-        detail.AGENDA.length
-          ? detail.AGENDA
-              .map(
-                agendaDetailHtml
-              )
-              .join('')
-          : emptyState(
-              'Belum ada agenda.'
-            )
-      }
-
-    </section>
-
-
-    <section class="detail-section">
-
-      <header>
-
-        <h4>
-          Kehadiran
-        </h4>
-
-        ${
-          !detail.KEHADIRAN.length
-            ? `
-              <button
-                class="mini-button"
-                onclick="initializeAttendance('${detail.ID_NOTULEN}')">
-
-                Isi dari Pengurus Aktif
-
-              </button>
-            `
-            : `
-              <span class="badge">
-                ${detail.QUORUM.present}/${detail.QUORUM.total} hadir
-              </span>
-            `
-        }
-
-      </header>
-
-      <div class="attendance-table">
-
-        ${
-          detail.KEHADIRAN.length
-            ? detail.KEHADIRAN
-                .map(
-                  attendanceRowHtml
-                )
-                .join('')
-            : emptyState(
-                'Belum ada daftar hadir.'
-              )
-        }
-
-      </div>
-
-    </section>
-
-
-    <section class="detail-section">
-
-      <header>
-
-        <h4>
-          Lampiran
-        </h4>
-
-        <span class="badge">
-          ${detail.ATTACHMENTS.length} file
-        </span>
-
-      </header>
-
-      ${
-        detail.ATTACHMENTS.length
-          ? detail.ATTACHMENTS
-              .map(
-                item => `
-                  <div class="attachment-row">
-
-                    <a
-                      href="${esc(item.FILE_URL)}"
-                      target="_blank">
-
-                      ${esc(item.JUDUL || item.FILE_NAME)}
-
-                    </a>
-
-                    <button
-                      class="mini-button"
-                      onclick="removeAttachment('${item.ID_ATTACHMENT}')">
-
-                      Hapus
-
-                    </button>
-
-                  </div>
-                `
-              )
-              .join('')
-          : emptyState(
-              'Belum ada lampiran.'
-            )
-      }
-
-    </section>
-
-    <nav class="detail-mobile-actions-v7">
-
-      <button
-        onclick="editEntity('notulen','${detail.ID_NOTULEN}')"
-        ${locked ? 'disabled' : ''}>
-        Edit
-      </button>
-
-      <button
-        onclick="downloadPdf('notulen','${detail.ID_NOTULEN}')">
-        PDF
-      </button>
-
-      <button
-        onclick="openAttachmentUpload('${detail.ID_NOTULEN}')">
-        Lampiran
-      </button>
-
-      <button
-        onclick="startMeetingModeV7('${detail.ID_NOTULEN}')">
-        Meeting
-      </button>
-
-    </nav>
-
-  `;
-
-  document
-    .getElementById(
-      'detailModal'
-    )
-    .classList.add(
-      'show'
-    );
+function renderNotulenDetail(detail) {
+  const locked=String(detail.LOCKED).toLowerCase()==='true';
+  const write=canWriteEntityV84('agenda') && !locked;
+  const approve=canApproveMeetingV87();
+  const tab=state.meetingTabV87 || 'catatan';
+  const id=escJs(detail.ID_NOTULEN);
+  setText('detailTitle','Rapat');
+  const tasks=(state.data.tindakLanjut || []).filter(row=>String(row.ID_NOTULEN)===String(detail.ID_NOTULEN));
+  const pending=(state.data.usulan || []).filter(row=>!['Diterima','Ditolak'].includes(row.STATUS));
+  let body='';
+  if(tab==='catatan') {
+    body=`<section class="detail-section"><header><h4>Pembahasan & hasil rapat</h4>${write?`<button class="mini-button" onclick="addAgenda('${id}')">Tambah pembahasan</button>`:''}</header><p>Catat pembahasan dan keputusan di tempat yang sama. Isi penanggung jawab atau batas waktu jika ada tugas yang perlu dikerjakan.</p>${(detail.AGENDA || []).map(agendaDetailHtml).join('') || emptyState('Belum ada pembahasan. Tambahkan sendiri atau pilih dari usulan masuk.')}</section>`;
+  } else if(tab==='persiapan') {
+    body=`<section class="detail-section"><h4>Siapkan rapat</h4><p>${pending.length} usulan belum dibahas.</p><div class="meeting-cover-actions">${write?`<button onclick="openMeetingProposalsV87('${id}')">Pilih usulan masuk</button><button onclick="openCarryForwardV7('${id}')">Lihat tugas rapat sebelumnya</button>`:''}${!locked && canWriteEntityV84('notulen')?`<button onclick="editEntity('notulen','${id}')">Ubah jadwal & peserta</button>`:''}</div><p>Rapat: ${dateLabel(detail.TANGGAL)} · ${esc(detail.TEMPAT || 'Tempat belum diisi')}</p><p>Pemimpin: ${esc(detail.PIMPINAN_RAPAT || 'Belum diisi')} · Pencatat: ${esc(detail.NOTULIS || 'Belum diisi')}</p></section>`;
+  } else if(tab==='hadir') {
+    body=`<section class="detail-section"><header><h4>Daftar hadir</h4>${!(detail.KEHADIRAN || []).length && canWriteEntityV84('kehadiran') && !locked?`<button class="mini-button" onclick="initializeAttendance('${id}')">Isi dari daftar pengurus</button>`:''}</header><p>${detail.QUORUM.present}/${detail.QUORUM.total} hadir · ${detail.QUORUM.met?'Jumlah peserta sudah cukup.':'Jumlah peserta belum cukup.'}</p><div class="attendance-table">${(detail.KEHADIRAN || []).map(attendanceRowHtml).join('') || emptyState('Belum ada daftar hadir.')}</div></section>`;
+  } else if(tab==='tugas') {
+    body=`<section class="detail-section"><h4>Tugas dari rapat ini</h4>${tasks.map(row=>`<article class="simple-panel-v87"><strong>${esc(row.URAIAN)}</strong><p>${esc(row.PIC || 'Belum ada penanggung jawab')} · ${esc(simpleLabelV87(row.STATUS || 'Belum Dimulai'))}</p>${hasPageAccessV84('tindak_lanjut')?`<button onclick="closeDetail();openPage('tindak_lanjut')">Buka daftar tugas</button>`:''}</article>`).join('') || emptyState('Belum ada tugas dari rapat ini.')}</section>`;
+  } else {
+    body=`<section class="detail-section"><header><h4>Lampiran</h4>${write?`<button class="mini-button" onclick="openAttachmentUpload('${id}')">Tambah file</button>`:''}</header>${(detail.ATTACHMENTS || []).map(item=>`<div class="attachment-row"><a href="${esc(item.FILE_URL)}" target="_blank" rel="noopener">${esc(item.JUDUL || item.FILE_NAME)}</a>${write?`<button onclick="removeAttachment('${escJs(item.ID_ATTACHMENT)}')">Hapus</button>`:''}</div>`).join('') || emptyState('Belum ada lampiran.')}</section>`;
+  }
+  document.getElementById('detailBody').innerHTML=`<section class="meeting-cover"><h3>${esc(detail.JUDUL)}</h3><p>${dateLabel(detail.TANGGAL)} · ${esc(detail.TEMPAT || 'Tempat belum diisi')} · ${esc(simpleLabelV87(detail.STATUS || 'Draft'))}</p><div class="meeting-steps-v87">Siapkan rapat → Catat hasil → Minta persetujuan → Kerjakan tugas</div><div class="meeting-cover-actions"><button onclick="downloadPdf('notulen','${id}')">Unduh catatan PDF</button>${!locked && canWriteEntityV84('notulen') && ['Draft','Perlu Revisi'].includes(detail.STATUS)?`<button onclick="reviewMeeting('${id}','submit')">Minta persetujuan</button>`:''}${detail.STATUS==='Menunggu Persetujuan' && approve?`<button onclick="openReviewAction('${id}','approve')">Setujui hasil rapat</button><button onclick="openReviewAction('${id}','revise')">Minta perbaikan</button>`:''}${locked && approve?`<button onclick="openReviewAction('${id}','unlock')">Buka untuk diperbaiki</button>`:''}${publicationControlV87('notulen',detail)}</div>${detail.APPROVAL_NOTE?`<p>Catatan: ${esc(detail.APPROVAL_NOTE)}</p>`:''}</section><nav class="section-menu-v87" aria-label="Bagian rapat">${[['persiapan','Persiapan'],['catatan','Catatan rapat'],['hadir','Daftar hadir'],['tugas','Tugas'],['lampiran','Lampiran']].map(([key,label])=>`<button onclick="setMeetingTabV87('${key}')" ${key===tab?'aria-current="page"':''}>${label}</button>`).join('')}</nav>${body}`;
+  document.getElementById('detailModal').classList.add('show');
+  if(!write)document.querySelectorAll('#detailBody [onclick^="editAgenda("],#detailBody [onclick^="openEntityAttachmentUpload("]').forEach(button=>button.hidden=true);
+  if(locked || !canWriteEntityV84('kehadiran'))document.querySelectorAll('#detailBody .attendance-table input,#detailBody .attendance-table select').forEach(input=>input.disabled=true);
 }
-
 
 function agendaDetailHtml(
   item
@@ -28931,7 +28376,7 @@ function agendaDetailHtml(
       }
 
       <p>
-        ${esc(item.PIC || 'PIC belum diisi')}
+        ${esc(item.PIC || 'Penanggung jawab belum diisi')}
         ·
         ${money(item.ANGGARAN || 0)}
         ·
@@ -28951,7 +28396,7 @@ function agendaDetailHtml(
       <footer>
 
         <span class="badge ${statusClass(item.STATUS)}">
-          ${esc(item.STATUS || 'Belum Dimulai')}
+          ${esc(simpleLabelV87(item.STATUS || 'Belum Dimulai'))}
         </span>
 
         <div class="record-actions">
@@ -28975,7 +28420,7 @@ function agendaDetailHtml(
                   class="mini-button"
                   onclick="editAgenda('${item.ID_AGENDA}')">
 
-                  Edit
+                  Ubah
 
                 </button>
               `
@@ -29438,7 +28883,7 @@ function openEntityAttachmentUpload(
           class="form-save"
           onclick="submitEntityAttachment('${entityType}','${entityId}')">
 
-          Upload
+          Unggah
 
         </button>
 
@@ -29755,7 +29200,7 @@ function openDepartmentManager() {
                             editEntity('departemen','${item.ID_DEPARTEMEN}');
                           ">
 
-                          Edit
+                          Ubah
 
                         </button>
 
@@ -29839,7 +29284,7 @@ function sendWhatsAppReminder(
     '',
     task.URAIAN,
     '',
-    'PIC: ' +
+    'Penanggung jawab: ' +
       (
         task.PIC ||
         '-'
@@ -29852,7 +29297,7 @@ function sendWhatsAppReminder(
             )
           : '-'
       ),
-    'Progress: ' +
+    'Kemajuan: ' +
       Number(
         task.PROGRESS ||
         0
@@ -31712,7 +31157,7 @@ function openCarryForwardV7(
 
   body.innerHTML = `
     <div class="carry-loading-v7">
-      memeriksa tindak lanjut sebelumnya...
+      Memeriksa tugas rapat sebelumnya...
     </div>
   `;
 
@@ -31730,8 +31175,8 @@ function openCarryForwardV7(
           body.innerHTML = `
             <div class="carry-clear-v7">
               <i></i>
-              <strong>Tidak ada tindak lanjut aktif.</strong>
-              <span>Rapat baru dapat dimulai tanpa agenda carry-forward.</span>
+              <strong>Tidak ada tugas yang perlu dilanjutkan.</strong>
+              <span>Semua tugas rapat sebelumnya sudah selesai.</span>
             </div>
           `;
 
@@ -31772,7 +31217,7 @@ function openCarryForwardV7(
                         </strong>
 
                         <small>
-                          ${esc(item.pic || 'PIC belum diisi')}
+                          ${esc(item.pic || 'Penanggung jawab belum diisi')}
                           · ${Number(item.progress || 0)}%
                           ${item.target ? ' · ' + dateLabel(item.target) : ''}
                         </small>
@@ -31856,10 +31301,10 @@ function applyCarryForwardFromModalV7() {
 
         toast(
           result.created.length +
-          ' tindak lanjut masuk ke agenda.'
+          ' tugas dimasukkan ke pembahasan rapat.'
         );
 
-        loadData();
+        loadData(() => detailNotulen(modal.dataset.notulenId));
       }
     )
 
@@ -32066,21 +31511,21 @@ function applyPhotoCropV7() {
 
   const preview =
     document.getElementById(
-      'photoPreview'
+      'photoPratinjau'
     );
 
   if (preview) {
     preview.innerHTML = `
       <img
         src="${dataUrl}"
-        alt="Preview">
+        alt="Pratinjau">
     `;
   }
 
   closePhotoCropV7();
 
   toast(
-    'Crop foto siap disimpan.'
+    'Potongan foto siap disimpan.'
   );
 }
 
@@ -32228,7 +31673,7 @@ function openPersonViewerV7(
 
             <button
               onclick="
-                closePreviewV7();
+                closePratinjauV7();
                 openMemberIdentityV82('${id}');
               ">
               Kartu PNG / PDF
@@ -32236,7 +31681,7 @@ function openPersonViewerV7(
 
             <button
               onclick="
-                closePreviewV7();
+                closePratinjauV7();
                 editEntity('jemaat','${id}');
               ">
               Edit Data
@@ -32384,13 +31829,13 @@ function previewDocumentV7(
       }
     )
 
-    .getFilePreviewInfoV7(
+    .getFilePratinjauInfoV7(
       item.FILE_ID
     );
 }
 
 
-function closePreviewV7() {
+function closePratinjauV7() {
   document
     .getElementById(
       'previewModalV7'
@@ -32640,7 +32085,7 @@ function renderMeetingModeV7() {
 
       <label>
 
-        <span>PIC</span>
+        <span>Penanggung jawab</span>
 
         <select id="mmPicV7">
 
@@ -32668,7 +32113,7 @@ function renderMeetingModeV7() {
 
       <label>
 
-        <span>Deadline</span>
+        <span>Batas waktu</span>
 
         <input
           id="mmDeadlineV7"
@@ -33130,6 +32575,7 @@ function refreshNotificationBadgeV8() {
 
     .withSuccessHandler(
       data => {
+        data = relevantNotificationsV87(data);
         badge.textContent =
           Number(
             data.count ||
@@ -33184,6 +32630,7 @@ function openNotificationCenterV8() {
 
     .withSuccessHandler(
       data => {
+        data = relevantNotificationsV87(data);
         list.innerHTML =
           data.notifications.length
             ? data.notifications
@@ -33357,8 +32804,8 @@ function renderSettingsCenterV8(
       <div class="settings-grid-v8">
 
         ${settingInputV8('CHURCH_NAME','Nama Gereja',s.CHURCH_NAME)}
-        ${settingInputV8('QUORUM_PERCENT','Kuorum Minimum (%)',s.QUORUM_PERCENT,'number')}
-        ${settingInputV8('BACKUP_WARNING_DAYS','Peringatan Backup (hari)',s.BACKUP_WARNING_DAYS,'number')}
+        ${settingInputV8('QUORUM_PERCENT','Jumlah peserta minimum (%)',s.QUORUM_PERCENT,'number')}
+        ${settingInputV8('BACKUP_WARNING_DAYS','Ingatkan salinan data setelah (hari)',s.BACKUP_WARNING_DAYS,'number')}
         ${settingInputV8('ARCHIVE_FOLDER_NAME','Folder Arsip Drive',s.ARCHIVE_FOLDER_NAME)}
         ${settingInputV8('DOCUMENT_FOLDER_NAME','Folder Dokumen Drive',s.DOCUMENT_FOLDER_NAME)}
         ${settingInputV8('MEDIA_FOLDER_NAME','Folder Media Drive',s.MEDIA_FOLDER_NAME)}
@@ -33392,7 +32839,7 @@ function renderSettingsCenterV8(
 
         ${settingInputV8('TARGET_PERPULUHAN_BULANAN','Target Perpuluhan / Bulan',s.TARGET_PERPULUHAN_BULANAN,'number')}
         ${settingInputV8('TARGET_PERSEMBAHAN_TERPADU_BULANAN','Target Persembahan Terpadu / Bulan',s.TARGET_PERSEMBAHAN_TERPADU_BULANAN,'number')}
-        ${settingInputV8('FINANCE_REPORT_PREFIX','Prefix Laporan Keuangan',s.FINANCE_REPORT_PREFIX)}
+        ${settingInputV8('FINANCE_REPORT_PREFIX','Awalan nomor laporan keuangan',s.FINANCE_REPORT_PREFIX)}
         ${settingInputV8('FINANCE_TREASURER_NAME','Nama Bendahara (PDF)',s.FINANCE_TREASURER_NAME)}
         ${settingInputV8('FINANCE_CHAIR_NAME','Nama Ketua Jemaat (PDF)',s.FINANCE_CHAIR_NAME)}
 
@@ -33405,7 +32852,7 @@ function renderSettingsCenterV8(
 
       <header>
         <small>NOMOR DOKUMEN</small>
-        <h3>Prefix otomatis</h3>
+        <h3>Awalan nomor dokumen</h3>
       </header>
 
       <div class="settings-grid-v8">
@@ -33463,7 +32910,7 @@ function renderSettingsCenterV8(
       <div class="settings-toggle-grid-v8">
 
         ${settingInputV8('VIEWER_SHOW_FINANCE','Ringkasan Keuangan',s.VIEWER_SHOW_FINANCE,'checkbox')}
-        ${settingInputV8('VIEWER_SHOW_MINISTRY_PROGRESS','Progress Perpuluhan & Persembahan',s.VIEWER_SHOW_MINISTRY_PROGRESS,'checkbox')}
+        ${settingInputV8('VIEWER_SHOW_MINISTRY_PROGRESS','Pencapaian perpuluhan & persembahan',s.VIEWER_SHOW_MINISTRY_PROGRESS,'checkbox')}
         ${settingInputV8('VIEWER_SHOW_PROGRAMS','Program Kerja',s.VIEWER_SHOW_PROGRAMS,'checkbox')}
         ${settingInputV8('VIEWER_SHOW_APPROVED_MEETINGS','Rapat Disetujui',s.VIEWER_SHOW_APPROVED_MEETINGS,'checkbox')}
 
@@ -34126,7 +33573,7 @@ function hydrateSecretaryLetterV81(
     applySecretaryTemplateV81();
   }
   else {
-    refreshSecretaryPreviewV81();
+    refreshSecretaryPratinjauV81();
   }
 }
 
@@ -34218,7 +33665,7 @@ function refreshLetterNumberV81() {
         number.value =
           result.number;
 
-        refreshSecretaryPreviewV81();
+        refreshSecretaryPratinjauV81();
       }
     )
 
@@ -34268,7 +33715,7 @@ function applySecretaryTemplateV81() {
             '';
         }
 
-        refreshSecretaryPreviewV81();
+        refreshSecretaryPratinjauV81();
       }
     )
 
@@ -34287,7 +33734,7 @@ function applySecretaryTemplateV81() {
 }
 
 
-function secretaryRecipientPreviewV81(
+function secretaryRecipientPratinjauV81(
   data
 ) {
   return [
@@ -34308,10 +33755,10 @@ function secretaryRecipientPreviewV81(
 }
 
 
-function refreshSecretaryPreviewV81() {
+function refreshSecretaryPratinjauV81() {
   const preview =
     document.getElementById(
-      'letterPreviewV81'
+      'letterPratinjauV81'
     );
 
   if (!preview) {
@@ -34463,7 +33910,7 @@ function refreshSecretaryPreviewV81() {
     </table>
 
     <div class="letter-preview-recipient-v81">
-      ${secretaryRecipientPreviewV81(data)}
+      ${secretaryRecipientPratinjauV81(data)}
     </div>
 
     <p>
@@ -34658,7 +34105,7 @@ function renderSecretaryLetterArchiveV81(
                   <button
                     class="mini-button"
                     onclick="downloadSecretaryLetterArchiveV81('${row.ID_SURAT}')">
-                    Download
+                    Unduh
                   </button>
 
                   ${
@@ -36899,13 +36346,13 @@ function cycleLoadingText() {
 <script>
 // Pintasan membantu pengurus menemukan pekerjaan utamanya.
 const OFFICER_WORK_V86 = {
-  SUPERADMIN: ['Administrator', 'Pantau administrasi dan kelola akses pengurus.', ['rapat','akses','keuangan']],
-  ADMIN: ['Administrator', 'Pantau administrasi dan kelola akses pengurus.', ['rapat','akses','keuangan']],
-  KETUA_JEMAAT: ['Ketua jemaat', 'Periksa keputusan, tindak lanjut, dan program pelayanan.', ['rapat','tindak_lanjut','program']],
+  SUPERADMIN: ['Administrator', 'Lihat jadwal, tugas, dan catatan gereja di sini.', ['rapat','akses','keuangan']],
+  ADMIN: ['Administrator', 'Lihat jadwal, tugas, dan catatan gereja di sini.', ['rapat','akses','keuangan']],
+  KETUA_JEMAAT: ['Ketua jemaat', 'Lihat hasil rapat, tugas, dan kegiatan gereja.', ['rapat','tindak_lanjut','program']],
   PENDETA: ['Pendeta', 'Ikuti keputusan majelis dan perkembangan pelayanan.', ['rapat','keputusan','program']],
   SEKRETARIS: ['Sekretaris', 'Siapkan notulen, surat, dan dokumen pelayanan.', ['rapat','surat','dokumen']],
-  KEUANGAN: ['Bendahara', 'Catat transaksi dan periksa anggaran serta realisasinya.', ['keuangan','rapbj','program']],
-  PENGURUS: ['Pengurus', 'Periksa tindak lanjut dan susun program departemen.', ['tindak_lanjut','program','usulan']],
+  KEUANGAN: ['Bendahara', 'Catat uang masuk dan keluar, lalu periksa anggaran.', ['keuangan','rapbj','program']],
+  PENGURUS: ['Pengurus', 'Lihat tugas dan susun kegiatan departemen.', ['tindak_lanjut','program','usulan']],
   MAJELIS: ['Anggota majelis', 'Ajukan bahan rapat dan pantau keputusan pelayanan.', ['usulan','keputusan','tindak_lanjut']],
   VIEWER: ['Pembaca', 'Baca informasi rapat, keputusan, dan program yang tersedia.', ['rapat','keputusan','program']]
 };
@@ -36921,33 +36368,10 @@ function officerProfileV86() {
 }
 
 function renderOfficerWorkspaceV86() {
-  const user = state.authV84.user;
-  const nav = document.getElementById('officerNavigationV86');
-  const welcome = document.getElementById('officerWelcomeV86');
-  if (!nav || !welcome) return;
-  nav.hidden = welcome.hidden = !user;
-  if (!user) return;
-  const [role, description, preferred] = officerProfileV86();
-  const pages = (user.permissions && user.permissions.pages) || [];
-  const shortcuts = preferred.filter(page => pages.includes(page));
-  const titles = window.MG_PAGE_TITLES;
-  nav.innerHTML = `<div>${['dashboard', ...shortcuts].map(page =>
-    `<button type="button" data-officer-page="${esc(page)}" ${state.page === page ? 'aria-current="page"' : ''}>${esc(titles[page])}</button>`).join('')}</div>
-    <label for="officerPageV86">Semua menu
-      <select id="officerPageV86">${pages.map(page => `<option value="${esc(page)}" ${state.page === page ? 'selected' : ''}>${esc(titles[page] || page)}</option>`).join('')}</select>
-    </label>`;
-  welcome.innerHTML = `<header><div><small>${esc(role)} · ${state.year}</small>
-      <h2>Selamat melayani, ${esc(user.name || user.username || 'pengurus')}.</h2><p>${esc(description)}</p></div>
-      <button class="officer-help-button" type="button" onclick="openOfficerGuideV86()">Panduan pengurus</button></header>
-    <div class="officer-shortcuts">${shortcuts.map(page => {
-      const config = PAGE_CREATE_V83[page];
-      const hint = config && canWriteEntityV84(config.entity) ? config.label + ' atau periksa data yang ada.' : 'Buka dan periksa informasi yang tersedia.';
-      return `<button type="button" data-officer-page="${esc(page)}"><strong>${esc(titles[page])} ↗</strong><span>${esc(hint)}</span></button>`;
-    }).join('')}</div>`;
-  [nav, welcome].forEach(root => root.querySelectorAll('[data-officer-page]').forEach(button => {
-    button.onclick = () => openPage(button.dataset.officerPage);
-  }));
-  document.getElementById('officerPageV86').onchange = event => openPage(event.target.value);
+  const user=state.authV84.user, welcome=document.getElementById('officerWelcomeV86');
+  if(!welcome)return;welcome.hidden=!user;if(!user)return;
+  const [,description]=officerProfileV86();
+  welcome.innerHTML=`<header><div><small>${esc(user.position || simpleRoleLabelV87(user.role || user.ROLE))} · ${state.year}</small><h2>Halo, ${esc(user.name || user.username || 'pengurus')}.</h2><p>${esc(description)}</p></div><button class="officer-help-button" onclick="openOfficerGuideV86()">Cara pakai</button></header>`;
 }
 
 function applyOfficerControlsV86() {
@@ -36969,11 +36393,12 @@ function applyOfficerControlsV86() {
     .forEach(button => { button.hidden = !permissions.settings; });
   document.querySelectorAll('#quickActionsV7 button[onclick^="quickCreateV7("]').forEach(button => {
     const match = button.getAttribute('onclick').match(/quickCreateV7\('([^']+)'\)/);
-    button.hidden = !match || !canWriteEntityV84(match[1]);
+    button.hidden = !match || match[1] === 'keputusan' || !canWriteEntityV84(match[1]);
   });
   const currentQuick = document.querySelector('#quickActionsV7 button[onclick="quickCreateCurrentPageV7()"]');
   if (currentQuick) currentQuick.hidden = !config || !canWriteEntityV84(config.entity);
   renderOfficerWorkspaceV86();
+  renderSimpleNavigationV87();
 }
 
 function publicationCollectionsV86() {
@@ -36991,7 +36416,7 @@ function openPublicationCenterV86() {
   closeDynamicIsland();
   setText('actionTitle', 'Publikasi untuk jemaat');
   document.getElementById('actionBody').innerHTML = `<div class="publication-panel">
-    <p>Pilih informasi yang boleh dibaca umum. Persetujuan rapat dan status dokumen tidak otomatis memberikan izin publikasi. Data lama tetap internal sampai Anda memilih Publikasikan.</p>
+    <p>Pilih informasi yang boleh dibaca umum. Persetujuan rapat dan status dokumen tidak otomatis memberikan izin publikasi. Data lama tetap internal sampai Anda memilih Tampilkan ke jemaat.</p>
     <div class="publication-filters">
       <label for="publicationTypeV86">Jenis informasi<select id="publicationTypeV86">${Object.entries(publicationCollectionsV86()).map(([key, value]) => `<option value="${key}">${value.label}</option>`).join('')}</select></label>
       <label for="publicationSearchV86">Cari judul atau isi<input id="publicationSearchV86" type="search" placeholder="Cari dalam tahun ${state.year}"></label>
@@ -37010,7 +36435,7 @@ function publicationReasonV86(entity, row) {
   if (entity === 'notulen' && !['Disetujui','Final'].includes(row.STATUS)) return 'Menunggu persetujuan rapat.';
   if (entity === 'keputusan') {
     const parent = (state.data.notulen || []).find(item => String(item.ID_NOTULEN) === String(row.ID_NOTULEN));
-    if (!parent || parent.PUBLIKASI !== 'Publik' || !['Disetujui','Final'].includes(parent.STATUS)) return 'Publikasikan notulen yang sudah disetujui terlebih dahulu.';
+    if (!parent || parent.PUBLIKASI !== 'Publik' || !['Disetujui','Final'].includes(parent.STATUS)) return 'Tampilkan catatan rapat yang sudah disetujui terlebih dahulu.';
   }
   if (entity === 'program' && row.STATUS === 'Dibatalkan') return 'Program ini dibatalkan.';
   if (entity === 'dokumen' && (row.STATUS || 'Aktif') !== 'Aktif') return 'Dokumen ini tidak aktif.';
@@ -37035,7 +36460,7 @@ function renderPublicationRowsV86() {
       <strong>${esc(row[config.title] || 'Tanpa judul')}</strong>
       <small>${esc(row.STATUS || 'Tanpa status')}${row.PUBLIKASI_OLEH ? ' · Diatur oleh ' + esc(row.PUBLIKASI_OLEH) : ''}</small>
       ${reason ? `<small>${esc(reason)}</small>` : ''}</div>
-      <button type="button" data-publication-id="${esc(row[config.id])}" aria-pressed="${published}" ${reason && !published ? 'disabled' : ''} aria-label="${published ? 'Tarik publikasi' : 'Publikasikan'}: ${esc(row[config.title] || 'Tanpa judul')}">${published ? 'Jadikan internal' : 'Publikasikan'}</button></article>`;
+      <button type="button" data-publication-id="${esc(row[config.id])}" aria-pressed="${published}" ${reason && !published ? 'disabled' : ''} aria-label="${published ? 'Tarik publikasi' : 'Tampilkan ke jemaat'}: ${esc(row[config.title] || 'Tanpa judul')}">${published ? 'Hanya untuk pengurus' : 'Tampilkan ke jemaat'}</button></article>`;
   }).join('') : '<p>Belum ada informasi yang cocok dengan pencarian ini.</p>';
   target.querySelectorAll('[data-publication-id]').forEach(button => {
     button.onclick = () => {
@@ -37055,7 +36480,7 @@ function setPublicationFromUiV86(entity, row, button) {
     row.PUBLIKASI = result.publication;
     row.PUBLIKASI_OLEH = state.authV84.user.name || state.authV84.user.username;
     renderPublicationRowsV86();
-    toast(publish ? 'Informasi dipublikasikan.' : 'Informasi kembali menjadi internal.');
+    toast(publish ? 'Informasi sudah tampil untuk jemaat.' : 'Informasi hanya terlihat oleh pengurus.');
   }).withFailureHandler(error => {
     renderPublicationRowsV86();
     toast(errorMessage(error));
@@ -37064,42 +36489,29 @@ function setPublicationFromUiV86(entity, row, button) {
 
 function openOfficerGuideV86() {
   closeDynamicIsland();
-  setText('actionTitle', 'Panduan pengurus');
-  const permissions = state.authV84.user && state.authV84.user.permissions || {};
-  document.getElementById('actionBody').innerHTML = `<div class="officer-guide">
-    <h3>Mulai dari tugas Anda</h3><p>Gunakan pintasan di dashboard. Pilihan Semua menu memuat halaman sesuai hak akses Anda. Pilih tahun di bagian atas untuk membuka periode lain.</p>
-    <h3>Rapat sampai tindak lanjut</h3><p>Siapkan usulan, susun notulen, minta persetujuan, lalu pantau keputusan dan PIC pada Tindak Lanjut.</p>
-    <h3>Informasi untuk jemaat</h3><p>Pengurus yang berwenang memilih Publikasi jemaat. Data internal tidak ditampilkan oleh viewer publik. Periksa isi dokumen sebelum membagikannya.</p>
-    <h3>Pergantian pengurus</h3><p>Administrator menonaktifkan akun pengurus lama dan memberikan jabatan yang sesuai pada akun pengurus baru. Perubahan berlaku saat permintaan berikutnya; jangan membagikan password antarpengurus.</p>
-    <h3>Backup dan pemulihan</h3><p>Backup database menyalin seluruh tab spreadsheet. Arsip tahunan tetap tersedia untuk laporan per periode. Simpan salinan database sebelum pergantian pengurus atau perbaikan data. Untuk pemulihan, administrator memeriksa salinan lalu mengembalikan tab yang diperlukan ke spreadsheet asli agar koneksi aplikasi tetap sama.</p>
-    <div class="officer-guide-actions">
-      ${canPublishV86() ? '<button type="button" onclick="openPublicationCenterV86()">Publikasi jemaat</button>' : ''}
-      ${permissions.settings ? '<button type="button" id="governanceBackupButtonV86" onclick="createOfficerBackupV86(this)">Backup seluruh database</button><button type="button" onclick="closeActionModal();openPage(\'akses\')">Kelola akses</button>' : ''}
-      ${hasPageAccessV84('arsip') ? '<button type="button" onclick="closeActionModal();openPage(\'arsip\')">Arsip tahunan</button>' : ''}
-    </div><p id="governanceBackupResultV86" class="officer-backup-result" role="status"></p></div>`;
-  document.getElementById('actionModal').classList.add('show');
+  openActionModal('Cara pakai',`<div class="officer-guide"><h3>Mulai dari lima menu</h3><p>Ringkasan menunjukkan jadwal dan tugas yang belum selesai. Menu yang terlihat mengikuti izin akun Anda.</p><h3>Menyiapkan dan mencatat rapat</h3><p>Buka Rapat, lalu buat rapat. Di Persiapan, pilih usulan masuk dan lihat tugas rapat sebelumnya. Di Catatan rapat, isi pembahasan, keputusan, serta penanggung jawab dan batas waktu bila diperlukan. Keputusan dan tugas dibuat otomatis dari catatan ini.</p><h3>Sesudah rapat</h3><p>Tekan Minta persetujuan. Pengurus yang diberi izin dapat menyetujui hasil rapat. Buka bagian Tugas untuk memperbarui status pekerjaan.</p><h3>Program dan anggaran</h3><p>Buat program, lalu bendahara memilih Atur anggaran pada program tersebut. Saat mencatat transaksi, pilih anggaran yang dipakai agar rincian sumber dana dan departemen terisi.</p><h3>Keuangan</h3><p>Catat uang masuk dan keluar di Transaksi. Lihat saldo di Ringkasan. Di Laporan, cocokkan saldo dan unduh laporan bulanan.</p><h3>Inventaris, kartu, dan foto</h3><p>Administrasi memuat surat, dokumen, kartu inventaris, pengurus, dan jemaat. Kartu anggota, kartu keluarga, dan potong foto tetap ada pada bagian Jemaat.</p><h3>Informasi untuk jemaat</h3><p>Pilih Tampilkan ke jemaat pada catatan yang ingin dibagikan. Jika isinya diubah, periksa lagi sebelum menampilkannya kembali.</p><h3>Data lama dan salinan data</h3><p>Pilih tahun di atas untuk membuka data lama. Arsip tahunan, akun pengurus, dan salinan data ada di Pengaturan. Salinan data mencakup tabel; file lampiran di Drive tetap perlu disimpan terpisah.</p></div>`,'');
 }
 
 function createOfficerBackupV86(button) {
   button.disabled = true;
-  button.textContent = 'Menyalin database…';
+  button.textContent = 'Membuat salinan data…';
   google.script.run.withSuccessHandler(result => {
     const target = document.getElementById('governanceBackupResultV86');
     if (target) {
-      target.textContent = 'Backup berhasil. ';
+      target.textContent = 'Salinan data berhasil dibuat. ';
       const link = document.createElement('a');
       link.textContent = result.name;
       if (/^https:\/\//i.test(result.url || '')) link.href = result.url;
       link.target = '_blank'; link.rel = 'noopener';
       target.appendChild(link);
     }
-    button.disabled = false; button.textContent = 'Backup seluruh database';
-    toast('Backup database berhasil dibuat.');
+    button.disabled = false; button.textContent = 'Buat salinan data';
+    toast('Salinan data berhasil dibuat.');
   }).withFailureHandler(error => {
-    button.disabled = false; button.textContent = 'Backup seluruh database';
+    button.disabled = false; button.textContent = 'Buat salinan data';
     const target = document.getElementById('governanceBackupResultV86');
     if (target) target.textContent = errorMessage(error);
-    toast('Backup belum berhasil.');
+    toast('Salinan data belum berhasil dibuat.');
   }).createGovernanceBackupV86(state.authV84.token);
 }
 
@@ -37115,7 +36527,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const publish = document.createElement('button');
   publish.type = 'button'; publish.textContent = 'Publikasi jemaat';
   publish.dataset.publicationControl = ''; publish.onclick = openPublicationCenterV86;
-  publish.hidden = true; utility.appendChild(publish);
+  publish.hidden = true;
   const help = document.createElement('button');
   help.type = 'button'; help.textContent = 'Panduan pengurus'; help.onclick = openOfficerGuideV86;
   utility.appendChild(help);
@@ -37127,6 +36539,193 @@ document.addEventListener('DOMContentLoaded', () => {
   message.setAttribute('role', 'status'); message.setAttribute('aria-live', 'polite');
   document.querySelectorAll('.close-button').forEach(button => button.setAttribute('aria-label', 'Tutup'));
   applyOfficerControlsV86();
+});
+
+
+/* Alur sederhana. Nama kolom lama tetap dipakai agar arsip tetap terbaca. */
+const WORKSPACE_GROUPS_V87 = [
+  {id:'ringkasan', label:'Ringkasan', pages:['dashboard','kalender']},
+  {id:'rapat', label:'Rapat', pages:['rapat','usulan','keputusan','tindak_lanjut']},
+  {id:'program', label:'Program & Anggaran', pages:['program','rapbj']},
+  {id:'keuangan', label:'Keuangan', pages:['keuangan']},
+  {id:'administrasi', label:'Administrasi', pages:['surat','dokumen','inventaris','pengurus','jemaat']}
+];
+const SIMPLE_PAGE_LABELS_V87 = {dashboard:'Ringkasan',kalender:'Jadwal',rapat:'Daftar rapat',usulan:'Usulan masuk',keputusan:'Keputusan',tindak_lanjut:'Tugas',program:'Program',rapbj:'Anggaran tahunan',keuangan:'Keuangan',surat:'Surat',dokumen:'Dokumen',inventaris:'Inventaris',pengurus:'Pengurus',jemaat:'Jemaat',arsip:'Arsip tahunan',akses:'Akun pengurus',aktivitas:'Riwayat perubahan'};
+function simpleLabelV87(value) {
+  return ({'Belum Dimulai':'Belum dikerjakan','Proses':'Sedang dikerjakan','Draft':'Draf','Perlu Revisi':'Perlu diperbaiki','Menunggu Persetujuan':'Menunggu persetujuan'})[value] || value;
+}
+function groupForPageV87(page) { return WORKSPACE_GROUPS_V87.find(group => group.pages.includes(page)); }
+function firstGroupPageV87(id) {
+  const group = WORKSPACE_GROUPS_V87.find(item => item.id === id);
+  return group && group.pages.find(hasPageAccessV84) || 'dashboard';
+}
+function navigateGroupV87(id) { shellNavigate(firstGroupPageV87(id)); }
+function renderSimpleNavigationV87() {
+  const user = state.authV84.user;
+  const nav = document.getElementById('officerNavigationV86');
+  if (!nav) return;
+  nav.hidden = !user;
+  const group = groupForPageV87(state.page);
+  document.querySelectorAll('[data-group]').forEach(button => {
+    const item = WORKSPACE_GROUPS_V87.find(x => x.id === button.dataset.group);
+    button.hidden = !user || !item.pages.some(hasPageAccessV84);
+    button.classList.toggle('active', !!group && group.id === item.id);
+  });
+  if (!user) return;
+  const groups = WORKSPACE_GROUPS_V87.filter(item => item.pages.some(hasPageAccessV84));
+  nav.innerHTML = `<div class="main-menu-v87">${groups.map(item => `<button type="button" data-main-group="${item.id}" ${group && item.id === group.id ? 'aria-current="page"' : ''}>${item.label}</button>`).join('')}</div>
+    ${group && group.pages.length > 1 && group.id !== 'ringkasan' ? `<div class="section-menu-v87" aria-label="Bagian ${group.label}">${group.pages.filter(hasPageAccessV84).map(page => `<button type="button" data-section-page="${page}" ${state.page === page ? 'aria-current="page"' : ''}>${SIMPLE_PAGE_LABELS_V87[page]}</button>`).join('')}</div>` : ''}`;
+  nav.querySelectorAll('[data-main-group]').forEach(button => button.onclick = () => navigateGroupV87(button.dataset.mainGroup));
+  nav.querySelectorAll('[data-section-page]').forEach(button => button.onclick = () => openPage(button.dataset.sectionPage));
+  setText('pageTitle', group ? group.label : SIMPLE_PAGE_LABELS_V87[state.page]);
+  document.querySelectorAll('.island-utility-row-v7 button[onclick="openWorkspaceSettingsV87()"]')
+    .forEach(button => button.hidden = !['arsip','akses','aktivitas'].some(hasPageAccessV84) && !user.permissions.settings);
+  renderFinanceTabsV87();
+}
+function renderSimpleDashboardV87() {
+  const target = document.getElementById('simpleDashboardV87');
+  if (!target || !state.data || !state.authV84.user) return;
+  const summary = state.data.summary || {};
+  const next = summary.nextMeeting;
+  const tasks = (state.data.tindakLanjut || []).filter(row => !['Selesai','Dibatalkan'].includes(row.STATUS));
+  const programs = (state.data.programs || []).filter(row => !['Selesai','Dibatalkan'].includes(row.STATUS));
+  target.innerHTML = `<div class="summary-grid-v87">
+    ${hasPageAccessV84('rapat') ? `<article><small>RAPAT BERIKUTNYA</small><h3>${next ? esc(next.JUDUL) : 'Belum ada jadwal rapat'}</h3><p>${next ? dateLabel(next.TANGGAL)+' · '+esc(next.TEMPAT || 'Tempat belum diisi') : 'Jadwal rapat berikutnya akan muncul di sini.'}</p>${next ? `<button onclick="detailNotulen('${escJs(next.ID_NOTULEN)}')">Buka rapat</button>` : canWriteEntityV84('notulen') ? `<button onclick="quickCreateV7('notulen')">Buat rapat</button>` : ''}${hasPageAccessV84('kalender') ? `<button class="subtle-v87" onclick="openPage('kalender')">Lihat jadwal</button>` : ''}</article>` : ''}
+    ${hasPageAccessV84('tindak_lanjut') ? `<article><small>TUGAS BELUM SELESAI</small><h3>${tasks.length} tugas</h3>${tasks.slice(0,3).map(row=>`<p>${esc(row.URAIAN)}<small>${esc(row.PIC || 'Belum ada penanggung jawab')}</small></p>`).join('') || '<p>Belum ada tugas yang perlu dikerjakan.</p>'}<button onclick="openPage('tindak_lanjut')">Lihat tugas</button></article>` : ''}
+    ${hasPageAccessV84('keuangan') ? `<article><small>KEUANGAN ${state.year}</small><h3>Saldo dana gereja</h3>${Object.entries(summary.funds || {}).map(([name,fund])=>`<p>${esc(name)}<strong>${money(fund.balance || 0)}</strong></p>`).join('')}<button onclick="openPage('keuangan')">Buka keuangan</button></article>` : hasPageAccessV84('program') ? `<article><small>PROGRAM</small><h3>${programs.length} program berjalan</h3><p>Lihat rencana kegiatan dan siapa yang mengurusnya.</p><button onclick="openPage('program')">Lihat program</button></article>` : ''}
+  </div>`;
+}
+function relevantNotificationsV87(data) {
+  const permissions = state.authV84.user && state.authV84.user.permissions || {};
+  const notifications = (data.notifications || []).filter(item => hasPageAccessV84(item.page) && (item.id !== 'backup' || permissions.settings));
+  return {...data, notifications, count:notifications.length};
+}
+function renderFinanceTabsV87(selected) {
+  const root = document.querySelector('#keuangan .finance-command-v8');
+  if (!root) return;
+  state.financeTabV87 = selected || state.financeTabV87 || 'transaksi';
+  let nav = document.getElementById('financeTabsV87');
+  if (!nav) {
+    nav = document.createElement('nav'); nav.id = 'financeTabsV87'; nav.className = 'section-menu-v87';
+    nav.setAttribute('aria-label','Bagian keuangan'); root.querySelector('.finance-command-head-v8').after(nav);
+    const reports = document.createElement('section'); reports.id='financeReportsV87'; reports.className='simple-panel-v87';
+    reports.innerHTML='<h3>Laporan bulanan</h3><p>Pilih bulan di atas. Cocokkan saldo, periksa transaksi, lalu tutup bulan jika sudah selesai.</p><button onclick="downloadFinanceMonthlyPdfV8()">Unduh laporan PDF</button> <button data-finance-write onclick="openFinanceGovernanceV8()">Periksa & tutup bulan</button>';
+    root.appendChild(reports);
+    const extra = document.createElement('details'); extra.id='financeExtraV87'; extra.className='simple-extra-v87';
+    extra.innerHTML='<summary>Target perpuluhan & persembahan</summary>';
+    const ministry = root.querySelector('.finance-ministry-v8'); if (ministry) extra.appendChild(ministry); root.appendChild(extra);
+  }
+  nav.innerHTML = [['transaksi','Transaksi'],['ringkasan','Ringkasan'],['laporan','Laporan']].map(([id,label])=>`<button onclick="renderFinanceTabsV87('${id}')" ${state.financeTabV87 === id ? 'aria-current="page"' : ''}>${label}</button>`).join('');
+  const sections = {'transaksi':['.finance-filter-v8'],'ringkasan':['.finance-pulse-v8','.finance-trend-v8','.finance-funds-v8','#financeExtraV87'],'laporan':['#financeReportsV87','.finance-reconciliation-v8']};
+  Object.entries(sections).forEach(([id,selectors])=>selectors.forEach(selector=>{const el=root.querySelector(selector);if(el)el.hidden=id!==state.financeTabV87;}));
+  root.querySelectorAll('[data-finance-write],button[onclick="openFinanceGovernanceV8()"],button[onclick="openFinanceTargetV702()"],button[onclick="quickCreateV7(\'keuangan\')"]').forEach(button=>button.hidden=!canWriteEntityV84('keuangan'));
+}
+function renderSimpleFieldsV87(entity, fields, data) {
+  const optional = {
+    notulen:['JENIS_RAPAT','WAKTU_SELESAI','CATATAN'], agenda:['NO_URUT','STATUS','DEPARTEMEN','ANGGARAN','SUMBER_DANA'],
+    usulan:['TANGGAL_USUL','DEPARTEMEN','ESTIMASI_ANGGARAN','SUMBER_DANA','STATUS','CATATAN'],
+    tindak_lanjut:['ID_KEPUTUSAN','DEPARTEMEN','PROGRESS','CATATAN'],
+    program:['DESKRIPSI','ID_RAPBJ','SUMBER_DANA','ANGGARAN','REALISASI','CATATAN'], rapbj:['KATEGORI','STATUS','CATATAN'], jemaat:['NOMOR_ANGGOTA','TANGGAL_BAPTIS','TANGGAL_BERGABUNG','CATATAN'],
+    keuangan:['ID_NOTULEN','ID_AGENDA','CATATAN'], inventaris:['TANGGAL_PEROLEHAN','NILAI','STATUS','CATATAN']
+  };
+  const visible = fields.filter(field => !(entity === 'notulen' && field.key === 'STATUS'));
+  const extra = field => (optional[entity] || []).includes(field.key) && !field.required;
+  const render = field => {
+    let configured = {...field};
+    if (entity === 'tindak_lanjut' && field.key === 'STATUS') {
+      configured.options = ['Belum Dimulai','Proses','Selesai'];
+      if (data.STATUS && !configured.options.includes(data.STATUS)) configured.options.push(data.STATUS);
+    }
+    return renderField(configured, data[field.key] ?? '', data);
+  };
+  return `${entity === 'agenda' && (state.data.programs || []).length ? `<label class="form-hint-v87">Pakai anggaran program (boleh kosong)<select id="agendaProgramV87"><option value="">Isi sendiri</option>${state.data.programs.map(row=>`<option value="${esc(row.ID_PROGRAM)}">${esc(row.NAMA_PROGRAM)}</option>`).join('')}</select></label>` : ''}<div class="form-grid">${visible.filter(field=>!extra(field)).map(render).join('')}</div>${visible.some(extra) ? `<details class="simple-extra-v87"><summary>Rincian tambahan (boleh dikosongkan)</summary><div class="form-grid">${visible.filter(extra).map(render).join('')}</div></details>` : ''}${entity==='program' ? '<p class="form-hint-v87">Setelah program disimpan, bendahara dapat mengisi anggaran lewat tombol Atur anggaran pada program.</p>' : ''}${entity==='agenda' ? '<p class="form-hint-v87">Isi keputusan sekali di sini. Jika ada penanggung jawab atau batas waktu, tugasnya akan dibuat otomatis.</p>' : ''}`;
+}
+function bindSimpleFormV87(entity, data) {
+  const form = document.getElementById('dynamicForm');
+  const programSelect = document.getElementById('agendaProgramV87');
+  if (programSelect) programSelect.onchange = () => {
+    const program = (state.data.programs || []).find(row => String(row.ID_PROGRAM) === programSelect.value);
+    if (!program) return;
+    ['ANGGARAN','SUMBER_DANA','DEPARTEMEN'].forEach(key => {
+      const field=form.elements.namedItem(key); if (!field) return;
+      if (field.tagName==='SELECT' && ![...field.options].some(option=>option.value===String(program[key] || ''))) field.add(new Option(program[key] || '',program[key] || ''));
+      field.value=program[key] || (key==='ANGGARAN' ? 0 : '');
+    });
+    const extra=form.querySelector('details');if(extra)extra.open=true;
+  };
+  const link = form.elements.namedItem('ID_RAPBJ');
+  if (link && ['program','keuangan'].includes(entity)) link.addEventListener('change', () => {
+    const budget = (state.data.rapbj || []).find(row=>String(row.ID_RAPBJ)===link.value);
+    if (!budget) return;
+    const keys = entity === 'program' ? ['DEPARTEMEN','SUMBER_DANA','ANGGARAN'] : ['DEPARTEMEN','SUMBER_DANA','KATEGORI'];
+    keys.forEach(key=>{const input=form.elements.namedItem(key);if(input && budget[key] !== undefined){if(input.tagName==='SELECT' && ![...input.options].some(o=>o.value===String(budget[key])))input.add(new Option(budget[key],budget[key]));input.value=budget[key];}});
+  });
+  // Optional details can contain a required field from an older draft.
+  form.addEventListener('invalid', event => { const details = event.target.closest('details'); if(details) details.open=true; }, true);
+}
+function meetingOriginV87(item) {
+  const parent = (state.data.notulen || []).find(row=>String(row.ID_NOTULEN)===String(item.ID_NOTULEN));
+  return parent && hasPageAccessV84('rapat') ? `<button class="origin-link-v87" onclick="detailNotulen('${escJs(parent.ID_NOTULEN)}')">Dari rapat: ${esc(parent.JUDUL)}</button>` : '';
+}
+function publicationControlV87(entity,row) {
+  if (!canPublishV86()) return '';
+  const config=publicationCollectionsV86()[entity];
+  const reason=publicationReasonV86(entity,row);
+  const published=row.PUBLIKASI==='Publik';
+  return `<button class="mini-button publication-local-v87" data-publish-entity="${entity}" data-publish-id="${esc(row[config.id])}" onclick="toggleRecordPublicationV87(this)" ${reason && !published ? 'disabled' : ''} title="${esc(reason || (published ? 'Bisa dibaca jemaat' : 'Hanya terlihat oleh pengurus'))}">${published ? 'Tampil ke jemaat · Sembunyikan' : 'Tampilkan ke jemaat'}</button>`;
+}
+function toggleRecordPublicationV87(button) {
+  const entity=button.dataset.publishEntity, config=publicationCollectionsV86()[entity];
+  const row=config.rows.find(item=>String(item[config.id])===button.dataset.publishId);
+  if (!row) return;
+  button.disabled=true;
+  google.script.run.withSuccessHandler(result=>{
+    row.PUBLIKASI=result.publication;
+    renderNotulen(); renderDecisions(); renderPrograms(); renderDocuments(); applyOfficerControlsV86();
+    if(state.detail && entity==='notulen' && String(state.detail.ID_NOTULEN)===String(row.ID_NOTULEN)){state.detail.PUBLIKASI=result.publication;renderNotulenDetail(state.detail);}
+    toast(result.publication==='Publik'?'Sudah tampil untuk jemaat.':'Hanya terlihat oleh pengurus.');
+  }).withFailureHandler(error=>{button.disabled=false;toast(errorMessage(error));}).setPublicPublicationV86(state.authV84.token,entity,row[config.id],row.PUBLIKASI!=='Publik');
+}
+function changeTaskStatusV87(id, select) {
+  const previous=select.dataset.previous;
+  select.disabled=true;
+  google.script.run.withSuccessHandler(()=>{toast('Status tugas tersimpan.');loadData();})
+    .withFailureHandler(error=>{select.disabled=false;select.value=previous;toast(errorMessage(error));})
+    .updateTaskStatusV87(state.authV84.token,id,select.value);
+}
+function openProgramBudgetV87(id) {
+  const program=(state.data.programs || []).find(row=>String(row.ID_PROGRAM)===id);
+  if (!program || !canWriteEntityV84('rapbj')) return;
+  const budget=(state.data.rapbj || []).find(row=>String(row.ID_RAPBJ)===String(program.ID_RAPBJ));
+  openActionModal('Anggaran: '+program.NAMA_PROGRAM,`<p>Anggaran ini langsung terhubung dengan program. Tidak perlu mengisi nama program lagi.</p><form id="programBudgetFormV87"><div class="form-grid">${renderField({key:'ANGGARAN',label:'Jumlah anggaran',type:'number',required:true},budget ? budget.ANGGARAN : program.ANGGARAN || 0,{})}${renderField({key:'SUMBER_DANA',label:'Sumber dana',type:'source',required:true},budget ? budget.SUMBER_DANA : program.SUMBER_DANA || 'Kas Jemaat',{})}${renderField({key:'CATATAN',label:'Catatan (boleh kosong)',type:'textarea',full:true},budget ? budget.CATATAN : '',{})}</div><button type="submit">Simpan anggaran</button></form>`,'');
+  document.getElementById('programBudgetFormV87').onsubmit=event=>{
+    event.preventDefault(); const form=event.target; if(!form.reportValidity())return;
+    const button=form.querySelector('button');button.disabled=true;
+    google.script.run.withSuccessHandler(()=>{closeActionModal();toast('Anggaran program tersimpan.');loadData();}).withFailureHandler(error=>{button.disabled=false;toast(errorMessage(error));})
+      .saveProgramBudgetV87(state.authV84.token,id,Object.fromEntries(new FormData(form)));
+  };
+}
+function openWorkspaceSettingsV87() {
+  closeDynamicIsland();
+  const p=state.authV84.user && state.authV84.user.permissions || {};
+  openActionModal('Pengaturan',`<div class="settings-links-v87">${['akses','arsip','aktivitas'].filter(hasPageAccessV84).map(page=>`<button onclick="closeActionModal();openPage('${page}')">${SIMPLE_PAGE_LABELS_V87[page]}</button>`).join('')}${p.settings ? '<button onclick="closeActionModal();openSettingsCenterV8()">Pengaturan gereja</button><button onclick="createOfficerBackupV86(this)">Buat salinan data</button><button onclick="closeActionModal();openSystemHealthV7()">Periksa aplikasi</button>' : ''}</div><p id="governanceBackupResultV86" role="status"></p>`,'');
+}
+function simpleRoleLabelV87(role) { return ({ADMIN:'Administrator',SUPERADMIN:'Administrator utama',SEKRETARIS:'Sekretariat',KEUANGAN:'Bendahara',MAJELIS:'Anggota majelis',KETUA_JEMAAT:'Ketua jemaat',PENDETA:'Pendeta',PENGURUS:'Pengurus',VIEWER:'Pembaca'})[role] || role; }
+function openMeetingProposalsV87(id) {
+  const rows=(state.data.usulan || []).filter(row=>!['Diterima','Ditolak'].includes(row.STATUS));
+  openActionModal('Pilih usulan untuk rapat',`<div>${rows.map(row=>`<article class="simple-panel-v87"><strong>${esc(row.JUDUL_USULAN)}</strong><p>${esc(row.LATAR_BELAKANG || '')}</p><button data-proposal-id="${esc(row.ID_USULAN)}">Masukkan ke rapat</button></article>`).join('') || '<p>Belum ada usulan baru.</p>'}</div>`,'');
+  document.querySelectorAll('[data-proposal-id]').forEach(button=>button.onclick=()=>{button.disabled=true;google.script.run.withSuccessHandler(()=>{closeActionModal();loadData(()=>detailNotulen(id));toast('Usulan masuk ke rapat.');}).withFailureHandler(error=>{button.disabled=false;toast(errorMessage(error));}).approveAgendaProposal(button.dataset.proposalId,id,state.authV84.token);});
+}
+function setMeetingTabV87(tab) { state.meetingTabV87=tab; if(state.detail)renderNotulenDetail(state.detail); }
+function canApproveMeetingV87() {
+  const p=state.authV84.user && state.authV84.user.permissions || {};
+  return p.approveMeeting === undefined ? !!p.meeting : !!p.approveMeeting;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  Object.assign(window.MG_PAGE_TITLES,SIMPLE_PAGE_LABELS_V87);
+  const target=document.createElement('div');target.id='simpleDashboardV87';document.getElementById('dashboard').insertBefore(target,document.querySelector('#dashboard > .page-signature'));
+  document.querySelectorAll('.scene-rail h2').forEach(el=>{const page=el.closest('.page');if(page && SIMPLE_PAGE_LABELS_V87[page.id])el.textContent=SIMPLE_PAGE_LABELS_V87[page.id];});
+  renderSimpleNavigationV87();renderSimpleDashboardV87();
 });
 
 </script>
