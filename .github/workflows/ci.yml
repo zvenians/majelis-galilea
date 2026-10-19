@@ -27,3 +27,9 @@ jobs:
 
       - name: Run Apps Script manifest and syntax validation
         run: node scripts/validate-gas.js
+
+      - name: Check publication and account access
+        run: node scripts/test-governance.js
+
+      - name: Check simplified meeting and budget workflow
+        run: node scripts/test-simple-workflow.js

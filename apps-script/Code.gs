@@ -503,6 +503,11 @@ function doPost(e) {
     const action = String(body.action || '');
     const args = body.args || [];
 
+    if (!Array.isArray(args)) throw new Error('Argumen permintaan tidak valid.');
+    const publicActions = ['loginMajelisV84','loginGoogleV85','logoutMajelisV84',
+      'getAuthContextV84','getBackendStatus','getPublicViewerDataV84','getCongregationViewerDataV8'];
+    if (!publicActions.includes(action)) requireAuthV84_(body.authToken);
+
     if (!action) {
       return jsonResponse_({ __error__: 'Missing action parameter' });
     }
@@ -510,8 +515,6 @@ function doPost(e) {
     // Whitelist of callable functions from Vercel proxy
     const ALLOWED = {
       // Auth
-      fixAksesRoleV85: fixAksesRoleV85,
-      migrateAuthV85: migrateAuthV85,
       loginMajelisV84: loginMajelisV84,
       loginGoogleV85: loginGoogleV85,
       logoutMajelisV84: logoutMajelisV84,
@@ -524,12 +527,15 @@ function doPost(e) {
       getBackendStatus: getBackendStatus,
       getSecureAppDataV84: getSecureAppDataV84,
       getPublicViewerDataV84: getPublicViewerDataV84,
-      getAppData: getAppData,
+      setPublicPublicationV86: setPublicPublicationV86,
+      createGovernanceBackupV86: createGovernanceBackupV86,
       getNotulenDetail: getNotulenDetail,
       getAuditLog: getAuditLog,
       getCrudContractV83: getCrudContractV83,
       // CRUD
       saveEntity: saveEntity,
+      updateTaskStatusV87: updateTaskStatusV87,
+      saveProgramBudgetV87: saveProgramBudgetV87,
       // Special features
       reviewNotulen: typeof reviewNotulen !== 'undefined' ? reviewNotulen : null,
       initializeAttendance: typeof initializeAttendance !== 'undefined' ? initializeAttendance : null,
@@ -630,7 +636,7 @@ function renderMainAppV84_() {
       )
       .addMetaTag(
         'viewport',
-        'width=device-width, initial-scale=1, maximum-scale=1'
+        'width=device-width, initial-scale=1'
       )
       .setXFrameOptionsMode(
         HtmlService
@@ -3074,6 +3080,13 @@ function saveEntityCore_(
         )
       : null;
 
+  // Setelah isi berubah, pengurus perlu memeriksa publikasinya lagi.
+  if (publicationEntitiesV86_()[entity]) {
+    payload.PUBLIKASI = 'Internal';
+    payload.PUBLIKASI_OLEH = '';
+    payload.PUBLIKASI_PADA = '';
+  }
+
   if (
     entity ===
     'keuangan'
@@ -3312,22 +3325,31 @@ function saveEntityCore_(
 
 function saveEntity(entity,payload,token){
   assertEntityPermissionV84_(token,entity,'write');
+  payload = {...(payload || {})};
+  ['PUBLIKASI','PUBLIKASI_OLEH','PUBLIKASI_PADA','_ALLOW_LOCKED_EDIT','_ALLOW_CLOSED_EDIT'].forEach(key => delete payload[key]);
+  if (entity === 'notulen') {
+    ['LOCKED','APPROVED_BY','APPROVED_AT','APPROVAL_NOTE'].forEach(key => delete payload[key]);
+    const current = payload.ID_NOTULEN ? findObjectById_(APP.SHEETS.NOTULEN, 'ID_NOTULEN', payload.ID_NOTULEN) : null;
+    payload.STATUS = current ? current.STATUS : 'Draft';
+  }
+  if (entity === 'tindak_lanjut' && payload.STATUS === 'Selesai') payload.PROGRESS = 100;
   return saveEntityInternal_(entity,payload);
 }
 
-function saveEntityInternal_(
-  entity,
-  payload
-) {
-  return withDocumentLock_(
-    () =>
-      saveEntityCore_(
-        entity,
-        payload
-      )
-  );
+function saveEntityInternal_(entity, payload) {
+  return withDocumentLock_(() => {
+    if (['agenda','kehadiran'].includes(entity)) {
+      const config=APP.ENTITY[entity];
+      const previous=payload[config.id] ? findObjectById_(resolveEntitySheetNameV602_(config),config.id,payload[config.id]) : null;
+      const parents=[previous && previous.ID_NOTULEN,payload.ID_NOTULEN].filter(Boolean);
+      parents.forEach(id => {
+        const meeting=findObjectById_(APP.SHEETS.NOTULEN,'ID_NOTULEN',id);
+        if (meeting && String(meeting.LOCKED).toLowerCase()==='true') throw new Error('Rapat sudah disetujui. Buka untuk diperbaiki terlebih dahulu.');
+      });
+    }
+    return saveEntityCore_(entity, payload);
+  });
 }
-
 
 function processEntityPayload_(
   entity,
@@ -3821,7 +3843,10 @@ function authCacheV84_(){return CacheService.getScriptCache();}
 function authKeyV84_(t){return 'MG-AUTH-V84-'+String(t||'');}
 function safeRoleUserV84_(r){
   const role=String(r.ROLE||'');
-  return {id:r.ID_USER,username:r.USERNAME,name:r.NAMA||r.USERNAME,role,ROLE:role,permissions:rolePermissionMatrixV84_()[role]||{pages:[],write:[],remove:[]}};
+  const permissions = {...(rolePermissionMatrixV84_()[role] || {pages:[],write:[],remove:[]})};
+  permissions.approveMeeting = r.BOLEH_SETUJUI_RAPAT === undefined || r.BOLEH_SETUJUI_RAPAT === ''
+    ? !!permissions.meeting : String(r.BOLEH_SETUJUI_RAPAT).toLowerCase() === 'true';
+  return {id:r.ID_USER,username:r.USERNAME,name:r.NAMA||r.USERNAME,position:r.JABATAN||'',role,ROLE:role,permissions};
 }
 function loginGoogleV85(idToken) {
   if (!idToken) throw new Error('Token tidak valid.');
@@ -3867,12 +3892,27 @@ function loginMajelisV84(username,pin){
 function getAuthContextV84(token){
   const raw=token&&authCacheV84_().get(authKeyV84_(token));
   if(!raw)return {authenticated:false};
-  const user = JSON.parse(raw);
+  let user = JSON.parse(raw);
+  // Pergantian jabatan dan penonaktifan akun berlaku pada sesi yang masih terbuka.
+  if (user.AUTH_PROVIDER === 'GOOGLE') {
+    if (user.GOOGLE_EMAIL !== getSuperadminEmail_()) {
+      logoutMajelisV84(token);
+      return {authenticated:false};
+    }
+  } else {
+    const account = readSheet_(APP.SHEETS.ACCESS).find(row =>
+      String(row.ID_USER) === String(user.id) && String(row.STATUS || 'Aktif') === 'Aktif');
+    if (!account || account.ROLE === 'SUPERADMIN') {
+      logoutMajelisV84(token);
+      return {authenticated:false};
+    }
+    user = safeRoleUserV84_(account);
+  }
   const r = user && (user.ROLE || user.role);
   if (r) {
     const matrix = rolePermissionMatrixV84_();
     if (matrix[r]) {
-       user.permissions = matrix[r];
+       user.permissions = {...matrix[r], approveMeeting:user.AUTH_PROVIDER === 'GOOGLE' ? true : user.permissions.approveMeeting};
     }
   }
   authCacheV84_().put(authKeyV84_(token), JSON.stringify(user), 21600);
@@ -3893,22 +3933,106 @@ function assertFeatureV84_(token,feature){
 }
 function getSecureAppDataV84(token,filters){
   const u=requireAuthV84_(token),d=getAppData(filters||{}),pages=new Set(u.permissions.pages||[]);
-  const map={notulen:'rapat',agenda:'rapat',kehadiran:'rapat',usulan:'usulan',keputusan:'keputusan',tindakLanjut:'tindak_lanjut',program:'program',rapbj:'rapbj',keuangan:'keuangan',inventaris:'inventaris',pengurus:'pengurus',jemaat:'jemaat',documents:'dokumen',letters:'surat'};
+  const map={notulen:'rapat',agenda:'rapat',kehadiran:'rapat',usulan:'usulan',keputusan:'keputusan',tindakLanjut:'tindak_lanjut',programs:'program',rapbj:'rapbj',keuangan:'keuangan',inventaris:'inventaris',pengurus:'pengurus',jemaat:'jemaat',documents:'dokumen',letters:'surat'};
   Object.keys(map).forEach(k=>{if(!pages.has(map[k]))d[k]=[];});
   d.authV84=u;return d;
 }
 function getPublicViewerDataV84(filters){
   const year=Number((filters&&filters.year)||currentYear_()),d=getAppData({year});
-  const meetings=(d.notulen||[]).filter(x=>['Disetujui','Final'].includes(String(x.STATUS||''))).map(x=>({id:x.ID_NOTULEN,date:x.TANGGAL,title:x.JUDUL,type:x.JENIS_RAPAT,place:x.TEMPAT}));
+  const meetings=(d.notulen||[]).filter(x=>isPublicPublicationV86_(x)&&['Disetujui','Final'].includes(String(x.STATUS||''))).map(x=>({id:x.ID_NOTULEN,date:x.TANGGAL,title:x.JUDUL,type:x.JENIS_RAPAT,place:x.TEMPAT}));
   const ids=new Set(meetings.map(x=>String(x.id)));
-  const decisions=(d.keputusan||[]).filter(x=>ids.has(String(x.ID_NOTULEN))).map(x=>({number:x.NO_KEPUTUSAN,decision:x.KEPUTUSAN,department:x.DEPARTEMEN,target:x.TARGET_SELESAI,status:x.STATUS}));
-  const programs=(d.program||[]).map(x=>({name:x.NAMA_PROGRAM,department:x.DEPARTEMEN,start:x.TANGGAL_MULAI,end:x.TANGGAL_SELESAI,status:x.STATUS}));
-  const documents=(d.documents||[]).filter(x=>String(x.STATUS||'Aktif')==='Aktif').map(x=>({date:x.TANGGAL,category:x.KATEGORI,title:x.JUDUL,number:x.NOMOR_DOKUMEN,url:x.FILE_URL}));
+  const decisions=(d.keputusan||[]).filter(x=>isPublicPublicationV86_(x)&&ids.has(String(x.ID_NOTULEN))).map(x=>({number:x.NO_KEPUTUSAN,decision:x.KEPUTUSAN,department:x.DEPARTEMEN,target:x.TARGET_SELESAI,status:x.STATUS}));
+  const programs=(d.programs||[]).filter(x=>isPublicPublicationV86_(x)&&x.STATUS!=='Dibatalkan').map(x=>({name:x.NAMA_PROGRAM,department:x.DEPARTEMEN,start:x.TANGGAL_MULAI,end:x.TANGGAL_SELESAI,status:x.STATUS}));
+  const documents=(d.documents||[]).filter(x=>isPublicPublicationV86_(x)&&String(x.STATUS||'Aktif')==='Aktif').map(x=>({date:x.TANGGAL,category:x.KATEGORI,title:x.JUDUL,number:x.NOMOR_DOKUMEN,url:safePublicUrlV86_(x.FILE_URL)}));
   return {success:true,version:APP.VERSION,year,church:{name:getSettingSafe_('CHURCH_NAME')||'GMAHK Galilea Balikpapan',logo:getSettingSafe_('LOGO_URL')||''},summary:{meetings:meetings.length,decisions:decisions.length,programs:programs.length,documents:documents.length},meetings,decisions,programs,documents};
+}
+
+function publicationEntitiesV86_() {
+  return {
+    notulen: {sheet: APP.SHEETS.NOTULEN, id: 'ID_NOTULEN'},
+    keputusan: {sheet: APP.SHEETS.KEPUTUSAN, id: 'ID_KEPUTUSAN'},
+    program: {sheet: APP.SHEETS.PROGRAM, id: 'ID_PROGRAM'},
+    dokumen: {sheet: APP.SHEETS.DOKUMEN, id: 'ID_DOKUMEN'}
+  };
+}
+
+function isPublicPublicationV86_(row) {
+  return String(row.PUBLIKASI || '') === 'Publik';
+}
+
+function safePublicUrlV86_(value) {
+  const url = String(value || '').trim();
+  return /^https:\/\/[^\s<>"']+$/i.test(url) ? url : '';
+}
+
+function setPublicPublicationV86(token, entity, id, publish) {
+  const user = requireAuthV84_(token);
+  if (!['SUPERADMIN','ADMIN','KETUA_JEMAAT','SEKRETARIS'].includes(user.role || user.ROLE)) {
+    throw new Error('Publikasi hanya dapat diatur oleh administrator, ketua jemaat, atau sekretaris.');
+  }
+  const config = publicationEntitiesV86_()[entity];
+  if (!config || !String(id || '').trim() || typeof publish !== 'boolean') {
+    throw new Error('Pilihan publikasi tidak valid.');
+  }
+  return withDocumentLock_(() => {
+    const sheet = getSheet_(config.sheet);
+    const row = findRowById_(sheet, config.id, id);
+    if (!row) throw new Error('Data tidak ditemukan.');
+    const record = rowToObject_(sheet, row);
+    if (publish) {
+      if (entity === 'notulen' && !['Disetujui','Final'].includes(record.STATUS)) {
+        throw new Error('Notulen harus disetujui sebelum dipublikasikan.');
+      }
+      if (entity === 'keputusan') {
+        const meeting = findObjectById_(APP.SHEETS.NOTULEN, 'ID_NOTULEN', record.ID_NOTULEN);
+        if (!meeting || !isPublicPublicationV86_(meeting) || !['Disetujui','Final'].includes(meeting.STATUS)) {
+          throw new Error('Publikasikan notulen yang sudah disetujui terlebih dahulu.');
+        }
+      }
+      if (entity === 'program' && record.STATUS === 'Dibatalkan') {
+        throw new Error('Program yang dibatalkan tidak dapat dipublikasikan.');
+      }
+      if (entity === 'dokumen' && String(record.STATUS || 'Aktif') !== 'Aktif') {
+        throw new Error('Hanya dokumen aktif yang dapat dipublikasikan.');
+      }
+    }
+    // Kolom ditambahkan saat dipakai; data lama tetap menjadi arsip internal.
+    const headers = getHeaders_(sheet);
+    ['PUBLIKASI','PUBLIKASI_OLEH','PUBLIKASI_PADA'].forEach(header => {
+      if (!headers.includes(header)) {
+        if (headers.length === sheet.getMaxColumns()) sheet.insertColumnsAfter(headers.length, 1);
+        headers.push(header);
+        sheet.getRange(1, headers.length).setValue(header);
+      }
+    });
+    const at = new Date();
+    const values = {
+      PUBLIKASI: publish ? 'Publik' : 'Internal',
+      PUBLIKASI_OLEH: user.name || user.username,
+      PUBLIKASI_PADA: at
+    };
+    Object.keys(values).forEach(header => sheet.getRange(row, headers.indexOf(header) + 1).setValue(values[header]));
+    audit_(publish ? 'PUBLISH_PUBLIC' : 'WITHDRAW_PUBLIC', entity, id,
+      (user.name || user.username) + ': ' + values.PUBLIKASI);
+    return {success:true, publication:values.PUBLIKASI};
+  });
+}
+
+function createGovernanceBackupV86(token) {
+  const user = assertFeatureV84_(token, 'settings');
+  return withDocumentLock_(() => {
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const folder = getOrCreateFolder_(getSettingSafe_('ARCHIVE_FOLDER_NAME') || 'MAJELIS GALILEA - ARSIP');
+    const stamp = Utilities.formatDate(new Date(), APP.TZ, 'yyyyMMdd-HHmmss');
+    SpreadsheetApp.flush();
+    const copy = DriveApp.getFileById(spreadsheet.getId()).makeCopy('Majelis Galilea - Backup ' + stamp, folder);
+    audit_('BACKUP_DATABASE', 'database', copy.getId(), (user.name || user.username) + ': salinan seluruh database.');
+    return {success:true, name:copy.getName(), url:copy.getUrl()};
+  });
 }
 function listAccessUsersV84(token){
   const u=requireAuthV84_(token);if(!u.permissions.access)throw new Error('Akses ditolak.');
-  return readSheet_(APP.SHEETS.ACCESS).map(x=>({id:x.ID_USER,username:x.USERNAME,name:x.NAMA,role:x.ROLE,status:x.STATUS,lastLogin:x.LAST_LOGIN}));
+  return readSheet_(APP.SHEETS.ACCESS).map(x=>({id:x.ID_USER,username:x.USERNAME,name:x.NAMA,role:x.ROLE,status:x.STATUS,lastLogin:x.LAST_LOGIN,position:x.JABATAN||'',canApprove:safeRoleUserV84_(x).permissions.approveMeeting}));
 }
 function saveAccessUserV84(token,p){
   const u=requireAuthV84_(token);if(!u.permissions.access)throw new Error('Akses ditolak.');
@@ -3917,9 +4041,15 @@ function saveAccessUserV84(token,p){
   if(!username||!Object.keys(matrix).includes(role))throw new Error('Username/role tidak valid.');
   const rows=readSheet_(APP.SHEETS.ACCESS),dup=rows.find(x=>String(x.USERNAME||'').toLowerCase()===username&&String(x.ID_USER||'')!==String(p.id||''));
   if(dup)throw new Error('Username sudah digunakan.');
+  ensureAccessDetailsV87_(sh);
+  const details = {};
+  if (p.position !== undefined) details.JABATAN = String(p.position || '').trim();
+  if (p.canApprove !== undefined) details.BOLEH_SETUJUI_RAPAT = p.canApprove === true;
   const now=new Date(),level=matrix[role].level;
   if(p.id){
-    const row=findRowById_(sh,'ID_USER',p.id),cur=rowToObject_(sh,row),next={...cur,USERNAME:username,NAMA:String(p.name||username),ROLE:role,STATUS:String(p.status||'Aktif'),UPDATED_AT:now,LEVEL:level};
+    const row=findRowById_(sh,'ID_USER',p.id),cur=rowToObject_(sh,row),next={...cur,...details,USERNAME:username,NAMA:String(p.name||username),ROLE:role,STATUS:String(p.status||'Aktif'),UPDATED_AT:now,LEVEL:level};
+    if(!cur) throw new Error('Akun pengurus tidak ditemukan.');
+    if(String(cur.USERNAME).toLowerCase()!==username && !p.pin) throw new Error('Isi kata sandi baru jika nama untuk masuk diubah.');
     if(p.pin) {
         if(String(p.pin||'').length<6)throw new Error('Password minimal 6 karakter.');
         next.PIN_HASH=hashPinV84_(username,p.pin);
@@ -3929,7 +4059,7 @@ function saveAccessUserV84(token,p){
   if(String(p.pin||'').length<6)throw new Error('Password minimal 6 karakter.');
   const id=generateId_('USR');
   const h=getHeaders_(sh);
-  const next={ID_USER:id,USERNAME:username,NAMA:String(p.name||username),ROLE:role,PIN_HASH:hashPinV84_(username,p.pin),STATUS:String(p.status||'Aktif'),CREATED_AT:now,UPDATED_AT:now,LEVEL:level};
+  const next={...details,ID_USER:id,USERNAME:username,NAMA:String(p.name||username),ROLE:role,PIN_HASH:hashPinV84_(username,p.pin),STATUS:String(p.status||'Aktif'),CREATED_AT:now,UPDATED_AT:now,LEVEL:level};
   sh.appendRow(h.map(k=>next[k]!==undefined?next[k]:''));
   return {success:true,id};
 }
@@ -12356,7 +12486,12 @@ function reviewNotulen(
   action,
   note,
   token) {
-  assertFeatureV84_(token,'meeting');
+  const reviewer = requireAuthV84_(token);
+  if (action === 'submit') {
+    assertEntityPermissionV84_(token, 'notulen', 'write');
+  } else if (!(reviewer.permissions.approveMeeting === undefined ? reviewer.permissions.meeting : reviewer.permissions.approveMeeting)) {
+    throw new Error('Akun ini belum diberi izin menyetujui hasil rapat.');
+  }
 
   return withDocumentLock_(
     () => {
@@ -12460,6 +12595,9 @@ function reviewNotulen(
         );
       }
 
+      payload.PUBLIKASI = 'Internal';
+      payload.PUBLIKASI_OLEH = '';
+      payload.PUBLIKASI_PADA = '';
       payload.UPDATED_AT =
         now;
 
@@ -12638,7 +12776,7 @@ function approveAgendaProposal(
   proposalId,
   notulenId,
   token) {
-  assertFeatureV84_(token,'meeting');
+  assertEntityPermissionV84_(token,'agenda','write');
 
   return withDocumentLock_(
     () => {
@@ -12668,6 +12806,11 @@ function approveAgendaProposal(
         );
       }
 
+      if (String(meeting.LOCKED).toLowerCase() === 'true') throw new Error('Rapat sudah disetujui. Buka untuk diperbaiki terlebih dahulu.');
+      if (proposal.STATUS === 'Diterima' && proposal.ID_AGENDA) {
+        if (String(proposal.ID_NOTULEN) !== String(notulenId)) throw new Error('Usulan ini sudah masuk ke rapat lain.');
+        return {success:true, agendaId:proposal.ID_AGENDA};
+      }
       const agendaResult =
         saveEntityCore_(
           'agenda',
@@ -16079,8 +16222,7 @@ function getSystemHealthV7() {
       .reverse()
       .find(
         item =>
-          item.ACTION ===
-          'ARCHIVE_YEAR'
+          ['ARCHIVE_YEAR', 'BACKUP_DATABASE'].includes(item.ACTION)
       ) ||
     null;
 
@@ -19275,120 +19417,19 @@ function settingBoolV8_(
 }
 
 
-function getCongregationViewerDataV8(
-  year
-) {
-  year =
-    Number(
-      year ||
-      currentYear_()
-    );
-
-  const data =
-    getAppData({
-      year
-    });
-
-  const approvedMeetings =
-    data.notulen
-      .filter(
-        item =>
-          item.STATUS ===
-          'Disetujui'
-      )
-      .slice(
-        0,
-        6
-      )
-      .map(
-        item => ({
-          title:
-            item.JUDUL,
-          date:
-            item.TANGGAL,
-          type:
-            item.JENIS_RAPAT
-        })
-      );
-
-  const programs =
-    data.programs
-      .filter(
-        item =>
-          ![
-            'Dibatalkan'
-          ].includes(
-            item.STATUS
-          )
-      )
-      .slice(
-        0,
-        8
-      )
-      .map(
-        item => ({
-          name:
-            item.NAMA_PROGRAM,
-          department:
-            item.DEPARTEMEN,
-          start:
-            item.TANGGAL_MULAI,
-          end:
-            item.TANGGAL_SELESAI,
-          status:
-            item.STATUS
-        })
-      );
-
-  const ministry =
-    getFinanceMinistryMetricsV702(
-      year
-    );
-
+function getCongregationViewerDataV8(year) {
+  const data = getPublicViewerDataV84({year});
   return {
-    church:
-      data.app.church,
-    logoUrl:
-      data.app.logoUrl,
-    year,
-    nextMeeting:
-      data.summary.nextMeeting ||
-      null,
-    approvedMeetings:
-      settingBoolV8_(
-        'VIEWER_SHOW_APPROVED_MEETINGS',
-        true
-      )
-        ? approvedMeetings
-        : [],
-    programs:
-      settingBoolV8_(
-        'VIEWER_SHOW_PROGRAMS',
-        true
-      )
-        ? programs
-        : [],
-    finance:
-      settingBoolV8_(
-        'VIEWER_SHOW_FINANCE',
-        true
-      )
-        ? {
-            income:
-              data.summary.totalIncome,
-            expense:
-              data.summary.totalExpense,
-            balance:
-              data.summary.totalBalance
-          }
-        : null,
-    ministry:
-      settingBoolV8_(
-        'VIEWER_SHOW_MINISTRY_PROGRESS',
-        true
-      )
-        ? ministry
-        : null
+    church: data.church.name,
+    logoUrl: data.church.logo,
+    year: data.year,
+    nextMeeting: null,
+    approvedMeetings: settingBoolV8_('VIEWER_SHOW_APPROVED_MEETINGS', true)
+      ? data.meetings.slice(0, 6) : [],
+    programs: settingBoolV8_('VIEWER_SHOW_PROGRAMS', true)
+      ? data.programs.slice(0, 8) : [],
+    finance: null,
+    ministry: null
   };
 }
 
@@ -24347,4 +24388,72 @@ function fixAksesRoleV85() {
     }
   }
   return { success: true, message: 'AKSES_ROLE fixed successfully.' };
+}
+
+
+/* Pilihan sederhana di layar; data lama tetap memakai nama kolom yang sama. */
+function ensureAccessDetailsV87_(sheet) {
+  const headers = getHeaders_(sheet);
+  ['JABATAN','BOLEH_SETUJUI_RAPAT'].forEach(name => {
+    if (headers.includes(name)) return;
+    if (headers.length === sheet.getMaxColumns()) sheet.insertColumnsAfter(headers.length, 1);
+    headers.push(name);
+    sheet.getRange(1, headers.length).setValue(name);
+  });
+}
+
+function updateTaskStatusV87(token, id, status) {
+  assertEntityPermissionV84_(token, 'tindak_lanjut', 'write');
+  if (!['Belum Dimulai','Proses','Selesai'].includes(status)) throw new Error('Pilih status tugas yang tersedia.');
+  return withDocumentLock_(() => {
+    const task = findObjectById_(APP.SHEETS.TINDAK_LANJUT, 'ID_TINDAK_LANJUT', id);
+    if (!task) throw new Error('Tugas tidak ditemukan.');
+    // Read again while locked: changing status must not overwrite somebody else's notes.
+    const progress = status === 'Selesai' ? 100 : status === 'Belum Dimulai' ? 0 : Math.min(99, Number(task.PROGRESS || 0));
+    return saveEntityCore_('tindak_lanjut', {...task, STATUS:status, PROGRESS:progress});
+  });
+}
+
+function saveProgramBudgetV87(token, programId, input) {
+  assertEntityPermissionV84_(token, 'rapbj', 'write');
+  input = input || {};
+  const amount = Number(input.ANGGARAN);
+  if (input.ANGGARAN === '' || !Number.isFinite(amount) || amount < 0) throw new Error('Isi anggaran dengan angka nol atau lebih.');
+  if (!APP.SOURCES.includes(input.SUMBER_DANA)) throw new Error('Pilih sumber dana yang tersedia.');
+  return withDocumentLock_(() => {
+    const program = findObjectById_(APP.SHEETS.PROGRAM, 'ID_PROGRAM', programId);
+    if (!program) throw new Error('Program tidak ditemukan.');
+    const budget = program.ID_RAPBJ ? findObjectById_(APP.SHEETS.RAPBJ, 'ID_RAPBJ', program.ID_RAPBJ) : null;
+    if (program.ID_RAPBJ && !budget) throw new Error('Anggaran yang terhubung tidak ditemukan. Periksa data program terlebih dahulu.');
+    // A shared budget may cover several programs. Changing it here would alter all of them.
+    const shared = budget && readSheet_(APP.SHEETS.PROGRAM).some(row => row.ID_PROGRAM !== program.ID_PROGRAM && String(row.ID_RAPBJ) === String(budget.ID_RAPBJ));
+    if (shared) throw new Error('Anggaran ini dipakai beberapa program. Ubah melalui bagian Anggaran tahunan.');
+    const budgetId = budget ? budget.ID_RAPBJ : generateId_(APP.ENTITY.rapbj.prefix);
+    const sheet = getSheet_(APP.SHEETS.PROGRAM);
+    const row = findRowById_(sheet, 'ID_PROGRAM', programId);
+    const headers = getHeaders_(sheet);
+    const before = sheet.getRange(row, 1, 1, headers.length).getValues()[0];
+    // Save the link after the budget succeeds. Roll back a new budget if linking fails.
+    const saved = saveEntityCore_('rapbj', {
+      ...(budget || {}), ID_RAPBJ:budgetId, TAHUN:program.TAHUN,
+      PROGRAM_ATAU_POS:budget ? budget.PROGRAM_ATAU_POS : program.NAMA_PROGRAM,
+      DEPARTEMEN:program.DEPARTEMEN || '', ANGGARAN:amount, SUMBER_DANA:input.SUMBER_DANA,
+      CATATAN:String(input.CATATAN || ''), STATUS:budget ? budget.STATUS : 'Draft'
+    });
+    try {
+      const updated = {ID_RAPBJ:budgetId, ANGGARAN:amount, SUMBER_DANA:input.SUMBER_DANA, UPDATED_AT:new Date(), PUBLIKASI:'Internal', PUBLIKASI_OLEH:'', PUBLIKASI_PADA:''};
+      sheet.getRange(row, 1, 1, headers.length).setValues([headers.map((key,index) => updated[key] === undefined ? before[index] : updated[key])]);
+    } catch (error) {
+      if (!budget) {
+        const budgetSheet = getSheet_(APP.SHEETS.RAPBJ);
+        const budgetRow = findRowById_(budgetSheet, 'ID_RAPBJ', budgetId);
+        if (budgetRow) budgetSheet.deleteRow(budgetRow);
+      } else {
+        saveEntityCore_('rapbj', budget);
+      }
+      throw error;
+    }
+    audit_('PROGRAM_BUDGET', 'program', programId, 'Anggaran program diperbarui.');
+    return {success:true, id:saved.id};
+  });
 }

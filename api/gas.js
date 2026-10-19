@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { action, args } = req.body || {};
+    const { action, args, authToken } = req.body || {};
 
     if (!action) {
       return res.status(400).json({ __error__: 'Missing action parameter' });
@@ -48,6 +48,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         action,
         args: args || [],
+        authToken: authToken || '',
         source: 'vercel-proxy'
       }),
       redirect: 'follow'
