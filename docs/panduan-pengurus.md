@@ -4,11 +4,13 @@
 
 | Menu | Untuk apa? |
 | --- | --- |
-| Ringkasan | Melihat rapat berikutnya, tugas yang belum selesai, dan informasi sesuai izin akun. |
+| Ringkasan | Melihat tugas yang terlambat atau dekat batas waktunya, rapat yang menunggu persetujuan, dan jadwal berikutnya. |
 | Rapat | Menampung usulan, mencatat rapat, melihat keputusan, dan mengurus tugas. |
 | Program & Anggaran | Menyusun kegiatan, mengisi anggarannya, dan melihat anggaran tahunan. |
 | Keuangan | Mencatat transaksi, melihat saldo, dan membuat laporan. |
 | Administrasi | Mengurus surat, dokumen, inventaris, pengurus, dan anggota jemaat. |
+
+Di HP, geser baris menu utama lalu pilih **Bagian** yang ingin dibuka.
 
 Pilih tahun di bagian atas untuk membuka data lama. Menu yang tidak sesuai izin akun tidak ditampilkan. Akun pengurus, arsip tahunan, riwayat perubahan, dan salinan data ada di **Menu → Pengaturan**.
 
@@ -21,9 +23,19 @@ Pilih tahun di bagian atas untuk membuka data lama. Menu yang tidak sesuai izin 
 5. Tekan **Minta persetujuan**. Pengurus yang diberi izin dapat menyetujui hasil rapat atau meminta perbaikan.
 6. Di bagian **Tugas**, ubah status menjadi **Belum dikerjakan**, **Sedang dikerjakan**, atau **Selesai**. Persentase kemajuan tidak wajib diisi. Status lama seperti Ditunda tetap terbaca.
 
+Tombol utama mengikuti tahap rapat: tambah pembahasan, minta persetujuan, setujui, lalu lihat tugas. Unduh PDF, ubah jadwal, dan pilihan lain ada di **Pilihan lainnya**.
+
 Rapat yang sudah disetujui dikunci. Pengurus yang berwenang dapat membukanya untuk diperbaiki. Perubahan status tugas setelah rapat tetap boleh dilakukan sesuai izin akun.
 
 Tombol WhatsApp membuka pesan yang sudah disiapkan. Pengurus tetap memilih sendiri apakah pesan akan dikirim.
+
+## Mengisi dan menyimpan data
+
+Bagian wajib diberi tanda **(wajib)**. Kalau belum diisi, penjelasan muncul tepat di bawah kolomnya. Rincian tambahan bisa dibuka jika diperlukan.
+
+**Isian tersimpan sementara** belum berarti data sudah masuk. Tekan **Simpan** untuk menyelesaikan. Isian sementara dipisah menurut akun, tahun, dan formulir. Saat formulir dibuka lagi, tekan **Pakai isian sebelumnya** untuk melanjutkan. Foto dan file perlu dipilih lagi.
+
+Pesan gagal tetap terlihat sampai ditutup. Tombol **Coba lagi** tersedia untuk perubahan status tugas dan anggaran. Periksa internet jika sambungan terputus.
 
 ## Program dan anggaran
 
@@ -49,7 +61,9 @@ Pencatatan, bukti transaksi, riwayat perubahan, pencocokan saldo, dan kunci peri
 
 ## Informasi untuk jemaat
 
-Pengurus yang berwenang dapat memilih **Tampilkan ke jemaat** langsung pada catatan rapat, keputusan, program, atau dokumen.
+Pengurus yang berwenang menekan **Lihat tampilan jemaat** pada catatan rapat, keputusan, program, atau dokumen. Periksa isinya, lalu tekan **Tampilkan ke jemaat**. Menutup tampilan ini tidak membagikan informasi.
+
+Label **Internal** berarti hanya pengurus yang bisa melihatnya. Setelah dibagikan, label berubah menjadi **Tampil ke jemaat**. Untuk menariknya, tekan **Lihat / sembunyikan**, lalu **Sembunyikan dari jemaat**.
 
 - Catatan rapat perlu disetujui terlebih dahulu. Tampilan jemaat menampilkan identitas rapat, bukan seluruh isi catatan.
 - Keputusan baru tampil jika catatan rapat asalnya juga sudah disetujui dan ditampilkan.
@@ -100,3 +114,5 @@ Nama tabel, ID data, dan nilai status yang sudah tersimpan tetap dipakai. Label 
 Pembaruan frontend dan Apps Script harus dilakukan bersama karena tombol status tugas dan anggaran program memakai endpoint baru. Tidak ada migrasi penghapusan data.
 
 Pengujian browser lokal tersedia di `scripts/test-workspace-browser.js`. Pasang Playwright di lingkungan pengujian, lalu jalankan dengan Chromium yang tersedia. Contoh: `MG_CHROMIUM_PATH=/path/to/chromium node scripts/test-workspace-browser.js`. Pengujian memakai proxy asli dan kode Apps Script di memori dengan tabel contoh. Ini tidak menguji login produksi, pembuatan PDF melalui layanan Google, atau unggah foto/berkas ke Drive asli.
+
+Perubahan status tugas dan anggaran program memperbarui bagian terkait tanpa memuat ulang seluruh data. Backend mengembalikan baris yang baru disimpan agar tampilan mengikuti hasil penyimpanan.

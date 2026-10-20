@@ -24410,7 +24410,8 @@ function updateTaskStatusV87(token, id, status) {
     if (!task) throw new Error('Tugas tidak ditemukan.');
     // Read again while locked: changing status must not overwrite somebody else's notes.
     const progress = status === 'Selesai' ? 100 : status === 'Belum Dimulai' ? 0 : Math.min(99, Number(task.PROGRESS || 0));
-    return saveEntityCore_('tindak_lanjut', {...task, STATUS:status, PROGRESS:progress});
+    const saved = saveEntityCore_('tindak_lanjut', {...task, STATUS:status, PROGRESS:progress});
+    return {...saved, task:JSON.parse(JSON.stringify(findObjectById_(APP.SHEETS.TINDAK_LANJUT, 'ID_TINDAK_LANJUT', id)))};
   });
 }
 
@@ -24454,6 +24455,6 @@ function saveProgramBudgetV87(token, programId, input) {
       throw error;
     }
     audit_('PROGRAM_BUDGET', 'program', programId, 'Anggaran program diperbarui.');
-    return {success:true, id:saved.id};
+    return {success:true, id:saved.id, program:JSON.parse(JSON.stringify(findObjectById_(APP.SHEETS.PROGRAM, 'ID_PROGRAM', programId))), budget:JSON.parse(JSON.stringify(findObjectById_(APP.SHEETS.RAPBJ, 'ID_RAPBJ', budgetId)))};
   });
 }

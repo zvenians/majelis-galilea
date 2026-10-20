@@ -6,7 +6,7 @@ const rows=key=>tables[app.SHEETS[key]].rows;
 assert.throws(()=>c.updateTaskStatusV87('VIEWER','T1','Selesai'),/Akses ditolak/);
 assert.throws(()=>c.updateTaskStatusV87('MAJELIS','T1','Unknown'),/status/);
 let result=dispatch({action:'updateTaskStatusV87',args:['MAJELIS','T1','Selesai'],authToken:'MAJELIS'}).result;
-assert.equal(result.success,true);assert.equal(rows('TINDAK_LANJUT')[0].PROGRESS,100);
+assert.equal(result.task.STATUS,'Selesai');assert.equal(result.task.CATATAN,'Catatan yang harus tetap tersimpan');assert.equal(result.success,true);assert.equal(rows('TINDAK_LANJUT')[0].PROGRESS,100);
 assert.equal(rows('TINDAK_LANJUT')[0].CATATAN,'Catatan yang harus tetap tersimpan');
 c.updateTaskStatusV87('MAJELIS','T1','Proses');assert.equal(rows('TINDAK_LANJUT')[0].PROGRESS,99);
 // The treasurer can set only the budget of a program without gaining program-edit rights.
@@ -14,7 +14,7 @@ assert.throws(()=>c.saveProgramBudgetV87('SEKRETARIS','P1',{ANGGARAN:100,SUMBER_
 assert.throws(()=>c.saveProgramBudgetV87('KEUANGAN','P1',{ANGGARAN:-1,SUMBER_DANA:'Kas Jemaat'}),/anggaran/);
 assert.throws(()=>c.saveProgramBudgetV87('KEUANGAN','P1',{ANGGARAN:10,SUMBER_DANA:'Palsu'}),/sumber dana/);
 result=dispatch({action:'saveProgramBudgetV87',args:['KEUANGAN','P1',{ANGGARAN:750000,SUMBER_DANA:'Kas Jemaat'}],authToken:'KEUANGAN'}).result;
-assert.equal(result.success,true,JSON.stringify(result));assert.equal(rows('RAPBJ').length,1);
+assert.equal(result.program.ANGGARAN,750000);assert.equal(result.budget.ANGGARAN,750000);assert.equal(result.program.ID_RAPBJ,result.budget.ID_RAPBJ);assert.equal(result.success,true,JSON.stringify(result));assert.equal(rows('RAPBJ').length,1);
 assert.equal(rows('PROGRAM')[0].ID_RAPBJ,rows('RAPBJ')[0].ID_RAPBJ);
 c.saveProgramBudgetV87('KEUANGAN','P1',{ANGGARAN:800000,SUMBER_DANA:'Sumbangan'});
 assert.equal(rows('RAPBJ').length,1);assert.equal(rows('PROGRAM')[0].ANGGARAN,800000);
