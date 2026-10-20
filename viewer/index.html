@@ -70,9 +70,9 @@
   <main>
     <section class="hero">
       <small>INFORMASI JEMAAT</small>
-      <h1>Pelayanan yang dapat kita ikuti bersama.</h1>
-      <p>Rapat, keputusan, program, dan dokumen yang telah dipilih pengurus untuk dibagikan kepada jemaat.</p>
-      <div class="stats" aria-label="Jumlah informasi yang dipublikasikan">
+      <h1>Kabar dan kegiatan jemaat</h1>
+      <p>Lihat jadwal rapat, hasil keputusan, kegiatan, dan dokumen yang dibagikan pengurus.</p>
+      <div class="stats" aria-label="Jumlah informasi">
         <div><b id="m">—</b><span>Rapat</span></div>
         <div><b id="d">—</b><span>Keputusan</span></div>
         <div><b id="p">—</b><span>Program</span></div>
@@ -85,14 +85,14 @@
         <label class="search" for="viewerSearch">Cari informasi<input id="viewerSearch" type="search" placeholder="Judul, departemen, atau keputusan"></label>
         <button id="viewerReload" type="submit">Muat ulang</button>
       </form>
-      <p class="note" id="viewerProgress" role="status" aria-live="polite">Menyiapkan informasi…</p>
+      <p class="note" id="viewerProgress" role="status" aria-live="polite">Memuat informasi…</p>
     </section>
     <section id="status" class="status" role="alert" hidden></section>
-    <section class="panel"><h2>Rapat yang dipublikasikan</h2><div id="meet" class="list"></div></section>
+    <section class="panel"><h2>Rapat</h2><div id="meet" class="list"></div></section>
     <section class="panel"><h2>Keputusan</h2><div id="dec" class="list"></div></section>
-    <section class="panel"><h2>Program kerja</h2><div id="prog" class="list"></div></section>
+    <section class="panel"><h2>Kegiatan</h2><div id="prog" class="list"></div></section>
     <section class="panel"><h2>Dokumen untuk jemaat</h2><div id="docs" class="list"></div></section>
-    <p class="note">Informasi internal majelis, data pribadi anggota, dan rincian transaksi keuangan tidak ditampilkan pada halaman ini.</p>
+    <p class="note">Ada yang ingin ditanyakan? Hubungi pengurus jemaat.</p>
   </main>
   <script>
     const $ = id => document.getElementById(id);
@@ -113,8 +113,10 @@
       return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
     }
 
+    function statusLabel(value) {return ({Draft:'Belum selesai',Final:'Selesai','Belum Dimulai':'Belum dikerjakan',Proses:'Sedang dikerjakan','Perlu Revisi':'Perlu diperbaiki'})[value] || value;}
+
     function renderList(id, rows, content) {
-      $(id).innerHTML = rows.length ? rows.map(content).join('') : '<p class="empty">Belum ada informasi yang dipublikasikan atau cocok dengan pencarian.</p>';
+      $(id).innerHTML = rows.length ? rows.map(content).join('') : `<p class="empty">${$('viewerSearch').value.trim()?'Tidak ada yang cocok. Coba kata lain.':'Belum ada informasi untuk tahun ini.'}</p>`;
     }
 
     function renderViewer() {
@@ -122,13 +124,13 @@
       const search = $('viewerSearch').value.trim().toLocaleLowerCase('id');
       const filter = rows => (rows || []).filter(row => Object.values(row).some(value => String(value || '').toLocaleLowerCase('id').includes(search)));
       renderList('meet', filter(viewerData.meetings), row => `<article><strong>${esc(row.title)}</strong><small>${esc([dateLabel(row.date), row.type, row.place].filter(Boolean).join(' · '))}</small></article>`);
-      renderList('dec', filter(viewerData.decisions), row => `<article><strong>${esc(row.decision)}</strong><small>${esc([row.number, row.department, row.status, row.target && 'Target: ' + dateLabel(row.target)].filter(Boolean).join(' · '))}</small></article>`);
-      renderList('prog', filter(viewerData.programs), row => `<article><strong>${esc(row.name)}</strong><small>${esc([row.department, row.status, dateLabel(row.start)].filter(Boolean).join(' · '))}</small></article>`);
+      renderList('dec', filter(viewerData.decisions), row => `<article><strong>${esc(row.decision)}</strong><small>${esc([row.number, row.department, statusLabel(row.status), row.target && 'Batas waktu: ' + dateLabel(row.target)].filter(Boolean).join(' · '))}</small></article>`);
+      renderList('prog', filter(viewerData.programs), row => `<article><strong>${esc(row.name)}</strong><small>${esc([row.department, statusLabel(row.status), [dateLabel(row.start),row.end!==row.start && dateLabel(row.end)].filter(Boolean).join(' – ')].filter(Boolean).join(' · '))}</small></article>`);
       renderList('docs', filter(viewerData.documents), row => {
         const url = safeDocumentUrl(row.url);
         return `<article><strong>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(row.title || 'Dokumen')} ↗</a>` : esc(row.title || 'Dokumen')}</strong><small>${esc([row.category, row.number, dateLabel(row.date)].filter(Boolean).join(' · '))}</small></article>`;
       });
-      $('viewerProgress').textContent = `Informasi tahun ${viewerData.year}${search ? ' · Hasil pencarian ditampilkan di bawah.' : ' · Data terbaru berhasil dimuat.'}`;
+      $('viewerProgress').textContent = `Informasi tahun ${viewerData.year}${search ? ' · Hasil pencarian ditampilkan di bawah.' : ' · Sudah diperbarui.'}`;
     }
 
     window.MG_VIEWER_CALLBACK = data => {
@@ -163,10 +165,10 @@
         window.MG_VIEWER_CALLBACK(data.result || data);
       } catch (error) {
         if (current !== requestId) return;
-        $('status').textContent = 'Informasi belum dapat dimuat. Tekan Muat ulang untuk mencoba kembali, atau hubungi sekretaris jemaat.';
+        $('status').textContent = 'Informasi belum bisa dibuka. Coba tekan Muat ulang. Kalau masih gagal, hubungi sekretaris jemaat.';
         $('status').hidden = false;
-        $('viewerProgress').textContent = 'Koneksi belum tersedia.';
-        ['meet','dec','prog','docs'].forEach(id => { $(id).innerHTML = '<p class="empty">Informasi belum dapat dimuat.</p>'; });
+        $('viewerProgress').textContent = 'Gagal memuat informasi.';
+        ['meet','dec','prog','docs'].forEach(id => { $(id).innerHTML = '<p class="empty">Informasi belum bisa dibuka.</p>'; });
       } finally {
         if (current === requestId) { loading = false; $('viewerReload').disabled = false; }
       }
