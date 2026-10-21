@@ -3,181 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#650a15">
+  <meta name="theme-color" content="#5f0b18">
+  <meta name="description" content="Informasi publik rapat, keputusan, kegiatan, dan dokumen GMAHK Galilea Balikpapan.">
   <title>Majelis Galilea — Informasi Jemaat</title>
-  <style>
-    * { box-sizing: border-box; }
-    :root { --wine: #650a15; --ink: #251a1c; --line: #e7dfe0; --muted: #6a5b60; }
-    body { margin: 0; font: 14px/1.6 Inter, Arial, sans-serif; background: #f5f1ee; color: var(--ink); }
-    header, main { width: min(1120px, calc(100% - 32px)); margin: auto; }
-    header { margin-top: 18px; padding: 16px 20px; border-radius: 22px; background: var(--ink); color: white; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-    .brand { display: flex; align-items: center; gap: 14px; }
-    .brand-logo { width: 50px; height: 50px; padding: 7px; border-radius: 15px; background: white; color: var(--wine); flex-shrink: 0; display: grid; place-items: center; overflow: hidden; font-weight: 800; }
-    .brand-logo img { width: 100%; height: 100%; object-fit: contain; }
-    .brand-copy small, .brand-copy b { display: block; }
-    .brand-copy small { font-size: 12px; color: #d0c0c5; }
-    .brand-copy b { font-size: 16px; }
-    header a { padding: 10px 14px; border: 1px solid #8f7b83; border-radius: 12px; color: white; text-decoration: none; }
-    main { display: grid; gap: 18px; margin-top: 18px; margin-bottom: 48px; }
-    .hero, .panel { padding: 28px; border-radius: 24px; background: white; border: 1px solid var(--line); }
-    .hero { background: linear-gradient(145deg, #4a0710, #7b1020); color: white; }
-    .hero small { font-size: 12px; color: #e4c9ce; }
-    h1 { font-size: clamp(28px, 5vw, 46px); line-height: 1.15; margin: 14px 0; letter-spacing: -.03em; }
-    h2 { font-size: 21px; line-height: 1.3; margin: 0 0 18px; }
-    .hero p { max-width: 70ch; color: #efdbdf; margin: 0; }
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
-    .stats div { padding: 14px 18px; border: 1px solid #a66571; border-radius: 16px; }
-    .stats b, .stats span { display: block; }
-    .stats b { font-size: 26px; }
-    .stats span { color: #efdbdf; }
-    .filters { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; }
-    .filters label { display: grid; gap: 6px; }
-    .filters .search { flex: 1; min-width: 180px; }
-    input, button { font: inherit; min-height: 44px; }
-    input { padding: 10px 12px; border: 1px solid #cbb6bd; border-radius: 12px; background: white; color: var(--ink); }
-    input[type="number"] { width: 110px; }
-    button { padding: 10px 16px; border: 1px solid var(--wine); border-radius: 12px; background: var(--wine); color: white; cursor: pointer; }
-    button:disabled { opacity: .7; cursor: wait; }
-    a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #b65c28; outline-offset: 4px; }
-    .list article { padding: 16px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
-    .list article:last-child { border-bottom: 0; }
-    .list strong, .list small { display: block; }
-    .list strong { font-size: 16px; line-height: 1.5; }
-    .list small { color: var(--muted); font-size: 13px; margin-top: 6px; }
-    .list a { color: var(--wine); text-underline-offset: 3px; }
-    .empty { color: var(--muted); margin: 0; }
-    .status { padding: 16px 20px; border-radius: 16px; background: #fff4f4; border: 1px solid #d7adb6; }
-    [hidden] { display: none !important; }
-    .note { margin: 0; color: var(--muted); font-size: 13px; }
-    .filters + .note { margin-top: 16px; }
-    @media (max-width: 600px) {
-      header { align-items: start; padding: 16px; flex-wrap: wrap; }
-      .hero, .panel { padding: 20px; }
-      .stats { grid-template-columns: 1fr 1fr; }
-      .filters { gap: 12px; }
-      .filters .search { flex-basis: 100%; }
-    }
-  </style>
+  <link rel="stylesheet" href="/viewer/styles.css">
+  <script src="/viewer/app.js" defer></script>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="brand-logo"><img src="https://www.adventist.design/wp-content/uploads/2017/04/adventist_logo.png" alt="Logo Gereja Masehi Advent Hari Ketujuh" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-label="Majelis Galilea">MG</span></div>
-      <div class="brand-copy"><small>GMAHK GALILEA</small><b>Majelis Galilea</b></div>
-    </div>
-    <a href="/admin">Masuk pengurus</a>
+  <a class="skip-link" href="#content">Lewati ke informasi</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Beranda Majelis Galilea">
+      <span class="brand-logo"><img src="/assets/adventist-logo.png" alt=""></span>
+      <span class="brand-copy"><small>GMAHK GALILEA</small><b>Informasi Jemaat</b></span>
+    </a>
+    <a class="admin-link" href="/admin">Masuk pengurus</a>
   </header>
-  <main>
+  <main id="content">
     <section class="hero">
-      <small>INFORMASI JEMAAT</small>
-      <h1>Kabar dan kegiatan jemaat</h1>
-      <p>Lihat jadwal rapat, hasil keputusan, kegiatan, dan dokumen yang dibagikan pengurus.</p>
+      <div><span class="eyebrow">INFORMASI JEMAAT</span><h1>Kabar dan kegiatan jemaat</h1><p>Lihat rapat, keputusan, kegiatan, dan dokumen yang telah dibagikan oleh pengurus.</p></div>
       <div class="stats" aria-label="Jumlah informasi">
-        <div><b id="m">—</b><span>Rapat</span></div>
-        <div><b id="d">—</b><span>Keputusan</span></div>
-        <div><b id="p">—</b><span>Program</span></div>
-        <div><b id="f">—</b><span>Dokumen</span></div>
+        <div><b id="m">—</b><span>Rapat</span></div><div><b id="d">—</b><span>Keputusan</span></div><div><b id="p">—</b><span>Program</span></div><div><b id="f">—</b><span>Dokumen</span></div>
       </div>
     </section>
-    <section class="panel">
+    <section class="filter-panel" aria-labelledby="filterTitle">
+      <div><h2 id="filterTitle">Temukan informasi</h2><p id="viewerProgress" role="status" aria-live="polite">Menyiapkan informasi…</p></div>
       <form class="filters" id="viewerFilters">
         <label for="viewerYear">Tahun<input id="viewerYear" type="number" min="2000" max="2100" required></label>
-        <label class="search" for="viewerSearch">Cari informasi<input id="viewerSearch" type="search" placeholder="Judul, departemen, atau keputusan"></label>
-        <button id="viewerReload" type="submit">Muat ulang</button>
+        <label class="search" for="viewerSearch">Cari<input id="viewerSearch" type="search" placeholder="Contoh: pelayanan atau keputusan"></label>
+        <button id="viewerReload" type="submit"><span>Muat ulang</span></button>
       </form>
-      <p class="note" id="viewerProgress" role="status" aria-live="polite">Memuat informasi…</p>
     </section>
-    <section id="status" class="status" role="alert" hidden></section>
-    <section class="panel"><h2>Rapat</h2><div id="meet" class="list"></div></section>
-    <section class="panel"><h2>Keputusan</h2><div id="dec" class="list"></div></section>
-    <section class="panel"><h2>Kegiatan</h2><div id="prog" class="list"></div></section>
-    <section class="panel"><h2>Dokumen untuk jemaat</h2><div id="docs" class="list"></div></section>
-    <p class="note">Ada yang ingin ditanyakan? Hubungi pengurus jemaat.</p>
+    <section id="status" class="status" role="status" aria-live="polite" hidden></section>
+    <section id="emptyYear" class="empty-year" hidden>
+      <span aria-hidden="true">◇</span><div><h2>Belum ada informasi yang dibagikan</h2><p>Pengurus belum menerbitkan informasi untuk tahun ini.</p></div><button id="previousYear" type="button">Lihat tahun sebelumnya</button>
+    </section>
+    <div class="content-grid" id="informationSections">
+      <section class="panel"><div class="panel-title"><span>01</span><h2>Rapat</h2></div><div id="meet" class="list"></div></section>
+      <section class="panel"><div class="panel-title"><span>02</span><h2>Keputusan</h2></div><div id="dec" class="list"></div></section>
+      <section class="panel"><div class="panel-title"><span>03</span><h2>Kegiatan</h2></div><div id="prog" class="list"></div></section>
+      <section class="panel"><div class="panel-title"><span>04</span><h2>Dokumen untuk jemaat</h2></div><div id="docs" class="list"></div></section>
+    </div>
   </main>
-  <script>
-    const $ = id => document.getElementById(id);
-    const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-    let viewerData = null;
-    let requestId = 0;
-    let loading = false;
-    $('viewerYear').value = new Date().getFullYear();
-
-    function safeDocumentUrl(value) {
-      try { const url = new URL(value); return url.protocol === 'https:' ? url.href : ''; }
-      catch { return ''; }
-    }
-
-    function dateLabel(value) {
-      if (!value) return '';
-      const date = new Date(value);
-      return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-    }
-
-    function statusLabel(value) {return ({Draft:'Belum selesai',Final:'Selesai','Belum Dimulai':'Belum dikerjakan',Proses:'Sedang dikerjakan','Perlu Revisi':'Perlu diperbaiki'})[value] || value;}
-
-    function renderList(id, rows, content) {
-      $(id).innerHTML = rows.length ? rows.map(content).join('') : `<p class="empty">${$('viewerSearch').value.trim()?'Tidak ada yang cocok. Coba kata lain.':'Belum ada informasi untuk tahun ini.'}</p>`;
-    }
-
-    function renderViewer() {
-      if (!viewerData) return;
-      const search = $('viewerSearch').value.trim().toLocaleLowerCase('id');
-      const filter = rows => (rows || []).filter(row => [...Object.values(row), statusLabel(row.status), ...['date','target','start','end'].map(key => dateLabel(row[key]))].some(value => String(value || '').toLocaleLowerCase('id').includes(search)));
-      renderList('meet', filter(viewerData.meetings), row => `<article><strong>${esc(row.title)}</strong><small>${esc([dateLabel(row.date), row.type, row.place].filter(Boolean).join(' · '))}</small></article>`);
-      renderList('dec', filter(viewerData.decisions), row => `<article><strong>${esc(row.decision)}</strong><small>${esc([row.number, row.department, statusLabel(row.status), row.target && 'Batas waktu: ' + dateLabel(row.target)].filter(Boolean).join(' · '))}</small></article>`);
-      renderList('prog', filter(viewerData.programs), row => `<article><strong>${esc(row.name)}</strong><small>${esc([row.department, statusLabel(row.status), [dateLabel(row.start),row.end!==row.start && dateLabel(row.end)].filter(Boolean).join(' – ')].filter(Boolean).join(' · '))}</small></article>`);
-      renderList('docs', filter(viewerData.documents), row => {
-        const url = safeDocumentUrl(row.url);
-        return `<article><strong>${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(row.title || 'Dokumen')} ↗</a>` : esc(row.title || 'Dokumen')}</strong><small>${esc([row.category, row.number, dateLabel(row.date)].filter(Boolean).join(' · '))}</small></article>`;
-      });
-      $('viewerProgress').textContent = `Informasi tahun ${viewerData.year}${search ? ' · Hasil pencarian ditampilkan di bawah.' : ' · Sudah diperbarui.'}`;
-    }
-
-    window.MG_VIEWER_CALLBACK = data => {
-      if (!data || !data.success) throw new Error('Informasi jemaat belum tersedia.');
-      viewerData = data;
-      $('status').hidden = true;
-      ['m','d','p','f'].forEach((id, index) => { $(id).textContent = data.summary?.[['meetings','decisions','programs','documents'][index]] || 0; });
-      renderViewer();
-    };
-
-    async function load() {
-      const year = Number($('viewerYear').value);
-      if (!Number.isInteger(year) || year < 2000 || year > 2100) return;
-      const current = ++requestId;
-      loading = true;
-      $('viewerReload').disabled = true;
-      $('viewerProgress').textContent = `Memuat informasi tahun ${year}…`;
-      $('status').hidden = true;
-      viewerData = null;
-      ['meet','dec','prog','docs'].forEach(id => { $(id).innerHTML = '<p class="empty">Memuat informasi…</p>'; });
-      ['m','d','p','f'].forEach(id => { $(id).textContent = '—'; });
-      try {
-        const response = await fetch('/api/gas', {
-          method: 'POST', headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({action:'getPublicViewerDataV84', args:[{year}]}),
-          signal: AbortSignal.timeout(30000)
-        });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        const data = await response.json();
-        if (current !== requestId) return;
-        if (data.__error__) throw new Error(data.__error__);
-        window.MG_VIEWER_CALLBACK(data.result || data);
-      } catch (error) {
-        if (current !== requestId) return;
-        $('status').textContent = 'Informasi belum bisa dibuka. Coba tekan Muat ulang. Kalau masih gagal, hubungi sekretaris jemaat.';
-        $('status').hidden = false;
-        $('viewerProgress').textContent = 'Gagal memuat informasi.';
-        ['meet','dec','prog','docs'].forEach(id => { $(id).innerHTML = '<p class="empty">Informasi belum bisa dibuka.</p>'; });
-      } finally {
-        if (current === requestId) { loading = false; $('viewerReload').disabled = false; }
-      }
-    }
-
-    $('viewerFilters').onsubmit = event => { event.preventDefault(); load(); };
-    $('viewerYear').onchange = () => { if ($('viewerYear').checkValidity()) load(); };
-    $('viewerSearch').oninput = () => { if (!loading) renderViewer(); };
-    load();
-  </script>
+  <footer><img src="/assets/adventist-logo.png" alt=""><p><strong>GMAHK Galilea Balikpapan</strong><br><span>Informasi resmi yang diterbitkan pengurus jemaat.</span></p></footer>
 </body>
 </html>

@@ -38,7 +38,7 @@ Church board administration involves multiple interdependent stakeholders—Exec
 * **Unified Role-Aware Portal:** Provides a single-page web interface tailored to board workflows with real-time draft autosave and a live "Meeting Mode" for minute-taking during board sessions.
 * **Granular Role-Based Access Control (RBAC):** Server-side clearance levels (ADMIN, KEUANGAN, PENGURUS, MAJELIS) ensure members only access and modify data aligned with their official capacity.
 * **Structured 23-Tab Relational Database:** Utilizes Google Sheets as an accessible, zero-maintenance relational database backed by 250+ Google Apps Script business logic functions with `LockService` concurrency controls.
-* **Edge Proxy Architecture:** Routes all requests through an isolated Vercel serverless proxy (`/api/gas`), completely concealing internal Google Apps Script deployment endpoints and securing communications.
+* **Edge Proxy Architecture:** Routes authenticated requests through an isolated Vercel serverless proxy (`/api/gas`). Public information uses a cacheable read-only endpoint (`/api/public`) with stale fallback in the browser.
 * **Automated Document Automation:** In-browser PDF generation for official letters, meeting minutes, and financial statements directly archived to Google Drive.
 
 ---
@@ -138,17 +138,24 @@ The system enforces four distinct authorization tiers:
 
 ```text
 majelis-galilea/
-├── admin/                     # Admin portal UI single-page application
-│   └── index.html             # Full administration dashboard
+├── admin/                     # Admin portal UI
+│   ├── index.html             # Semantic page shell
+│   ├── styles/                # Base, feature, and visual-polish styles
+│   └── js/                    # Shell, core, feature, and enhancement modules
+├── assets/                    # Shared Adventist brand assets
 ├── api/                       # Vercel serverless functions
-│   └── gas.js                 # Upstream Apps Script reverse proxy
+│   ├── _gas.js                # Shared Apps Script client
+│   ├── gas.js                 # Authenticated request proxy
+│   └── public.js              # CDN-cached public data endpoint
 ├── apps-script/               # Upstream Google Apps Script sources
 │   ├── appsscript.json        # Apps Script project manifest (V8 runtime)
 │   └── Code.gs                # 250+ backend functions & business logic
 ├── scripts/                   # Local development & CI validation scripts
 │   └── validate-gas.js        # Apps Script manifest and syntax validator
 ├── viewer/                    # Public viewer UI
-│   └── index.html             # Read-only public meeting viewer
+│   ├── index.html             # Page shell
+│   ├── styles.css             # Responsive presentation
+│   └── app.js                 # Loading, search, and offline cache behavior
 ├── .clasp.json.example        # Clasp configuration template
 ├── vercel.json                # Vercel routing rules & security headers
 └── README.md                  # Project documentation

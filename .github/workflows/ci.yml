@@ -36,3 +36,6 @@ jobs:
 
       - name: Check data access and login protection
         run: node scripts/test-access-boundaries.js
+
+      - name: Check modular frontend assets and public caching
+        run: node scripts/test-frontend-structure.js

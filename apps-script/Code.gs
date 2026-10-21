@@ -3339,6 +3339,9 @@ function saveEntity(entity,payload,token){
 
 function saveEntityInternal_(entity, payload) {
   return withDocumentLock_(() => {
+    const publicConfig=publicationEntitiesV86_()[entity];
+    const previousPublic=publicConfig&&payload[publicConfig.id]
+      ?findObjectById_(publicConfig.sheet,publicConfig.id,payload[publicConfig.id]):null;
     if (['agenda','kehadiran'].includes(entity)) {
       const config=APP.ENTITY[entity];
       const previous=payload[config.id] ? findObjectById_(resolveEntitySheetNameV602_(config),config.id,payload[config.id]) : null;
@@ -3348,7 +3351,12 @@ function saveEntityInternal_(entity, payload) {
         if (meeting && String(meeting.LOCKED).toLowerCase()==='true') throw new Error('Rapat sudah disetujui. Buka untuk diperbaiki terlebih dahulu.');
       });
     }
-    return saveEntityCore_(entity, payload);
+    const result=saveEntityCore_(entity, payload);
+    if(publicConfig){
+      clearPublicViewerCacheV89_(previousPublic&&(previousPublic.TAHUN||yearFromDate_(previousPublic.TANGGAL||previousPublic.TANGGAL_MULAI)));
+      clearPublicViewerCacheV89_(payload.TAHUN||yearFromDate_(payload.TANGGAL||payload.TANGGAL_MULAI));
+    }
+    return result;
   });
 }
 
@@ -3972,13 +3980,36 @@ function getSecureAppDataV84(token,filters){
   d.authV84=u;return d;
 }
 function getPublicViewerDataV84(filters){
-  const year=Number((filters&&filters.year)||currentYear_()),d=getAppData({year});
-  const meetings=(d.notulen||[]).filter(x=>isPublicPublicationV86_(x)&&['Disetujui','Final'].includes(String(x.STATUS||''))).map(x=>({id:x.ID_NOTULEN,date:x.TANGGAL,title:x.JUDUL,type:x.JENIS_RAPAT,place:x.TEMPAT}));
+  const year=Number((filters&&filters.year)||currentYear_());
+  const cache=publicViewerCacheV89_(),cacheKey='PUBLIC-V89-'+year;
+  if(cache){
+    try{const saved=cache.get(cacheKey);if(saved)return JSON.parse(saved);}catch(_){/* cache is optional */}
+  }
+  // The public page needs only four sheets. Avoid loading every private workspace table.
+  const d={
+    notulen:byYear_(readSheet_(APP.SHEETS.NOTULEN),year),
+    keputusan:readSheet_(APP.SHEETS.KEPUTUSAN),
+    programs:readSheet_(APP.SHEETS.PROGRAM).filter(x=>!x.TAHUN||Number(x.TAHUN)===year),
+    documents:readSheet_(APP.SHEETS.DOKUMEN).filter(x=>!x.TAHUN||Number(x.TAHUN)===year)
+  };
+  const meetings=d.notulen.filter(x=>isPublicPublicationV86_(x)&&['Disetujui','Final'].includes(String(x.STATUS||''))).map(x=>({id:x.ID_NOTULEN,date:x.TANGGAL,title:x.JUDUL,type:x.JENIS_RAPAT,place:x.TEMPAT}));
   const ids=new Set(meetings.map(x=>String(x.id)));
   const decisions=(d.keputusan||[]).filter(x=>isPublicPublicationV86_(x)&&ids.has(String(x.ID_NOTULEN))).map(x=>({number:x.NO_KEPUTUSAN,decision:x.KEPUTUSAN,department:x.DEPARTEMEN,target:x.TARGET_SELESAI,status:x.STATUS}));
   const programs=(d.programs||[]).filter(x=>isPublicPublicationV86_(x)&&x.STATUS!=='Dibatalkan').map(x=>({name:x.NAMA_PROGRAM,department:x.DEPARTEMEN,start:x.TANGGAL_MULAI,end:x.TANGGAL_SELESAI,status:x.STATUS}));
   const documents=(d.documents||[]).filter(x=>isPublicPublicationV86_(x)&&String(x.STATUS||'Aktif')==='Aktif').map(x=>({date:x.TANGGAL,category:x.KATEGORI,title:x.JUDUL,number:x.NOMOR_DOKUMEN,url:safePublicUrlV86_(x.FILE_URL)}));
-  return {success:true,version:APP.VERSION,year,church:{name:getSettingSafe_('CHURCH_NAME')||'GMAHK Galilea Balikpapan',logo:getSettingSafe_('LOGO_URL')||''},summary:{meetings:meetings.length,decisions:decisions.length,programs:programs.length,documents:documents.length},meetings,decisions,programs,documents};
+  const result={success:true,version:APP.VERSION,year,church:{name:getSettingSafe_('CHURCH_NAME')||'GMAHK Galilea Balikpapan'},summary:{meetings:meetings.length,decisions:decisions.length,programs:programs.length,documents:documents.length},meetings,decisions,programs,documents};
+  if(cache){try{const serialized=JSON.stringify(result);if(serialized.length<90000)cache.put(cacheKey,serialized,300);}catch(_){/* serve without cache */}}
+  return result;
+}
+
+function publicViewerCacheV89_(){
+  try{return typeof CacheService!=='undefined'?CacheService.getScriptCache():null;}catch(_){return null;}
+}
+
+function clearPublicViewerCacheV89_(year){
+  const cache=publicViewerCacheV89_();if(!cache)return;
+  const years=[Number(year),currentYear_()].filter((value,index,list)=>Number.isFinite(value)&&list.indexOf(value)===index);
+  years.forEach(value=>{try{cache.remove('PUBLIC-V89-'+value);}catch(_){}});
 }
 
 function publicationEntitiesV86_() {
@@ -4046,6 +4077,7 @@ function setPublicPublicationV86(token, entity, id, publish) {
       PUBLIKASI_PADA: at
     };
     Object.keys(values).forEach(header => sheet.getRange(row, headers.indexOf(header) + 1).setValue(values[header]));
+    clearPublicViewerCacheV89_(record.TAHUN || yearFromDate_(record.TANGGAL || record.TANGGAL_MULAI));
     audit_(publish ? 'PUBLISH_PUBLIC' : 'WITHDRAW_PUBLIC', entity, id,
       (user.name || user.username) + ': ' + values.PUBLIKASI);
     return {success:true, publication:values.PUBLIKASI};
@@ -12066,6 +12098,10 @@ function deleteEntityInternal_(
       sheet.deleteRow(
         row
       );
+
+      if (publicationEntitiesV86_()[entity]) {
+        clearPublicViewerCacheV89_(current.TAHUN || yearFromDate_(current.TANGGAL || current.TANGGAL_MULAI));
+      }
 
       audit_(
         'DELETE',

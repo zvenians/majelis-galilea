@@ -1,0 +1,107 @@
+:root {
+  --focus-ring: #d59a4b;
+}
+
+.auth-gate-v84 {
+  overflow: auto;
+  padding: clamp(18px, 4vw, 48px);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(215, 157, 80, .16), transparent 30%),
+    radial-gradient(circle at 84% 82%, rgba(255, 255, 255, .08), transparent 31%),
+    linear-gradient(145deg, #26060b 0%, #620b15 55%, #24191b 100%);
+}
+
+.auth-gate-v84::before,
+.auth-gate-v84::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 50%;
+}
+
+.auth-gate-v84::before { width: 36vw; height: 36vw; left: -15vw; bottom: -20vw; }
+.auth-gate-v84::after { width: 28vw; height: 28vw; right: -12vw; top: -15vw; }
+
+.auth-card-v84 {
+  width: min(520px, 100%);
+  padding: clamp(26px, 5vw, 42px);
+  border-radius: 36px 12px 36px 36px;
+  border-color: rgba(255, 255, 255, .12);
+  background: rgba(31, 21, 23, .94);
+  box-shadow: 0 36px 100px rgba(0, 0, 0, .34);
+  backdrop-filter: blur(22px);
+}
+
+.auth-brand-v84 { align-items: flex-start; gap: 17px; padding-bottom: 25px; }
+.auth-brand-v84 > div { min-width: 0; }
+.auth-brand-v84 > span.advent-mark-v89,
+.advent-mark-v89 {
+  width: 64px;
+  height: 64px;
+  padding: 10px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 20px 7px 20px 20px;
+  background: #fff;
+}
+
+.advent-mark-v89 img { width: 100%; height: 100%; object-fit: contain; }
+.auth-brand-v84 small { color: #d7c4c9; letter-spacing: .13em; }
+.auth-brand-v84 strong { margin-top: 6px; font-size: clamp(24px, 5vw, 31px); letter-spacing: -.035em; }
+.auth-brand-v84 p { margin: 9px 0 0; max-width: 35ch; color: #bbaeb1; line-height: 1.55; }
+.google-login-v89 { margin: 24px 0 18px; min-height: 44px; display: flex; justify-content: center; }
+.auth-divider-v89 { display: flex; align-items: center; gap: 12px; margin: 8px 0 18px; color: #94868a; font-size: 12px; }
+.auth-divider-v89::before, .auth-divider-v89::after { content: ""; height: 1px; flex: 1; background: rgba(255,255,255,.09); }
+
+#loginFormV84 { gap: 15px; margin-top: 0; }
+#loginFormV84 label > span:first-child { color: #eee5e7; font-weight: 650; }
+#loginFormV84 input { width: 100%; border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.075); }
+#loginFormV84 input:hover { border-color: rgba(255,255,255,.25); }
+#loginFormV84 input:focus { border-color: #d59a4b; box-shadow: 0 0 0 4px rgba(213,154,75,.14); outline: 0; }
+.password-control-v89 { position: relative; display: block; }
+.password-control-v89 input { padding-right: 76px !important; }
+.password-control-v89 button {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+  width: auto !important;
+  height: 36px !important;
+  min-height: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 11px;
+  color: #f2e8ea !important;
+  background: rgba(255,255,255,.1) !important;
+}
+#loginFormV84 > button[type="submit"] { margin-top: 3px; border-radius: 15px; transition: transform .18s ease, opacity .18s ease; }
+#loginFormV84 > button[type="submit"]:hover:not(:disabled) { transform: translateY(-1px); }
+#loginFormV84 > button[type="submit"][aria-busy="true"] { opacity: .72; cursor: wait; }
+#loginErrorV84 { min-height: 21px; margin: -2px 0; color: #ffc2cb; }
+.auth-help-v89 { display: block; color: #998b8e; text-align: center; line-height: 1.55; }
+.caps-lock-v89 { margin-top: 6px; color: #f2ba72; font-weight: 700; }
+
+.island-brand img,
+.meeting-mode-logo-v7 img,
+.viewer-logo-v8 img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.island-brand { padding: 9px; background: #fff; }
+.meeting-mode-logo-v7,
+.viewer-logo-v8 { padding: 8px; background: #fff; overflow: hidden; }
+.fatal-sheet > .advent-mark-v89 { margin-inline: auto; }
+
+@media (max-width: 600px) {
+  .auth-gate-v84 { align-items: end; padding: 12px; }
+  .auth-card-v84 { padding: 25px 20px calc(24px + env(safe-area-inset-bottom)); border-radius: 28px 10px 28px 28px; }
+  .auth-brand-v84 > span.advent-mark-v89 { width: 56px; height: 56px; }
+  .auth-brand-v84 strong { font-size: 25px; }
+  .auth-brand-v84 p { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #loginFormV84 > button[type="submit"] { transition: none; }
+}

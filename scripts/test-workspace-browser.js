@@ -8,7 +8,7 @@ const {createWorkspaceRuntime}=require(root+'/scripts/fixtures/workspace-runtime
 (async()=>{
  const fixture=createWorkspaceRuntime();
  const failures=[],calls=[];let failTaskOnce=false;
- let proxy;
+ let proxy,publicProxy;
  const server=http.createServer(async(req,res)=>{
    if(req.method==='POST') {
      let raw='';for await(const chunk of req)raw+=chunk;req.body=JSON.parse(raw);
@@ -20,12 +20,25 @@ const {createWorkspaceRuntime}=require(root+'/scripts/fixtures/workspace-runtime
      }
      res.status=code=>{res.statusCode=code;return res;};res.json=data=>res.end(JSON.stringify(data));await proxy(req,res);return;
    }
-   res.setHeader('content-type','text/html');res.end(fs.readFileSync(root+(req.url==='/public'?'/viewer/index.html':'/admin/index.html')));
+   const parsed=new URL(req.url,'http://local.test');
+   if(parsed.pathname==='/api/public'){
+     req.query=Object.fromEntries(parsed.searchParams);res.status=code=>{res.statusCode=code;return res;};res.json=data=>res.end(JSON.stringify(data));await publicProxy(req,res);return;
+   }
+   const relative=parsed.pathname==='/public'?'/viewer/index.html':parsed.pathname==='/'?'/admin/index.html':parsed.pathname;
+   const file=path.normalize(root+relative);
+   if(!file.startsWith(root)||!fs.existsSync(file)){res.statusCode=404;res.end('Not found');return;}
+   const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.png':'image/png'};
+   res.setHeader('content-type',types[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file));
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const url='http://127.0.0.1:'+server.address().port;
  process.env.APPS_SCRIPT_URL=url+'/fixture-gas';
- proxy=(await import('data:text/javascript;base64,'+Buffer.from(fs.readFileSync(root+'/api/gas.js','utf8')).toString('base64'))).default;
+ const helper=fs.readFileSync(root+'/api/_gas.js','utf8').replace(/export /g,'');
+ const loadApi=async file=>{
+   const source=helper+'\n'+fs.readFileSync(root+file,'utf8').replace(/import \{[^}]+\} from '\.\/_gas\.js';\n/,'');
+   return (await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'))).default;
+ };
+ proxy=await loadApi('/api/gas.js');publicProxy=await loadApi('/api/public.js');
  const browser=await chromium.launch({executablePath:process.env.MG_CHROMIUM_PATH || undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu']});
  const context=await browser.newContext({viewport:{width:1440,height:1000}});
  await context.route('https://**/*',route=>route.abort());
@@ -169,8 +182,8 @@ const {createWorkspaceRuntime}=require(root+'/scripts/fixtures/workspace-runtime
   }
   const publicPage=await context.newPage();
   await publicPage.goto(url+'/public');
-  await publicPage.getByText('Belum ada informasi untuk tahun ini.').first().waitFor();
-  await publicPage.getByLabel('Cari informasi').fill('Tidak ditemukan');
+  await publicPage.getByText('Belum ada informasi di bagian ini.').first().waitFor();
+  await publicPage.getByLabel('Cari').fill('Tidak ditemukan');
   await publicPage.getByText('Tidak ada yang cocok. Coba kata lain.').first().waitFor();
   await publicPage.close();
   console.log('BROWSER_ERRORS',errors);console.log('API_ERRORS',failures);

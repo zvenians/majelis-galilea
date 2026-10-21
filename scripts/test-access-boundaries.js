@@ -39,12 +39,12 @@ let released=false;
 c.LockService={getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>{released=true;}})};
 assert.throws(()=>c.loginMajelisV84('missing','wrong'),/tidak valid/);
 assert.equal(released,true);
-const html=fs.readFileSync(path.join(__dirname,'../viewer/index.html'),'utf8');
-const script=html.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/\n    load\(\);\s*$/, '\n');
-const elements={};const get=id=>elements[id]??={value:'',innerHTML:'',textContent:'',hidden:false};
-const v=vm.createContext({document:{getElementById:get},window:{},URL,Date,AbortSignal});
+const script=fs.readFileSync(path.join(__dirname,'../viewer/app.js'),'utf8');
+const elements={};const get=id=>elements[id]??={value:'',innerHTML:'',textContent:'',hidden:false,className:'',querySelector:()=>({textContent:''})};
+const storage=new Map();
+const v=vm.createContext({document:{getElementById:get,addEventListener:()=>{}},window:{},URL,Date,AbortSignal,localStorage:{getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)}});
 vm.runInContext(script,v);
-v.window.MG_VIEWER_CALLBACK({success:true,year:2026,programs:[{name:'Kunjungan',status:'Proses',start:'2026-10-21'}],summary:{programs:1}});
+v.window.MG_VIEWER.acceptData({success:true,year:2026,programs:[{name:'Kunjungan',status:'Proses',start:'2026-10-21'}],summary:{programs:1}});
 for(const term of ['Sedang dikerjakan','Oktober','kunjungan']){
  get('viewerSearch').value=term;vm.runInContext('renderViewer()',v);assert.match(get('prog').innerHTML,/Kunjungan/);
 }
