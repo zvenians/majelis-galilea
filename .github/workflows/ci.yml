@@ -33,3 +33,6 @@ jobs:
 
       - name: Check simplified meeting and budget workflow
         run: node scripts/test-simple-workflow.js
+
+      - name: Check data access and login protection
+        run: node scripts/test-access-boundaries.js

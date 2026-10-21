@@ -14,6 +14,9 @@ function createWorkspaceRuntime() {
     };}};
     tables[name]=table;
   }
+  const properties = new Map();
+  c.PropertiesService={getScriptProperties:()=>({getProperty:key=>properties.get(key)||null,setProperty:(key,value)=>properties.set(key,value),deleteProperty:key=>properties.delete(key)})};
+  c.LockService={getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>{}})};
   let serial=0;
   c.getSheet_=name=>{if(!tables[name])throw new Error('Missing fixture table '+name);return tables[name];};
   c.getHeaders_=table=>[...table.headers];

@@ -602,6 +602,7 @@ function doPost(e) {
     }
 
     const fn = ALLOWED[action];
+    if (action === 'globalSearchV7') args[3] = body.authToken;
     const result = fn.apply(null, args);
     return jsonResponse_({ result: result });
 
@@ -3881,14 +3882,32 @@ function loginGoogleV85(idToken) {
 }
 function loginMajelisV84(username,pin){
   username=String(username||'').trim().toLowerCase();
-  const u=readSheet_(APP.SHEETS.ACCESS).find(x=>String(x.USERNAME||'').trim().toLowerCase()===username&&String(x.STATUS||'Aktif')==='Aktif');
-  const hashed = hashPinV84_(username,pin);
-  if(!u || (u.PASSWORD_HASH !== hashed && u.PIN_HASH !== hashed)) throw new Error('Username atau Password tidak valid.');
-  if(u.ROLE === 'SUPERADMIN') throw new Error('SUPERADMIN harus menggunakan Google Login.');
-  const token=(Utilities.getUuid()+Utilities.getUuid()).replace(/-/g,''),safe=safeRoleUserV84_(u);
-  authCacheV84_().put(authKeyV84_(token),JSON.stringify(safe),21600);
-  return {success:true,token,user:safe};
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(5000)) throw new Error('Login sedang sibuk. Coba lagi sebentar.');
+  try {
+    const u=readSheet_(APP.SHEETS.ACCESS).find(x=>String(x.USERNAME||'').trim().toLowerCase()===username&&String(x.STATUS||'Aktif')==='Aktif');
+    // Batas percobaan tetap tersimpan meskipun cache dibersihkan.
+    const store = PropertiesService.getScriptProperties();
+    const key = 'MG-LOGIN-LIMIT-' + (u ? u.ID_USER : 'UNKNOWN');
+    const now = Date.now(), windowMs = 15 * 60 * 1000;
+    let attempt = JSON.parse(store.getProperty(key) || 'null');
+    if (!attempt || now >= attempt.until) attempt = {count:0, until:now + windowMs};
+    if (attempt.count >= 5) throw new Error('Terlalu banyak percobaan login. Coba lagi dalam 15 menit.');
+    const hashed = hashPinV84_(username,pin);
+    if(!u || (u.PASSWORD_HASH !== hashed && u.PIN_HASH !== hashed) || u.ROLE === 'SUPERADMIN') {
+      attempt.count++;
+      store.setProperty(key, JSON.stringify(attempt));
+      throw new Error('Username atau Password tidak valid.');
+    }
+    store.deleteProperty(key);
+    const token=(Utilities.getUuid()+Utilities.getUuid()).replace(/-/g,''),safe=safeRoleUserV84_(u);
+    authCacheV84_().put(authKeyV84_(token),JSON.stringify(safe),21600);
+    return {success:true,token,user:safe};
+  } finally {
+    lock.releaseLock();
+  }
 }
+
 function getAuthContextV84(token){
   const raw=token&&authCacheV84_().get(authKeyV84_(token));
   if(!raw)return {authenticated:false};
@@ -3935,6 +3954,21 @@ function getSecureAppDataV84(token,filters){
   const u=requireAuthV84_(token),d=getAppData(filters||{}),pages=new Set(u.permissions.pages||[]);
   const map={notulen:'rapat',agenda:'rapat',kehadiran:'rapat',usulan:'usulan',keputusan:'keputusan',tindakLanjut:'tindak_lanjut',programs:'program',rapbj:'rapbj',keuangan:'keuangan',inventaris:'inventaris',pengurus:'pengurus',jemaat:'jemaat',documents:'dokumen',letters:'surat'};
   Object.keys(map).forEach(k=>{if(!pages.has(map[k]))d[k]=[];});
+  const previousSummary = d.summary || {};
+  const fields = ['notulen','agenda','kehadiran','usulan','keputusan','tindakLanjut','keuangan','rapbj','programs','inventaris','pengurus','jemaat'];
+  fields.forEach(key => { d[key] = d[key] || []; });
+  d.summary = buildSummary_({...d, inventory:d.inventaris, allFinance:d.keuangan});
+  if (pages.has('rapat') && previousSummary.attendance) d.summary.attendance = previousSummary.attendance;
+  // Saldo bendahara tetap mencakup transaksi tahun sebelumnya.
+  if (pages.has('keuangan')) ['totalIncome','totalExpense','totalBalance','funds','rapbjRealized','rapbjRemaining'].forEach(key => {
+    if (previousSummary[key] !== undefined) d.summary[key] = previousSummary[key];
+  });
+  const collections = {notulen:'notulen',agenda:'agenda',kehadiran:'kehadiran',usulan:'usulan',keputusan:'keputusan',tindak_lanjut:'tindakLanjut',program:'programs',rapbj:'rapbj',keuangan:'keuangan',inventaris:'inventaris',pengurus:'pengurus',jemaat:'jemaat',dokumen:'documents',surat:'letters'};
+  d.attachments = (d.attachments || []).filter(file => {
+    const entity = file.ENTITY_TYPE, config = APP.ENTITY[entity], collection = collections[entity];
+    return config && collection && (d[collection] || []).some(row => String(row[config.id]) === String(file.ENTITY_ID));
+  });
+  d.calendar = pages.has('kalender') ? buildCalendarEvents_(d) : [];
   d.authV84=u;return d;
 }
 function getPublicViewerDataV84(filters){
@@ -12916,8 +12950,10 @@ function rejectAgendaProposal(
 function globalSearchV7(
   query,
   year,
-  limit
+  limit,
+  token
 ) {
+  const pages = new Set(requireAuthV84_(token).permissions.pages || []);
   query =
     String(
       query ||
@@ -13328,6 +13364,7 @@ function globalSearchV7(
 
   configs.forEach(
     config => {
+      if (!pages.has(config.page)) return;
       let rows =
         readSheet_(
           config.sheet

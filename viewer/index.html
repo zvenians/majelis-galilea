@@ -122,7 +122,7 @@
     function renderViewer() {
       if (!viewerData) return;
       const search = $('viewerSearch').value.trim().toLocaleLowerCase('id');
-      const filter = rows => (rows || []).filter(row => Object.values(row).some(value => String(value || '').toLocaleLowerCase('id').includes(search)));
+      const filter = rows => (rows || []).filter(row => [...Object.values(row), statusLabel(row.status), ...['date','target','start','end'].map(key => dateLabel(row[key]))].some(value => String(value || '').toLocaleLowerCase('id').includes(search)));
       renderList('meet', filter(viewerData.meetings), row => `<article><strong>${esc(row.title)}</strong><small>${esc([dateLabel(row.date), row.type, row.place].filter(Boolean).join(' · '))}</small></article>`);
       renderList('dec', filter(viewerData.decisions), row => `<article><strong>${esc(row.decision)}</strong><small>${esc([row.number, row.department, statusLabel(row.status), row.target && 'Batas waktu: ' + dateLabel(row.target)].filter(Boolean).join(' · '))}</small></article>`);
       renderList('prog', filter(viewerData.programs), row => `<article><strong>${esc(row.name)}</strong><small>${esc([row.department, statusLabel(row.status), [dateLabel(row.start),row.end!==row.start && dateLabel(row.end)].filter(Boolean).join(' – ')].filter(Boolean).join(' · '))}</small></article>`);
