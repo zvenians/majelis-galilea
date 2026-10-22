@@ -156,3 +156,127 @@
 @media (prefers-reduced-motion: reduce) {
   #loginFormV84 > button[type="submit"] { transition: none; }
 }
+
+/* =========================================================
+   V9.1 — compact page headers and faster perceived rendering
+========================================================= */
+
+/* The legacy editorial rail left a large empty block above every page title.
+   Keep the identity of each section, but make it a practical page header. */
+.workspace .page.active:not(#dashboard) {
+  gap: 14px;
+}
+
+.workspace .scene-rail {
+  min-height: 0;
+  padding: 18px 22px;
+  border: 1px solid var(--mg-line);
+  border-radius: 18px;
+  background: rgba(255, 253, 250, .92);
+  box-shadow: none;
+}
+
+.workspace .scene-rail > div {
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.workspace .scene-rail h2 {
+  max-width: none;
+  margin: 0;
+  font-size: clamp(24px, 2.5vw, 34px);
+  line-height: 1.15;
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+
+.workspace .scene-rail p {
+  max-width: 48ch;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: right;
+  text-wrap: pretty;
+}
+
+.workspace .scene-content {
+  padding: clamp(18px, 2.3vw, 28px);
+  border-radius: 18px;
+  background: rgba(255, 253, 250, .92);
+}
+
+.workspace .scene-content .search-row {
+  margin-bottom: 14px;
+}
+
+.workspace .scene-content .search-row input {
+  height: 48px;
+  padding-inline: 14px;
+  border: 1px solid var(--mg-line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Skip paint/layout work for long lists until they approach the viewport. */
+.workspace :is(.record-row,.decision-card,.task-card,.program-card,.inventory-card,.person-card,.document-card,.audit-row) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 92px;
+}
+
+body[data-workspace-loading="true"] .workspace::after {
+  content: "Menyiapkan data terbaru…";
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  padding: 11px 15px;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--mg-accent);
+  box-shadow: 0 10px 30px rgba(48, 39, 42, .18);
+  font-size: 13px;
+  font-weight: 650;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .workspace .page {
+    padding-inline: 14px;
+  }
+
+  .workspace .scene-rail {
+    padding: 16px;
+    border-radius: 15px;
+  }
+
+  .workspace .scene-rail > div {
+    display: block;
+  }
+
+  .workspace .scene-rail h2 {
+    font-size: 23px;
+  }
+
+  .workspace .scene-rail p {
+    margin-top: 5px;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .workspace .scene-content {
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .workspace .scene-content .record-row,
+  .workspace .scene-content .decision-card,
+  .workspace .scene-content .task-card,
+  .workspace .scene-content .document-card,
+  .workspace .scene-content .audit-row {
+    padding: 15px 0 !important;
+  }
+}

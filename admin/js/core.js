@@ -188,7 +188,21 @@ const state = {
     })()
   },
 
-  accessUsersV84: []
+  accessUsersV84: [],
+
+  dataLoadingV91: false,
+
+  pendingDataCallbacksV91: [],
+
+  renderedPagesV91: new Set(),
+
+  accessUsersLoadedAtV91: 0,
+
+  accessUsersLoadingV91: false,
+
+  auditLoadedAtV91: 0,
+
+  auditLoadingV91: false
 };
 
 
@@ -1245,20 +1259,42 @@ function startBootV601(
   if (!state.authV84.token) {
     hideLoader();
     showAuthGateV84();
+    loadGoogleIdentityV91();
     return;
   }
 
-  setBootLoading(
-    'Menyiapkan ruang kerja',
-    'Mengambil data tahun ' + state.year + '.'
-  );
-  loadDataV601(callback);
+  const cached = readWorkspaceCacheV91(state.year);
+
+  if (cached && (!state.data || Number(state.data.year) !== Number(state.year))) {
+    applyWorkspaceDataV91(cached, true);
+    setBootReady('Siap digunakan', 'Menampilkan data tersimpan sambil memperbarui.');
+  } else if (!state.data) {
+    setBootLoading(
+      'Menyiapkan ruang kerja',
+      'Mengambil data tahun ' + state.year + '.'
+    );
+  }
+
+  loadDataV601(callback, { background: Boolean(cached || state.data) });
 }
 
 
 function loadDataV601(
-  callback
+  callback,
+  options = {}
 ) {
+  if (typeof callback === 'function') {
+    state.pendingDataCallbacksV91.push(callback);
+  }
+
+  if (state.dataLoadingV91) {
+    return;
+  }
+
+  state.dataLoadingV91 = true;
+  document.body.dataset.workspaceLoading = 'true';
+  const requestedYear = Number(state.year);
+
   clearTimeout(
     state.timeout
   );
@@ -1266,12 +1302,14 @@ function loadDataV601(
   state.timeout =
     setTimeout(
       () => {
-        setBootError(
-          'Koneksi membutuhkan waktu lebih lama',
-          'Data belum selesai dimuat. Periksa koneksi lalu tekan Coba lagi.'
-        );
+        if (!state.data) {
+          setBootLoading(
+            'Masih menyinkronkan data',
+            'Anda dapat tetap di halaman ini. Proses akan dilanjutkan otomatis.'
+          );
+        }
       },
-      30000
+      25000
     );
 
   google.script.run
@@ -1291,58 +1329,15 @@ function loadDataV601(
             );
           }
 
-          state.data =
-            data;
-
-          if(data.authV84){
-            state.authV84.user=data.authV84;
-            localStorage.setItem('mg_auth_user_v84', JSON.stringify(data.authV84));
-            hideAuthGateV84();
-            applyRoleUiV84();
-          } else {
-            localStorage.removeItem('mg_auth_user_v84');
-          }
-
-          state.year =
-            Number(
-              data.year
-            );
-
-          if (
-            state.calendarDate
-              .getFullYear() !==
-            state.year
-          ) {
-            state.calendarDate =
-              new Date(
-                state.year,
-                0,
-                1
-              );
-          }
-
-          applyBrandLogo(
-            data.app.logoUrl
-          );
-
-          renderAll();
-
-          openPage(
-            state.page,
-            false
-          );
+          applyWorkspaceDataV91(data, false);
+          writeWorkspaceCacheV91(requestedYear, data);
 
           setBootReady(
             'Terhubung',
             'Data sudah siap.'
           );
 
-          if (
-            typeof callback ===
-            'function'
-          ) {
-            callback();
-          }
+          finishDataLoadV91(true);
         }
 
         catch (error) {
@@ -1350,11 +1345,12 @@ function loadDataV601(
             error
           );
 
-          setBootError(
-            'Data gagal dimuat',
-            error.message ||
-            String(error)
-          );
+          if (state.data) {
+            setBootReady('Data tersimpan', 'Pembaruan belum berhasil. Data yang sudah ada tetap dapat digunakan.');
+          } else {
+            setBootError('Data gagal dimuat', error.message || String(error));
+          }
+          finishDataLoadV91(false);
         }
       }
     )
@@ -1366,11 +1362,17 @@ function loadDataV601(
         );
 
         if(isAuthFailureV90(error)){
+          finishDataLoadV91(false);
           handleExpiredSessionV90();
           return;
         }
         const message=errorMessage(error);
-        setBootError('Koneksi data terputus', message || 'Coba lagi beberapa saat.');
+        if (state.data || options.background) {
+          setBootReady('Data tersimpan', 'Pembaruan akan dicoba lagi saat Anda memuat ulang.');
+        } else {
+          setBootError('Koneksi data terputus', message || 'Coba lagi beberapa saat.');
+        }
+        finishDataLoadV91(false);
       }
     )
 
@@ -1381,6 +1383,75 @@ function loadDataV601(
           state.year
       }
     );
+}
+
+
+function workspaceCacheKeyV91(year) {
+  const user = state.authV84.user || {};
+  const identity = user.id || user.username || user.email || 'pengurus';
+  return 'mg_workspace_v91:' + encodeURIComponent(identity) + ':' + Number(year);
+}
+
+
+function readWorkspaceCacheV91(year) {
+  try {
+    const raw = sessionStorage.getItem(workspaceCacheKeyV91(year));
+    if (!raw) return null;
+    const cached = JSON.parse(raw);
+    if (!cached || !cached.data || Date.now() - Number(cached.savedAt || 0) > 10 * 60 * 1000) {
+      sessionStorage.removeItem(workspaceCacheKeyV91(year));
+      return null;
+    }
+    return cached.data;
+  } catch (_) {
+    return null;
+  }
+}
+
+
+function writeWorkspaceCacheV91(year, data) {
+  try {
+    sessionStorage.setItem(
+      workspaceCacheKeyV91(year),
+      JSON.stringify({ savedAt: Date.now(), data })
+    );
+  } catch (_) {
+    /* Storage can be unavailable or full; fresh data still remains in memory. */
+  }
+}
+
+
+function applyWorkspaceDataV91(data, fromCache) {
+  state.data = data;
+
+  if (data.authV84) {
+    state.authV84.user = data.authV84;
+    localStorage.setItem('mg_auth_user_v84', JSON.stringify(data.authV84));
+    hideAuthGateV84();
+  } else if (!fromCache) {
+    localStorage.removeItem('mg_auth_user_v84');
+  }
+
+  state.year = Number(data.year);
+
+  if (state.calendarDate.getFullYear() !== state.year) {
+    state.calendarDate = new Date(state.year, 0, 1);
+  }
+
+  applyBrandLogo(data.app && data.app.logoUrl);
+  renderAll();
+  openPage(state.page, false);
+}
+
+
+function finishDataLoadV91(success) {
+  state.dataLoadingV91 = false;
+  delete document.body.dataset.workspaceLoading;
+  const callbacks = state.pendingDataCallbacksV91.splice(0);
+  if (!success) return;
+  callbacks.forEach(callback => {
+    try { callback(); } catch (error) { console.error(error); }
+  });
 }
 
 
@@ -1589,24 +1660,9 @@ function validateCrudAlignmentV83() {
 function renderAll() {
   validateCrudAlignmentV83();
   applyRoleUiV84();
-
+  state.renderedPagesV91 = new Set();
   renderYears();
-  renderDashboard();
-  renderNotulen();
-  renderProposals();
-  renderDecisions();
-  renderTasks();
-  renderPrograms();
-  renderRapbj();
-  renderFinance();
-  renderInventory();
-  renderOfficers();
-  hydrateMemberFamilyFiltersV82();
-  renderMembers();
-  renderBirthdayCenterV81();
-  renderDocuments();
-  renderSecretaryLettersV81();
-  renderCalendar();
+  renderPageV91(state.page || 'dashboard');
 
   setText(
     'archiveYear',
@@ -1614,8 +1670,42 @@ function renderAll() {
   );
 
   refreshNotificationBadgeV8();
-  renderSimpleDashboardV87();
   applyOfficerControlsV86();
+}
+
+
+function renderPageV91(page) {
+  if (!state.data || state.renderedPagesV91.has(page)) return;
+  state.renderedPagesV91.add(page);
+
+  const renderers = {
+    dashboard: () => renderDashboard(),
+    kalender: () => renderCalendar(),
+    rapat: () => renderNotulen(),
+    usulan: () => renderProposals(),
+    keputusan: () => renderDecisions(),
+    tindak_lanjut: () => renderTasks(),
+    program: () => renderPrograms(),
+    rapbj: () => renderRapbj(),
+    keuangan: () => renderFinance(),
+    inventaris: () => renderInventory(),
+    pengurus: () => renderOfficers(),
+    jemaat: () => {
+      hydrateMemberFamilyFiltersV82();
+      renderMembers();
+      renderBirthdayCenterV81();
+    },
+    dokumen: () => renderDocuments(),
+    surat: () => renderSecretaryLettersV81()
+  };
+
+  try {
+    if (renderers[page]) renderers[page]();
+  } catch (error) {
+    state.renderedPagesV91.delete(page);
+    console.error('Page render failed:', page, error);
+    throw error;
+  }
 }
 
 
@@ -5104,17 +5194,40 @@ function setWorkspaceLockedV89(locked){
 function setLoginBusyV89(busy){const button=document.getElementById('loginSubmitV89');if(button){button.disabled=busy;button.setAttribute('aria-busy',String(busy));button.querySelector('span').textContent=busy?'Memeriksa…':'Masuk';}const panel=document.getElementById('googleLoginPanelV90');if(panel){panel.classList.toggle('is-busy',busy);panel.setAttribute('aria-busy',String(busy));}}
 function setGoogleLoginStatusV90(text='',kind=''){const status=document.getElementById('googleLoginStatusV90');if(!status)return;status.textContent=text;status.classList.toggle('error',kind==='error');}
 function isAuthFailureV90(error){const raw=String(error?.message || error || '');return /AUTH_REQUIRED|AUTH_EXPIRED|session.*expired|sesi.*habis/i.test(raw);}
-function clearStoredAuthV90(){state.authV84={token:'',user:null};localStorage.removeItem('mg_auth_token_v84');localStorage.removeItem('mg_auth_user_v84');}
+function clearStoredAuthV90(){state.authV84={token:'',user:null};localStorage.removeItem('mg_auth_token_v84');localStorage.removeItem('mg_auth_user_v84');try{Object.keys(sessionStorage).filter(key=>key.startsWith('mg_workspace_v91:')).forEach(key=>sessionStorage.removeItem(key));}catch(_){} }
 function handleExpiredSessionV90(){clearStoredAuthV90();clearTimeout(state.timeout);hideLoader();showAuthGateV84('Sesi Anda telah berakhir. Silakan masuk kembali.');setGoogleLoginStatusV90('Pilih akun Google atau gunakan akun pengurus.');}
-function showAuthGateV84(msg=''){const g=document.getElementById('authGateV84');if(g)g.classList.add('show');setWorkspaceLockedV89(true);setLoginBusyV89(false);setText('loginErrorV84',msg)}
+function showAuthGateV84(msg=''){const g=document.getElementById('authGateV84');if(g)g.classList.add('show');setWorkspaceLockedV89(true);setLoginBusyV89(false);setText('loginErrorV84',msg);loadGoogleIdentityV91()}
 function hideAuthGateV84(){const g=document.getElementById('authGateV84');if(g)g.classList.remove('show');setWorkspaceLockedV89(false);setLoginBusyV89(false);setText('loginErrorV84','');setGoogleLoginStatusV90('')}
+
+let googleIdentityPromiseV91 = null;
+
+function loadGoogleIdentityV91(){
+  if(window.google?.accounts?.id){initGoogleLoginV90();return Promise.resolve();}
+  if(googleIdentityPromiseV91)return googleIdentityPromiseV91;
+  const target=document.getElementById('googleSignInButtonV90');
+  if(target)target.innerHTML='<span class="google-button-skeleton-v90">Menyiapkan Google…</span>';
+  setGoogleLoginStatusV90('Menyiapkan pilihan akun…');
+  googleIdentityPromiseV91=new Promise(resolve=>{
+    const script=document.createElement('script');
+    script.id='googleIdentityScriptV91';
+    script.src='https://accounts.google.com/gsi/client';
+    script.async=true;
+    script.onload=()=>{initGoogleLoginV90();resolve();};
+    script.onerror=()=>{
+      googleIdentityPromiseV91=null;
+      if(target)target.innerHTML='<button class="google-button-skeleton-v90" type="button" onclick="loadGoogleIdentityV91()">Coba muat Google lagi</button>';
+      setGoogleLoginStatusV90('Google belum dapat dimuat. Akun pengurus tetap bisa digunakan.','error');
+      resolve();
+    };
+    document.head.appendChild(script);
+  });
+  return googleIdentityPromiseV91;
+}
 
 function initGoogleLoginV90(){
   const target=document.getElementById('googleSignInButtonV90');
   if(!target)return;
   if(!window.google?.accounts?.id){
-    target.innerHTML='<span class="google-button-skeleton-v90">Google belum tersedia</span>';
-    setGoogleLoginStatusV90('Muat ulang halaman jika tombol belum muncul.','error');
     return;
   }
   const width=Math.min(400,Math.max(220,Math.floor(target.getBoundingClientRect().width || 400)));
@@ -5124,7 +5237,7 @@ function initGoogleLoginV90(){
   setGoogleLoginStatusV90('Gunakan akun Google yang terdaftar sebagai administrator.');
 }
 
-document.addEventListener('DOMContentLoaded',initGoogleLoginV90);
+document.addEventListener('DOMContentLoaded',()=>{if(!state.authV84.token)loadGoogleIdentityV91();});
 
 function handleGoogleLogin(response) {
   if(!response || !response.credential){setGoogleLoginStatusV90('Respons Google tidak lengkap. Silakan coba lagi.','error');return;}
@@ -5150,7 +5263,7 @@ function logoutMajelisV84(){const t=state.authV84.token;clearStoredAuthV90();goo
 function hasPageAccessV84(p){const u=state.authV84.user;return !!(u&&u.permissions&&Array.isArray(u.permissions.pages)&&u.permissions.pages.includes(p))}
 function canWriteEntityV84(e){const u=state.authV84.user;const _r=u&&(u.role||u.ROLE);const l=u&&u.permissions?u.permissions.write:[];const result=Array.isArray(l)&&(l.includes('*')||l.includes(e));if(!result)console.warn('[MG-AUTH] canWriteEntityV84 DENIED entity='+e+' user='+JSON.stringify({role:_r,hasPerms:!!(u&&u.permissions),write:l}));return result;}
 function applyRoleUiV84(){const u=state.authV84.user;if(!u)return;const _r=u.role||u.ROLE;document.querySelectorAll('[data-page]').forEach(el=>{el.hidden=!hasPageAccessV84(el.dataset.page)});document.querySelectorAll('.role-admin-only-v84').forEach(el=>{el.hidden=(_r!=='ADMIN'&&_r!=='SUPERADMIN')});applyOfficerControlsV86()}
-function loadAccessUsersV84(){const _u=state.authV84.user,_r=_u&&(_u.role||_u.ROLE);if(!_u||(_r!=='ADMIN'&&_r!=='SUPERADMIN'))return;google.script.run.withSuccessHandler(r=>{state.accessUsersV84=r;renderAccessUsersV84()}).withFailureHandler(e=>notifyErrorV88(e)).listAccessUsersV84(state.authV84.token)}
+function loadAccessUsersV84(force=false){const _u=state.authV84.user,_r=_u&&(_u.role||_u.ROLE);if(!_u||(_r!=='ADMIN'&&_r!=='SUPERADMIN'))return;if(!force&&state.accessUsersLoadedAtV91&&Date.now()-state.accessUsersLoadedAtV91<60000){renderAccessUsersV84();return;}if(state.accessUsersLoadingV91)return;state.accessUsersLoadingV91=true;google.script.run.withSuccessHandler(r=>{state.accessUsersLoadingV91=false;state.accessUsersLoadedAtV91=Date.now();state.accessUsersV84=r;renderAccessUsersV84()}).withFailureHandler(e=>{state.accessUsersLoadingV91=false;notifyErrorV88(e)}).listAccessUsersV84(state.authV84.token)}
 function renderAccessUsersV84() {
   const target=document.getElementById('accessUserListV84');if(!target)return;
   target.innerHTML=(state.accessUsersV84 || []).map(row=>`<article><div><small>${esc(simpleRoleLabelV87(row.role))}${row.canApprove?' · Boleh menyetujui rapat':''}</small><strong>${esc(row.name || row.username)}</strong><span>${esc(row.position || '')} · @${esc(row.username)} · ${esc(row.status)}</span></div><button onclick="openAccessUserFormV84('${escJs(row.id)}')">Ubah</button></article>`).join('') || emptyState('Belum ada akun pengurus.');
@@ -5169,10 +5282,10 @@ function saveAccessUserFormV84(id) {
   const form=document.getElementById('accessFormV87');if(!form.reportValidity())return;
   const payload={id,name:document.getElementById('accessNameV84').value,username:document.getElementById('accessUsernameV84').value,role:document.getElementById('accessRoleV84').value,status:document.getElementById('accessStatusV84').value,pin:document.getElementById('accessPinV84').value,position:document.getElementById('accessPositionV87').value,canApprove:document.getElementById('accessApproveV87').checked};
   const button=form.querySelector('[type="submit"]');button.disabled=true;
-  google.script.run.withSuccessHandler(()=>{closeActionModal();toast('Akun pengurus tersimpan.');loadAccessUsersV84();}).withFailureHandler(error=>{button.disabled=false;notifyErrorV88(error);}).saveAccessUserV84(state.authV84.token,payload);
+  google.script.run.withSuccessHandler(()=>{closeActionModal();toast('Akun pengurus tersimpan.');loadAccessUsersV84(true);}).withFailureHandler(error=>{button.disabled=false;notifyErrorV88(error);}).saveAccessUserV84(state.authV84.token,payload);
 }
 
-function deleteAccessUserFormV84(id){if(!confirm('Hapus akun ini?'))return;google.script.run.withSuccessHandler(()=>{closeActionModal();loadAccessUsersV84()}).withFailureHandler(e=>notifyErrorV88(e)).deleteAccessUserV84(state.authV84.token,id)}
+function deleteAccessUserFormV84(id){if(!confirm('Hapus akun ini?'))return;google.script.run.withSuccessHandler(()=>{closeActionModal();loadAccessUsersV84(true)}).withFailureHandler(e=>notifyErrorV88(e)).deleteAccessUserV84(state.authV84.token,id)}
 
 const PAGE_CREATE_V83 = {
   rapat: {entity: 'notulen', label: 'Tambah Rapat'},
@@ -5264,6 +5377,8 @@ function openPage(
         );
       }
     );
+
+  renderPageV91(page);
 
   const titles = {
     dashboard:
@@ -7999,7 +8114,14 @@ function createArchive() {
    AUDIT
 ========================================================= */
 
-function loadAuditLog() {
+function loadAuditLog(force = false) {
+  if (!force && state.auditLoadedAtV91 && Date.now() - state.auditLoadedAtV91 < 60000) {
+    return;
+  }
+
+  if (state.auditLoadingV91) return;
+  state.auditLoadingV91 = true;
+
   document.getElementById(
     'auditList'
   ).innerHTML = `
@@ -8012,6 +8134,8 @@ function loadAuditLog() {
 
     .withSuccessHandler(
       rows => {
+        state.auditLoadingV91 = false;
+        state.auditLoadedAtV91 = Date.now();
         document.getElementById(
           'auditList'
         ).innerHTML =
@@ -8053,6 +8177,7 @@ function loadAuditLog() {
 
     .withFailureHandler(
       error => {
+        state.auditLoadingV91 = false;
         document.getElementById(
           'auditList'
         ).innerHTML =
