@@ -192,6 +192,10 @@ const state = {
 
   dataLoadingV91: false,
 
+  dataLoadingYearV91: null,
+
+  queuedYearV91: null,
+
   pendingDataCallbacksV91: [],
 
   renderedPagesV91: new Set(),
@@ -1288,12 +1292,16 @@ function loadDataV601(
   }
 
   if (state.dataLoadingV91) {
+    if (Number(state.year) !== Number(state.dataLoadingYearV91)) {
+      state.queuedYearV91 = Number(state.year);
+    }
     return;
   }
 
   state.dataLoadingV91 = true;
   document.body.dataset.workspaceLoading = 'true';
   const requestedYear = Number(state.year);
+  state.dataLoadingYearV91 = requestedYear;
 
   clearTimeout(
     state.timeout
@@ -1328,6 +1336,8 @@ function loadDataV601(
               'Data aplikasi kosong.'
             );
           }
+
+          if (restartQueuedDataLoadV91(requestedYear)) return;
 
           applyWorkspaceDataV91(data, false);
           writeWorkspaceCacheV91(requestedYear, data);
@@ -1366,6 +1376,7 @@ function loadDataV601(
           handleExpiredSessionV90();
           return;
         }
+        if (restartQueuedDataLoadV91(requestedYear)) return;
         const message=errorMessage(error);
         if (state.data || options.background) {
           setBootReady('Data tersimpan', 'Pembaruan akan dicoba lagi saat Anda memuat ulang.');
@@ -1446,12 +1457,31 @@ function applyWorkspaceDataV91(data, fromCache) {
 
 function finishDataLoadV91(success) {
   state.dataLoadingV91 = false;
+  state.dataLoadingYearV91 = null;
   delete document.body.dataset.workspaceLoading;
   const callbacks = state.pendingDataCallbacksV91.splice(0);
   if (!success) return;
   callbacks.forEach(callback => {
     try { callback(); } catch (error) { console.error(error); }
   });
+}
+
+
+function restartQueuedDataLoadV91(requestedYear) {
+  const queuedYear = Number(state.queuedYearV91);
+  if (!queuedYear || queuedYear === Number(requestedYear)) {
+    state.queuedYearV91 = null;
+    return false;
+  }
+
+  clearTimeout(state.timeout);
+  state.dataLoadingV91 = false;
+  state.dataLoadingYearV91 = null;
+  state.queuedYearV91 = null;
+  delete document.body.dataset.workspaceLoading;
+  state.year = queuedYear;
+  startBootV601();
+  return true;
 }
 
 
