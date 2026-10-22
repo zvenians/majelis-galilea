@@ -2,7 +2,10 @@ window.__MG840_APP_SCRIPT_LOADED__ =
   true;
 
 window.__MG_APP_VERSION__ =
-  '8.4.0-vercel';
+  '8.4.1-vercel';
+
+const GOOGLE_CLIENT_ID_V90 =
+  '152249823054-gtalq11ff14re7cpnas3dktaf7u4t432.apps.googleusercontent.com';
 
 /* =========================================================
    GOOGLE.SCRIPT.RUN COMPATIBILITY SHIM
@@ -54,6 +57,9 @@ window.google.script = window.google.script || {};
           })
           .then(data => {
             if (data && data.__error__) {
+              if (isAuthFailureV90(data.__error__)) {
+                handleExpiredSessionV90();
+              }
               _failure({ message: data.__error__ });
             } else if (data && data.hasOwnProperty('result')) {
               _success(data.result);
@@ -1359,12 +1365,11 @@ function loadDataV601(
           state.timeout
         );
 
-        const message=errorMessage(error);
-        if(message.includes('AUTH_REQUIRED')){
-          hideLoader();
-          showAuthGateV84('Silakan masuk untuk melanjutkan.');
+        if(isAuthFailureV90(error)){
+          handleExpiredSessionV90();
           return;
         }
+        const message=errorMessage(error);
         setBootError('Koneksi data terputus', message || 'Coba lagi beberapa saat.');
       }
     )
@@ -5096,15 +5101,39 @@ function setWorkspaceLockedV89(locked){
     if(locked)element.setAttribute('aria-hidden','true');else element.removeAttribute('aria-hidden');
   });
 }
-function setLoginBusyV89(busy){const button=document.getElementById('loginSubmitV89');if(!button)return;button.disabled=busy;button.setAttribute('aria-busy',String(busy));button.querySelector('span').textContent=busy?'Memeriksa…':'Masuk';}
+function setLoginBusyV89(busy){const button=document.getElementById('loginSubmitV89');if(button){button.disabled=busy;button.setAttribute('aria-busy',String(busy));button.querySelector('span').textContent=busy?'Memeriksa…':'Masuk';}const panel=document.getElementById('googleLoginPanelV90');if(panel){panel.classList.toggle('is-busy',busy);panel.setAttribute('aria-busy',String(busy));}}
+function setGoogleLoginStatusV90(text='',kind=''){const status=document.getElementById('googleLoginStatusV90');if(!status)return;status.textContent=text;status.classList.toggle('error',kind==='error');}
+function isAuthFailureV90(error){const raw=String(error?.message || error || '');return /AUTH_REQUIRED|AUTH_EXPIRED|session.*expired|sesi.*habis/i.test(raw);}
+function clearStoredAuthV90(){state.authV84={token:'',user:null};localStorage.removeItem('mg_auth_token_v84');localStorage.removeItem('mg_auth_user_v84');}
+function handleExpiredSessionV90(){clearStoredAuthV90();clearTimeout(state.timeout);hideLoader();showAuthGateV84('Sesi Anda telah berakhir. Silakan masuk kembali.');setGoogleLoginStatusV90('Pilih akun Google atau gunakan akun pengurus.');}
 function showAuthGateV84(msg=''){const g=document.getElementById('authGateV84');if(g)g.classList.add('show');setWorkspaceLockedV89(true);setLoginBusyV89(false);setText('loginErrorV84',msg)}
-function hideAuthGateV84(){const g=document.getElementById('authGateV84');if(g)g.classList.remove('show');setWorkspaceLockedV89(false);setLoginBusyV89(false);setText('loginErrorV84','')}
+function hideAuthGateV84(){const g=document.getElementById('authGateV84');if(g)g.classList.remove('show');setWorkspaceLockedV89(false);setLoginBusyV89(false);setText('loginErrorV84','');setGoogleLoginStatusV90('')}
+
+function initGoogleLoginV90(){
+  const target=document.getElementById('googleSignInButtonV90');
+  if(!target)return;
+  if(!window.google?.accounts?.id){
+    target.innerHTML='<span class="google-button-skeleton-v90">Google belum tersedia</span>';
+    setGoogleLoginStatusV90('Muat ulang halaman jika tombol belum muncul.','error');
+    return;
+  }
+  const width=Math.min(400,Math.max(220,Math.floor(target.getBoundingClientRect().width || 400)));
+  target.replaceChildren();
+  window.google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID_V90,callback:handleGoogleLogin,ux_mode:'popup',auto_select:false,cancel_on_tap_outside:true});
+  window.google.accounts.id.renderButton(target,{type:'standard',theme:'filled_black',size:'large',shape:'pill',text:'continue_with',logo_alignment:'left',width});
+  setGoogleLoginStatusV90('Gunakan akun Google yang terdaftar sebagai administrator.');
+}
+
+document.addEventListener('DOMContentLoaded',initGoogleLoginV90);
 
 function handleGoogleLogin(response) {
+  if(!response || !response.credential){setGoogleLoginStatusV90('Respons Google tidak lengkap. Silakan coba lagi.','error');return;}
   setLoginBusyV89(true);
-  setText('loginErrorV84', 'Memeriksa akun Google...');
+  setText('loginErrorV84', '');
+  setGoogleLoginStatusV90('Memeriksa akun Google…');
   google.script.run
     .withSuccessHandler(r => {
+      if(!r || !r.token || !r.user)throw new Error('Sesi login tidak berhasil dibuat.');
       state.authV84 = { token: r.token, user: r.user };
       localStorage.setItem('mg_auth_token_v84', r.token);
       localStorage.setItem('mg_auth_user_v84', JSON.stringify(r.user));
@@ -5112,12 +5141,12 @@ function handleGoogleLogin(response) {
       hideAuthGateV84();
       startBootV601();
     })
-    .withFailureHandler(x => {setLoginBusyV89(false);setText('loginErrorV84', errorMessage(x));})
+    .withFailureHandler(x => {setLoginBusyV89(false);const message=errorMessage(x);setGoogleLoginStatusV90(message,'error');setText('loginErrorV84', message);})
     .loginGoogleV85(response.credential);
 }
 
 function loginMajelisV84(e){e.preventDefault();const u=document.getElementById('loginUsernameV84').value,p=document.getElementById('loginPinV84').value;setLoginBusyV89(true);setText('loginErrorV84','Memeriksa akses…');google.script.run.withSuccessHandler(r=>{state.authV84={token:r.token,user:r.user};localStorage.setItem('mg_auth_token_v84',r.token);localStorage.setItem('mg_auth_user_v84',JSON.stringify(r.user));document.getElementById('loginPinV84').value='';hideAuthGateV84();startBootV601()}).withFailureHandler(x=>{setLoginBusyV89(false);setText('loginErrorV84',errorMessage(x))}).loginMajelisV84(u,p)}
-function logoutMajelisV84(){const t=state.authV84.token;state.authV84={token:'',user:null};localStorage.removeItem('mg_auth_token_v84');localStorage.removeItem('mg_auth_user_v84');google.script.run.logoutMajelisV84(t);showAuthGateV84('Anda telah keluar.')}
+function logoutMajelisV84(){const t=state.authV84.token;clearStoredAuthV90();google.script.run.logoutMajelisV84(t);showAuthGateV84('Anda telah keluar.');setGoogleLoginStatusV90('Pilih akun Google atau gunakan akun pengurus.')}
 function hasPageAccessV84(p){const u=state.authV84.user;return !!(u&&u.permissions&&Array.isArray(u.permissions.pages)&&u.permissions.pages.includes(p))}
 function canWriteEntityV84(e){const u=state.authV84.user;const _r=u&&(u.role||u.ROLE);const l=u&&u.permissions?u.permissions.write:[];const result=Array.isArray(l)&&(l.includes('*')||l.includes(e));if(!result)console.warn('[MG-AUTH] canWriteEntityV84 DENIED entity='+e+' user='+JSON.stringify({role:_r,hasPerms:!!(u&&u.permissions),write:l}));return result;}
 function applyRoleUiV84(){const u=state.authV84.user;if(!u)return;const _r=u.role||u.ROLE;document.querySelectorAll('[data-page]').forEach(el=>{el.hidden=!hasPageAccessV84(el.dataset.page)});document.querySelectorAll('.role-admin-only-v84').forEach(el=>{el.hidden=(_r!=='ADMIN'&&_r!=='SUPERADMIN')});applyOfficerControlsV86()}

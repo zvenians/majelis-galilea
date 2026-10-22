@@ -19,5 +19,9 @@ assert.doesNotMatch(read('viewer/index.html'),/>\s*MG\s*</,'public viewer must n
 assert.doesNotMatch(read('admin/index.html'),/>\s*MG\s*</,'admin must not contain the old monogram');
 assert.match(read('viewer/index.html'),/\/assets\/adventist-logo\.png/);
 assert.match(read('admin/index.html'),/\/assets\/adventist-logo\.png/);
+assert.match(read('admin/index.html'),/id="googleSignInButtonV90"/);
+assert.doesNotMatch(read('admin/index.html'),/accounts\.google\.com\/gsi\/client" async/,'Google Identity must load in deterministic defer order');
+assert.match(read('admin/js/core.js'),/function isAuthFailureV90/);
+assert.match(read('admin/js/core.js'),/handleExpiredSessionV90\(\)/);
 assert.match(read('api/public.js'),/stale-while-revalidate=86400/);
-console.log('Frontend structure passed: modular assets exist, scripts parse, Adventist branding is present, and public caching is configured.');
+console.log('Frontend structure passed: modular assets exist, scripts parse, Adventist branding is present, auth recovery is wired, and public caching is configured.');

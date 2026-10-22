@@ -51,7 +51,57 @@
 .auth-brand-v84 small { color: #d7c4c9; letter-spacing: .13em; }
 .auth-brand-v84 strong { margin-top: 6px; font-size: clamp(24px, 5vw, 31px); letter-spacing: -.035em; }
 .auth-brand-v84 p { margin: 9px 0 0; max-width: 35ch; color: #bbaeb1; line-height: 1.55; }
-.google-login-v89 { margin: 24px 0 18px; min-height: 44px; display: flex; justify-content: center; }
+.google-login-v89 {
+  margin: 24px 0 18px;
+  padding: 15px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .045);
+  transition: border-color .18s ease, background .18s ease, opacity .18s ease;
+}
+.google-login-v89:hover { border-color: rgba(255, 255, 255, .17); background: rgba(255, 255, 255, .06); }
+.google-login-v89.is-busy { opacity: .7; pointer-events: none; }
+.google-login-heading-v90 { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.google-login-heading-v90 strong,
+.google-login-heading-v90 small { display: block; }
+.google-login-heading-v90 strong { color: #f7f0f2; font-size: 14px; }
+.google-login-heading-v90 small { margin-top: 3px; color: #9f9295; font-size: 11px; }
+.google-login-heading-v90 > span {
+  padding: 5px 9px;
+  border: 1px solid rgba(216, 171, 105, .2);
+  border-radius: 999px;
+  color: #e3bd85;
+  background: rgba(216, 171, 105, .08);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.google-signin-slot-v90 {
+  width: 100%;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+}
+.google-signin-slot-v90 > div,
+.google-signin-slot-v90 iframe { max-width: 100% !important; }
+.google-button-skeleton-v90 {
+  width: 100%;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .11);
+  border-radius: 999px;
+  color: #b9adb0;
+  background: rgba(12, 9, 10, .35);
+  font-size: 13px;
+}
+.google-login-status-v90 { min-height: 16px; margin: -3px 0 0; color: #c8babe; text-align: center; font-size: 11px; }
+.google-login-status-v90.error { color: #ffc2cb; }
 .auth-divider-v89 { display: flex; align-items: center; gap: 12px; margin: 8px 0 18px; color: #94868a; font-size: 12px; }
 .auth-divider-v89::before, .auth-divider-v89::after { content: ""; height: 1px; flex: 1; background: rgba(255,255,255,.09); }
 
@@ -100,6 +150,7 @@
   .auth-brand-v84 > span.advent-mark-v89 { width: 56px; height: 56px; }
   .auth-brand-v84 strong { font-size: 25px; }
   .auth-brand-v84 p { font-size: 13px; }
+  .google-login-v89 { padding: 13px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

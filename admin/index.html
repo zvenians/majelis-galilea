@@ -22,7 +22,7 @@
 
 <script src="/admin/js/shell.js" defer></script>
 
-<script src="https://accounts.google.com/gsi/client" async defer></script></head>
+</head>
 
 
 <body class="auth-locked-v89"><div id="authGateV84" class="auth-gate-v84" role="dialog" aria-modal="true" aria-labelledby="authTitleV89">
@@ -36,22 +36,18 @@
       </div>
     </div>
 
-    <div class="google-login-v89">
-      <div id="g_id_onload"
-           data-client_id="152249823054-gtalq11ff14re7cpnas3dktaf7u4t432.apps.googleusercontent.com"
-           data-context="signin"
-           data-ux_mode="popup"
-           data-callback="handleGoogleLogin"
-           data-auto_prompt="false">
+    <div id="googleLoginPanelV90" class="google-login-v89" aria-labelledby="googleLoginTitleV90">
+      <div class="google-login-heading-v90">
+        <div>
+          <strong id="googleLoginTitleV90">Masuk dengan Google</strong>
+          <small>Khusus administrator utama</small>
+        </div>
+        <span>Aman</span>
       </div>
-      <div class="g_id_signin"
-           data-type="standard"
-           data-shape="rectangular"
-           data-theme="outline"
-           data-text="continue_with"
-           data-size="large"
-           data-logo_alignment="left">
+      <div id="googleSignInButtonV90" class="google-signin-slot-v90" aria-live="polite">
+        <span class="google-button-skeleton-v90">Menyiapkan Google…</span>
       </div>
+      <p id="googleLoginStatusV90" class="google-login-status-v90" role="status" aria-live="polite"></p>
     </div>
 
     <div class="auth-divider-v89"><span>atau masuk dengan akun pengurus</span></div>
@@ -2936,6 +2932,7 @@
 
 
 <script src="/admin/js/enhancements.js" defer></script>
+<script src="https://accounts.google.com/gsi/client" defer></script>
 </body>
 </html>
 
