@@ -1,29 +1,20 @@
-﻿# Contributing Guidelines
+# Panduan kontribusi
 
-Thank you for your interest in contributing to **Majelis Galilea**.
+## Standar perubahan
+- Pertahankan batas akses berdasarkan peran dan pemisahan data pengurus.
+- Tulis kode dengan penamaan yang jelas dan penanganan gagal yang eksplisit.
+- Pastikan formulir, tabel, dan dialog dapat diakses dari keyboard pada layar ponsel maupun desktop.
+- Hindari informasi contoh yang menyerupai data jemaat nyata dan klaim fungsi yang belum diuji.
+- Jaga `.clasp.json`, token, dan data sensitif di luar repository.
 
-## Development & Clasp Workflow
+## Validasi
+```sh
+node scripts/validate-gas.js
+node scripts/test-frontend-structure.js
+node scripts/test-access-boundaries.js
+```
 
-1. **Local Clasp Configuration:**
-   Copy the provided template to create your local configuration:
-   ``bash
-   cp .clasp.json.example .clasp.json
-   ``
-   Configure your Google Apps Script project ID in `.clasp.json`. Note: `.clasp.json` is strictly ignored by Git to prevent credential leaks.
+Lakukan pengujian manual sesuai modul yang diubah, termasuk alur login, izin akses, penanganan kesalahan, dan tampilan seluler bila terkait. Jelaskan setiap pemeriksaan yang belum dapat dilakukan.
 
-2. **Validation Suite:**
-   Before pushing changes or submitting a pull request, run the pre-deployment validator:
-   ``bash
-   node scripts/validate-gas.js
-   ``
-   This performs:
-   - AST syntax parsing across all 24,000+ lines of `apps-script/Code.gs`.
-   - UTF-8 BOM and JSON validation of `appsscript.json` and `.clasp.json`.
-
-3. **Commit Standards:**
-   Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `ci:`, `chore:`).
-
-4. **Pull Requests:**
-   - Target the `main` branch.
-   - Describe administrative workflows affected (e.g., Notulen, RAPBJ, Surat Keluar, RBAC).
-   - Ensure automated GitHub Actions CI passes.
+## Review
+Gunakan branch dan pull request terpisah. Uraikan dampak perubahan terhadap admin, viewer, Google Apps Script, atau proxy Vercel. Jangan menyamakan push ke GitHub dengan rilis Apps Script produksi.
