@@ -1,14 +1,9 @@
 # Majelis Galilea — Church Governance & Board Administration System
 
-> A centralized administration platform and workflow automation system built with Google Apps Script, Vercel Serverless proxying, and a 23-tab Google Sheets relational database.
+> Church administration tools built with Google Apps Script, Google Sheets, and Vercel functions.
 
-[![Status](https://img.shields.io/badge/Status-Production-brightgreen?style=flat-square)](#)
 [![CI](https://github.com/zvenians/majelis-galilea/actions/workflows/ci.yml/badge.svg)](https://github.com/zvenians/majelis-galilea/actions/workflows/ci.yml)
-[![Live Demo](https://img.shields.io/badge/Live_Portal-majelis--galilea.vercel.app-blue?style=flat-square&logo=vercel)](https://majelis-galilea.vercel.app)
-[![Backend](https://img.shields.io/badge/Backend-Google_Apps_Script_(V8)-4285F4?style=flat-square&logo=google)](https://developers.google.com/apps-script)
-[![Proxy](https://img.shields.io/badge/Proxy-Vercel_Serverless-black?style=flat-square&logo=vercel)](https://vercel.com/)
-[![Database](https://img.shields.io/badge/Database-Google_Sheets_(23_Tabs)-34A853?style=flat-square&logo=googlesheets&logoColor=white)](https://www.google.com/sheets/about/)
-[![Tooling](https://img.shields.io/badge/Tooling-Google_Clasp-blueviolet?style=flat-square)](#)
+[Open portal](https://majelis-galilea.vercel.app)
 
 ---
 
@@ -22,7 +17,7 @@ Baca [cara pakai pengurus](docs/panduan-pengurus.md) untuk alur terbaru dan cata
 
 **Majelis Galilea** is the official church governance, administrative workflow, and records management portal for the church board (*Majelis Jemaat*) of GMAHK Galilea Balikpapan.
 
-It unifies meeting minutes management, resolutions, departmental program tracking, annual budget planning (*RAPBJ*), treasury reconciliation, congregational membership records, and official outward letter generation into a secure, single-page application.
+It unifies meeting minutes management, resolutions, departmental program tracking, annual budget planning (*RAPBJ*), treasury reconciliation, congregational membership records, and official outward letter generation through a web-based administrative interface.
 
 ---
 
@@ -36,8 +31,8 @@ Church board administration involves multiple interdependent stakeholders—Exec
 
 ### The Solution
 * **Unified Role-Aware Portal:** Provides a single-page web interface tailored to board workflows with real-time draft autosave and a live "Meeting Mode" for minute-taking during board sessions.
-* **Granular Role-Based Access Control (RBAC):** Server-side clearance levels (ADMIN, KEUANGAN, PENGURUS, MAJELIS) ensure members only access and modify data aligned with their official capacity.
-* **Structured 23-Tab Relational Database:** Utilizes Google Sheets as an accessible, zero-maintenance relational database backed by 250+ Google Apps Script business logic functions with `LockService` concurrency controls.
+* **Granular Role-Based Access Control (RBAC):** Server-side clearance levels (ADMIN, KEUANGAN, PENGURUS, MAJELIS) define the intended limits of access and modification according to role.
+* **Structured 23-Tab Google Sheets Store:** Utilizes Google Sheets as an accessible, structured data store backed by Google Apps Script functions with `LockService` concurrency controls.
 * **Edge Proxy Architecture:** Routes authenticated requests through an isolated Vercel serverless proxy (`/api/gas`). Public information uses a cacheable read-only endpoint (`/api/public`) with stale fallback in the browser.
 * **Automated Document Automation:** In-browser PDF generation for official letters, meeting minutes, and financial statements directly archived to Google Drive.
 
@@ -60,7 +55,7 @@ flowchart TD
     end
 
     subgraph BackendEngine ["Google Apps Script Engine (Code.gs)"]
-        GAS["Google Apps Script Web App (250+ Functions)"]
+        GAS["Google Apps Script Web App (Application Logic)"]
         RBAC["Role Access Controller (ADMIN, KEUANGAN, PENGURUS, MAJELIS)"]
         Concurrency["LockService & CacheService Session Engine"]
     end
@@ -87,7 +82,7 @@ flowchart TD
 
 ## 4. Role-Based Access Control (RBAC)
 
-The system enforces four distinct authorization tiers:
+The project defines four authorization tiers:
 
 | Tier | Role | Description & Permissions |
 |:---:|:---|:---|
@@ -98,7 +93,7 @@ The system enforces four distinct authorization tiers:
 
 ### Authentication Mechanism
 - User authentication via **Username + PIN**.
-- PINs are cryptographically hashed using **SHA-256 with dynamic salt**.
+- PINs are stored and validated by the backend's credential handling logic.
 - Authenticated sessions are securely cached for 6 hours via Google Apps Script `CacheService`.
 
 ---
