@@ -1,229 +1,175 @@
-# Majelis Galilea — Church Governance & Board Administration System
+# Majelis Galilea
 
-> Church administration tools built with Google Apps Script, Google Sheets, and Vercel functions.
+**A church board administration workspace built around meetings, records, finance, and correspondence.**
+
+Majelis Galilea brings related administrative workflows into a web interface for the GMAHK Galilea congregation. Google Apps Script implements the application logic, Google Sheets stores structured operational records, and Vercel provides browser-facing pages and API proxies.
+
+[Open the portal](https://majelis-galilea.vercel.app/) · [Contributor guide](.github/CONTRIBUTING.md) · [Board user guide](docs/panduan-pengurus.md)
 
 [![CI](https://github.com/zvenians/majelis-galilea/actions/workflows/ci.yml/badge.svg)](https://github.com/zvenians/majelis-galilea/actions/workflows/ci.yml)
-[Open portal](https://majelis-galilea.vercel.app)
 
 ---
 
-## Alur sederhana untuk pengurus
+## Background
 
-Navigasi utama terdiri dari **Ringkasan**, **Rapat**, **Program & Anggaran**, **Keuangan**, dan **Administrasi**. Usulan, catatan, keputusan, dan tugas berada dalam satu alur rapat. Kartu inventaris, kartu anggota/keluarga, dan potong foto tetap tersedia. Akun, arsip, salinan data, dan riwayat perubahan berada di Pengaturan.
+Board decisions produce information that must remain consistent across meetings, budget records, follow-up tasks, and official letters. When those records are maintained in disconnected spreadsheets and document files, it becomes difficult to trace a decision or confirm the next action.
 
-Baca [cara pakai pengurus](docs/panduan-pengurus.md) untuk alur terbaru dan catatan penerapan. Izin akun lama serta data historis tetap dipertahankan.
+This project provides a shared administrative interface while retaining the familiar Google Workspace tools used for storage and document production.
 
-## 1. Project Overview
+## Main modules
 
-**Majelis Galilea** is the official church governance, administrative workflow, and records management portal for the church board (*Majelis Jemaat*) of GMAHK Galilea Balikpapan.
+| Module | Scope |
+| --- | --- |
+| **Meeting governance** | Agendas, minutes, review states, decisions, action items, and meeting-oriented editing |
+| **Treasury and budgeting** | Congregational funds, budget plans (RAPBJ), financial entries, and reconciliation summaries |
+| **Secretariat** | Outgoing letters, tracking numbers, and document/PDF workflows |
+| **People and responsibilities** | Member and family records, board roles, assignments, and relevant directories |
+| **Inventory** | Congregation inventory and asset records |
+| **Publication** | Public viewer data separated from authorized administration |
 
-It unifies meeting minutes management, resolutions, departmental program tracking, annual budget planning (*RAPBJ*), treasury reconciliation, congregational membership records, and official outward letter generation through a web-based administrative interface.
+These are workflow categories in the codebase, not a promise that every feature is enabled for every deployed account. Permissions and content depend on the configured Apps Script environment.
 
----
-
-## 2. Problem & Solution
-
-### The Problem
-Church board administration involves multiple interdependent stakeholders—Executive Elders, Church Secretaries, Treasurers, Department Leaders, and Ordained Board Members:
-* **Fragmented Meeting Records:** Meeting minutes (*notulen*), agenda proposals, and formal resolutions were historically documented across ad-hoc text documents and messaging channels. Follow-ups were frequently missed and historical decisions were hard to trace.
-* **Budget & Treasury Disconnect:** Annual congregational budget execution (*RAPBJ*) and departmental fund disbursements required constant manual coordination between treasurers and ministry heads, lacking real-time budget utilization visibility.
-* **Secretarial Bottlenecks:** Preparing formal outgoing letters (*Surat Keluar*) with official church letterheads and sequential tracking numbers was a manual, desktop-bound process prone to duplicate numbering.
-
-### The Solution
-* **Unified Role-Aware Portal:** Provides a single-page web interface tailored to board workflows with real-time draft autosave and a live "Meeting Mode" for minute-taking during board sessions.
-* **Granular Role-Based Access Control (RBAC):** Server-side clearance levels (ADMIN, KEUANGAN, PENGURUS, MAJELIS) define the intended limits of access and modification according to role.
-* **Structured 23-Tab Google Sheets Store:** Utilizes Google Sheets as an accessible, structured data store backed by Google Apps Script functions with `LockService` concurrency controls.
-* **Edge Proxy Architecture:** Routes authenticated requests through an isolated Vercel serverless proxy (`/api/gas`). Public information uses a cacheable read-only endpoint (`/api/public`) with stale fallback in the browser.
-* **Automated Document Automation:** In-browser PDF generation for official letters, meeting minutes, and financial statements directly archived to Google Drive.
-
----
-
-## 3. System Architecture
+## System architecture
 
 ```mermaid
 flowchart TD
-    subgraph Client ["Client Browser (Single-Page Application)"]
-        Dashboard["Board Dashboard & Overview"]
-        MeetingEditor["Meeting Mode & Minutes Editor (Autosave)"]
-        TreasuryUI["RAPBJ Budget & Cash Reconciliation"]
-        LetterModule["Official Outward Letter Generator"]
-    end
-
-    subgraph EdgeLayer ["Vercel Serverless Edge Layer"]
-        Proxy["Serverless API Dispatcher (/api/gas)"]
-        SecretAuth["Header & CORS Verification Guard"]
-    end
-
-    subgraph BackendEngine ["Google Apps Script Engine (Code.gs)"]
-        GAS["Google Apps Script Web App (Application Logic)"]
-        RBAC["Role Access Controller (ADMIN, KEUANGAN, PENGURUS, MAJELIS)"]
-        Concurrency["LockService & CacheService Session Engine"]
-    end
-
-    subgraph WorkspaceStore ["Google Workspace Relational Storage"]
-        Sheets[("Google Sheets Database (23 Operational Tabs)")]
-        DriveStorage[("Google Drive (PDF Archives & Attachments)")]
-    end
-
-    Dashboard --> Proxy
-    MeetingEditor --> Proxy
-    TreasuryUI --> Proxy
-    LetterModule --> Proxy
-
-    Proxy --> SecretAuth
-    SecretAuth --> GAS
-    GAS --> RBAC
-    RBAC --> Concurrency
-    Concurrency --> Sheets
-    Concurrency --> DriveStorage
+  Board["Authorized board user"] --> Admin["Admin UI · admin/"]
+  Public["Public visitor"] --> Viewer["Read-only viewer · viewer/"]
+  Admin --> Proxy["Vercel API · api/gas.js"]
+  Viewer --> PublicAPI["Vercel API · api/public.js"]
+  Proxy --> Engine["Google Apps Script · Code.gs"]
+  PublicAPI --> Engine
+  Engine --> Sheets[("Google Sheets · structured records")]
+  Engine --> Drive["Google Drive · generated documents"]
 ```
 
----
+### Boundaries
 
-## 4. Role-Based Access Control (RBAC)
+The interface is split between `admin/` and `viewer/`. The backend contains role checks and business rules; frontend visibility is not a substitute for server authorization. The public endpoint has a different access and caching model from administrative operations.
 
-The project defines four authorization tiers:
+The code defines four primary role categories:
 
-| Tier | Role | Description & Permissions |
-|:---:|:---|:---|
-| **`ADMIN`** | System Administrator | Full administrative authority; manages user accounts, role allocations, system parameters, and database schemas. |
-| **`KEUANGAN`** | Treasury & Finance | Full management of church treasury accounts (*Kas Jemaat*, *Sumbangan*, *Uang Pembangunan*), annual budget plans (*RAPBJ*), and financial reconciliation. |
-| **`PENGURUS`** | Executive Committee | Administrative oversight of board meetings, agenda scheduling, minutes approval, congregational membership records, and official correspondence. |
-| **`MAJELIS`** | Board Member | Read access to approved minutes and reports; authority to submit agenda proposals, submit committee feedback, and monitor assigned action items. |
+| Role | Intended area of responsibility |
+| --- | --- |
+| `ADMIN` | System setup, authorization, and oversight |
+| `KEUANGAN` | Treasury and budget workflows |
+| `PENGURUS` | Executive administration and correspondence |
+| `MAJELIS` | Board-level access and approved meeting information |
 
-### Authentication Mechanism
-- User authentication via **Username + PIN**.
-- PINs are stored and validated by the backend's credential handling logic.
-- Authenticated sessions are securely cached for 6 hours via Google Apps Script `CacheService`.
+Actual permissions are determined by the backend's access rules, not simply by the names above.
 
----
+## Technology and storage
 
-## 5. Core Administrative Modules
+- **Frontend:** HTML, CSS, and JavaScript, with separate modules for core behavior, features, navigation, and presentation.
+- **API:** Node.js handlers under `api/`, deployed through Vercel.
+- **Business logic:** Google Apps Script V8 in `apps-script/Code.gs`.
+- **Data:** Google Sheets, organized into operational worksheets; this is **not** a standalone SQL database.
+- **Documents:** Google Workspace document workflows and Drive storage where configured.
+- **Quality controls:** Node.js-based validation scripts and GitHub Actions.
 
-- **Meeting Governance Suite:**
-  - Full CRUD lifecycle for Meeting Minutes (*Notulen Rapat*) with draft, review, and approval states.
-  - Agenda proposal pipeline (*Usulan Agenda*) and formal resolution index (*Keputusan Rapat*).
-  - Dedicated **Meeting Mode** enabling real-time minute drafting with autosave protection.
-  - Action item tracker (*Tindak Lanjut*) with assigned deadlines and responsible parties.
-- **Financial Oversight & Budgeting:**
-  - Annual Congregational Budget Plan (*RAPBJ*) with real-time absorption tracking.
-  - Multi-fund general ledger (*Kas Jemaat*, *Sumbangan*, *Uang Pembangunan*).
-  - Monthly and annual reconciliation reporting with exportable summaries.
-- **Congregational Records & Directory:**
-  - Parishioner directory with family grouping and identity card generation.
-  - Complete board executive roster (*Pengurus*) and committee assignments.
-  - Church inventory and asset catalog (*Inventaris*).
-- **Secretariat Automation:**
-  - Outgoing official letter generator (*Surat Keluar*) with automated sequential numbering and church letterhead formatting.
-  - Integrated PDF report compilation and direct Google Drive file attachments.
-
----
-
-## 6. Technology Stack
-
-- **Frontend:** Semantic HTML5, Modular CSS3, Vanilla JavaScript (ES6+), Single-Page Architecture
-- **API Gateway:** Node.js, Vercel Serverless Functions (`/api/gas`)
-- **Backend Service:** Google Apps Script (V8 Runtime, 250+ modular functions)
-- **Database Engine:** Google Sheets (23 structured database sheets)
-- **Cloud Tooling:** Google Clasp (`@google/clasp`), custom syntax validator (`scripts/validate-gas.js`)
-
----
-
-## 7. Project Structure
+## Code structure
 
 ```text
-majelis-galilea/
-├── admin/                     # Admin portal UI
-│   ├── index.html             # Semantic page shell
-│   ├── styles/                # Base, feature, and visual-polish styles
-│   └── js/                    # Shell, core, feature, and enhancement modules
-├── assets/                    # Shared Adventist brand assets
-├── api/                       # Vercel serverless functions
-│   ├── _gas.js                # Shared Apps Script client
-│   ├── gas.js                 # Authenticated request proxy
-│   └── public.js              # CDN-cached public data endpoint
-├── apps-script/               # Upstream Google Apps Script sources
-│   ├── appsscript.json        # Apps Script project manifest (V8 runtime)
-│   └── Code.gs                # 250+ backend functions & business logic
-├── scripts/                   # Local development & CI validation scripts
-│   └── validate-gas.js        # Apps Script manifest and syntax validator
-├── viewer/                    # Public viewer UI
-│   ├── index.html             # Page shell
-│   ├── styles.css             # Responsive presentation
-│   └── app.js                 # Loading, search, and offline cache behavior
-├── .clasp.json.example        # Clasp configuration template
-├── vercel.json                # Vercel routing rules & security headers
-└── README.md                  # Project documentation
+.
+├── admin/
+│   ├── index.html                 Authorized UI
+│   ├── js/
+│   │   ├── shell.js               Navigation and initialization
+│   │   ├── core.js                Shared behavior
+│   │   ├── features.js            Administrative modules
+│   │   └── enhancements.js        Interaction improvements
+│   └── styles/                    Base, features, visual refinement
+├── viewer/
+│   ├── index.html                 Public page
+│   ├── app.js                     Public data loading and rendering
+│   └── styles.css                 Visitor presentation
+├── api/
+│   ├── _gas.js                    Apps Script transport helpers
+│   ├── gas.js                     Administrative API proxy
+│   └── public.js                  Public data endpoint
+├── apps-script/
+│   ├── Code.gs                    Application logic
+│   └── appsscript.json            Runtime manifest
+├── scripts/                       Validators and workflow tests
+├── docs/panduan-pengurus.md       Board documentation
+├── .clasp.json.example            Apps Script configuration template
+└── vercel.json                    Routing and asset cache policy
 ```
 
----
+## Local development
 
-## 8. Local Development & Clasp Setup
+This repository is not a conventional npm web application. There is no root `package.json`; the validation scripts run directly under Node.js.
 
-### 1. Prerequisites
-- Node.js 20+
-- Google Apps Script project with `Code.gs` and Google Sheets configured
-- Vercel CLI (optional, for local proxy testing)
+**Prerequisites:** Node.js 24 (used by CI), an authorized Apps Script project for backend work, and the Vercel CLI only when testing serverless routes locally.
 
-### 2. Clasp Configuration
-Local development synchronizes with Google Apps Script using Google's `@google/clasp` CLI:
+```bash
+git clone https://github.com/zvenians/majelis-galilea.git
+cd majelis-galilea
+cp .clasp.json.example .clasp.json
+node scripts/validate-gas.js
+```
 
-1. Copy the configuration template:
-   ```bash
-   cp .clasp.json.example .clasp.json
-   ```
-2. Populate `scriptId` with your Apps Script Project ID (**Apps Script Editor > Project Settings > Script ID**).
-3. The `.clasp.json` file is ignored by Git (`.gitignore`) to safeguard project IDs.
-4. Run syntax and manifest integrity validation:
-   ```bash
-   node scripts/validate-gas.js
-   ```
-5. Push changes to Google Apps Script:
-   ```bash
-   npx @google/clasp push
-   ```
+Fill the `scriptId` in your local `.clasp.json` only when connecting to an Apps Script project you are permitted to modify. The template itself does not provide credentials.
 
-### 3. Local Proxy Preview
-To preview the Vercel serverless proxy locally:
+To preview the Vercel routes and static pages together:
 
 ```bash
 npx vercel dev
 ```
 
----
+Backend requests require a correctly configured Apps Script deployment; a local HTML preview alone cannot demonstrate live data persistence.
 
-## 9. Environment Variables
+### Configuration
 
-Configure this environment variable in your Vercel Project Settings:
+| Setting | Purpose | Where it belongs |
+| --- | --- | --- |
+| `APPS_SCRIPT_URL` | URL of the Apps Script web-app backend | Vercel environment |
+| `.clasp.json` | Local `clasp` script-project association | Developer machine, not committed |
+| Google Sheets and Drive IDs | Operational records and document storage | Authorized Apps Script setup |
 
-| Variable | Description | Exposure |
-| :--- | :--- | :--- |
-| `APPS_SCRIPT_URL` | Production Google Apps Script Web App Deployment URL | Server-only |
+Never add PINs, session material, account details, or secret values to the repository.
 
----
+## Verification
 
-## 10. Deployment
+The CI workflow runs the checks below:
 
-1. Push commits to the `main` branch of this repository.
-2. Link the repository in **Vercel**.
-3. Configure the `APPS_SCRIPT_URL` environment variable.
-4. Deploy:
-   ```bash
-   npx vercel --prod
-   ```
-
----
-
-## 11. Development & CI Workflow
-
-The repository enforces backend syntax and manifest validation via GitHub Actions before code reaches production:
-
-```text
-Local Branch ──► Pull Request ──► GitHub Actions CI (validate-gas.js) ──► Merge to main ──► Vercel & Clasp Deploy
+```bash
+node scripts/validate-gas.js
+node scripts/test-governance.js
+node scripts/test-simple-workflow.js
+node scripts/test-access-boundaries.js
+node scripts/test-frontend-structure.js
 ```
 
-- **Local Verification:** Run `node scripts/validate-gas.js` locally to verify `appsscript.json`, syntax check all 24k+ lines of `Code.gs`, and ensure configuration integrity.
-- **Automated Gating:** Every push and pull request to `main` triggers automated execution of the validation suite.
-- **Zero Credential Exposure:** CI executes pure syntax and static integrity checks without requiring production Google Apps Script credentials.
+These checks cover syntax and manifest integrity, governance rules, a simplified meeting/budget workflow, access boundaries, and frontend/public-cache structure. They are source-level and simulated checks, **not** proof that every production workflow has been exercised with real church records.
 
+Additional scripts such as `scripts/smoke-test.js` and `scripts/test-workspace-browser.js` exist for targeted testing; review their setup requirements before running them.
 
+## Deployment responsibilities
+
+The **frontend/API** and **Apps Script backend** have distinct release procedures.
+
+1. Review a focused pull request and run the repository checks.
+2. Verify `APPS_SCRIPT_URL` against the intended environment.
+3. Review backend permission changes and sample the affected workflow using non-sensitive test records.
+4. Publish a Vercel change only with deployment approval.
+5. Update the Apps Script deployment separately where backend code changed; `clasp` operations are not implied by pushing to GitHub.
+
+Do not publish production changes while inspecting or editing documentation.
+
+## Administration and data safeguards
+
+The platform handles potentially sensitive records, including members and financial information. Use accounts with the least access needed, keep test data synthetic, verify the backend's role checks, and limit sharing of exported documents.
+
+When editing financial or governance features, validate both the write path and the subsequent read/reload. A success notification is not proof that the Google Sheet or Drive entry was updated.
+
+## Related services
+
+- [GMAHK Galilea congregation website](https://github.com/zvenians/gmahk-galilea)
+- [GMAHK Galilea Digital Archive](https://github.com/zvenians/gmahk-galilea-digital-archive)
+- [Board user guide](docs/panduan-pengurus.md)
+- [Contribution and code review](.github/CONTRIBUTING.md)
+
+---
+
+**Built to support accountable congregation administration.** Maintained by [@zvenians](https://github.com/zvenians).
