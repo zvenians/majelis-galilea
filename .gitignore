@@ -7,3 +7,13 @@ node_modules
 
 # Clasp Apps Script configuration
 .clasp.json
+
+# additional local and generated files
+dist/
+build/
+coverage/
+.cache/
+*.tmp
+*.bak
+Thumbs.db
+*.tsbuildinfo
